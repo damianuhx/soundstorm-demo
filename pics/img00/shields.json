@@ -1,0 +1,52 @@
+{"frames": {
+
+"shield1":
+{
+	"frame": {"x":1,"y":520,"w":500,"h":502},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":500,"h":502},
+	"sourceSize": {"w":500,"h":502}
+},
+"shield2":
+{
+	"frame": {"x":503,"y":1022,"w":500,"h":488},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":500,"h":488},
+	"sourceSize": {"w":500,"h":488}
+},
+"shield3":
+{
+	"frame": {"x":1,"y":1024,"w":500,"h":484},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":500,"h":484},
+	"sourceSize": {"w":500,"h":484}
+},
+"shield4":
+{
+	"frame": {"x":503,"y":520,"w":500,"h":500},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":500,"h":500},
+	"sourceSize": {"w":500,"h":500}
+},
+"shield5":
+{
+	"frame": {"x":1,"y":1,"w":520,"h":517},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":520,"h":517},
+	"sourceSize": {"w":520,"h":517}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "shields.jpg",
+	"format": "RGB888",
+	"size": {"w":1004,"h":1511},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:097cc056f80a9b00c14b76bc415fe9d9:081aea9b694550665be0cbc0bcdc14ee:af2dc0563f2baeef9a8dab35085ab099$"
+}
+}

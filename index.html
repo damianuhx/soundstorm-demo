@@ -1,0 +1,925 @@
+<!--META-->
+
+<!DOCTYPE html>
+<head>
+<link rel="shortcut icon" type="image/png" href="pics/favicon.png"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GFC1HB3WSN"></script>
+  <script src='code/vendor/electron-cookies.js'></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GFC1HB3WSN');
+
+//Cookies
+  function setCookie(name,value,days=36500) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days*24*60*60*1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+  }
+  function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+  }
+  function eraseCookie(name) {   
+    document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  }
+
+
+  function mail2db(data, mode=''){
+
+    //var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    var validRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (!data.mail.match(validRegex)){
+      document.getElementById('mailerror'+mode).innerHTML = 'Not a valid email address.'
+    }
+    else{
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      var paras='';
+      paras+='mail='+data.mail;
+      paras+='&user='+user_id;
+      paras+='&link='+urlParams.get('l');
+      paras+='&mode='+mode;
+
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == XMLHttpRequest.DONE) {
+          if (xhttp.responseText.length>2){
+            document.getElementById('formwrapper'+mode).innerHTML ='Success';
+            document.getElementById('send'+mode).style.color ='black';
+            document.getElementById('send'+mode).removeAttribute("onclick");
+            document.getElementById('mailerror'+mode).innerHTML = xhttp.responseText+' was added successfully to our mailing list.';
+            document.getElementById('mailerror'+mode).style.color = 'green'
+          }
+          else{
+            document.getElementById('mailerror'+mode).innerHTML = 'An error occurred.'
+          }
+        }
+      }
+      xhttp.open("GET", "https://log.uhx.ch/mail.php?"+paras, true);
+      xhttp.send();
+    }
+    
+  }
+
+  function subscribe(mode=''){
+    var form = document.getElementById('mailform'+mode)
+    var formData = new FormData(form);
+    var data = [];
+    formData.forEach(function(value, key){
+    data[key] = value;
+    });
+        mail2db(data, mode);
+
+      }
+ //if (!window.navigator.cookieEnabled){window.alert("Cookies are disabled. Your options and progress won't be saved.")}
+  </script>
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    	<title>SoundStorm</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="SoundStorm">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+
+        <link rel="stylesheet" href="code/vendor/main.css">
+        <style>
+        
+        *{text-transform: uppercase;}
+        input{width: 20px;}
+        .input{display: flex;}
+        .available{width: 25%}
+        .space{width: 12%}
+        button.input{height: 40px; width: 60px; font-size: 10px; background-color: #CC4444;}
+        .inputwrapper{display: inline-block; width: 80px; margin: 20px; margin-top: 0;}
+        .inputbutton{width: 100%}
+        canvas{
+          z-index: -1;
+          width: 100%;
+          height: auto;
+          max-width: 100%;
+          display: none;
+          }
+
+          .bigblock{
+            min-width: 300px;
+            width: 500px;
+            max-width: 100%;
+            padding: 20px; 
+            margin-left: auto;
+            margin-right: auto;
+          }
+
+          img{max-width: 100%}
+
+          
+          @media only screen and (min-width: 1000px) {
+            .allblock{
+            width: 1000px;
+            display: flex;
+            }
+          }
+          @media only screen and (max-width: 999px) {
+            .allblock{
+            width: 100%;
+            display: block;
+            }
+            #setgp{
+              padding-left: 30px;
+              padding-right: 30px;
+            }
+          }
+
+          .bold{
+            text-decoration: underline;
+          }
+          
+          @media only screen and (max-width: 300px) {
+            #framemode, #browser{
+              width: 50% !important;
+              margin-top: 100px !important;
+              position: fixed !important;
+            }
+            #browser{
+              left: 0 !important;
+            }
+            #framemode{
+              right: 0 !important;
+            }
+            #startgame{
+              width: 100% !important;
+              margin-bottom: 100px;
+            }
+          }
+
+          @font-face {font-family: "inline"; src: url("pics/html/PhosphateInline.ttf") format("truetype") }
+          @font-face {font-family: "solid"; src: url("pics/html/PhosphateSolid.ttf") format("truetype") }
+          
+          h1{
+            font-weight: normal;
+            font-family: "inline" !important;
+            text-align: center;
+          }
+
+          body{
+            font-family: "solid";
+          }
+          .subtitle{
+            padding: 5px;
+            font-size: 24px;
+            font-family: "inline" !important;
+          }
+
+      p{
+        padding-left: 20px;
+        font-size: 20px;
+        font-color: #DDDDDD;
+      }
+      a{
+        color: lightblue;
+      }
+
+          </style>
+    </head>
+
+
+
+
+    <!--BODY-->
+<body style="max-width: 100%; margin: auto; transform: scale(1); transform-origin: 0 0;">     
+
+  <div style="
+    margin: auto;
+    margin-top: 30px;
+    width: 1000px; 
+    max-width: 100%;
+    color: #EEEEEE;     
+    font-size: 18px;
+    display: block;  
+    " id="feedback">
+
+<div id="demoend" style="border-style: ridge; padding: 30px; margin-bottom: 30px; margin-top: 30px; font-size: 32px; font-family: inline; display: none">
+  <div style="text-align: center; width: 100%; margin-bottom: 50px; padding-top: 30px; background-color: black; color: white; font-family: inline; border-style: hidden; font-size: 64px;">THANK YOU FOR PLAYING</div>     
+
+  MORE STAGES WILL BE AVAILABLE IN FUTURE FREE PLAYTESTS. <br/>
+  LEAVE YOUR EMAIL ADDRESS TO GET NOTIFIED.<br/>
+  <div style="display: flex; margin-top: 50px; margin-bottom: 50px;">
+    <div id="formwrapper"
+    style="width: 50%;">
+  <form id="mailform">
+    <input 
+    type="email"
+    name="mail" 
+    placeholder="your email" 
+    style="color: white;
+    background-color: black;
+    border-style: dashed;
+    width: 95%;
+    font-size: 24px;
+    margin: 10px;
+    padding: 10px;"></input>
+  </form> 
+</div>
+  <button id="send" style="margin-left: 10px; background-color: black; color: white; font-family: inline; border-style: hidden;"
+  onclick="subscribe('');">
+  <img src="pics/html/send.png"></button>   
+
+  <div style="margin-left: 30px; width: 25%; display: block;" ><a target="_blank" class="available" href="https://store.steampowered.com/app/2202400/SoundStorm/"><img src="pics/html/steam.png"></a></div>
+</div>
+<div id="mailerror" style="margin-top: -40px; font-family: solid; font-size: 18px; color: red"></div>
+<span style="font-size: 18px; font-family: solid;" >WE WILL ONLY SEND MAILS ABOUT FREE PLAYTESTS OF SOUNDSTORM. YOU CAN CANCEL YOUR SUBSCRIPTION ANYTIME.</SPAN>
+  <!--<button style="text-align: center; width: 100%; margin-top: 50px; padding-top: 30px; background-color: black; color: white; font-family: inline; border-style: hidden; font-size: 64px;"></button>    --> 
+</div>
+
+    </div>
+
+   <div style="
+    margin: auto;
+    margin-top: 30px;
+    width: 1000px; 
+    max-width: 100%;
+    color: #EEEEEE;     
+    font-size: 18px;
+    " id="settings">
+
+    <div style="margin: auto">
+
+      <div id="available" style="border-style: ridge; padding: 30px; margin-bottom: 30px; margin-top: 30px; font-size: 32px; font-family: inline; display: none">FIRST STAGE DEMO. SIGN UP FOR MORE IN FUTURE FREE PLAYTESTS: <br/>
+        <div style="display: flex; margin-top: 20px; margin-bottom: 50px;">
+          <div id="formwrapper2"
+          style="width: 50%;">
+        <form id="mailform2">
+          <input 
+          type="email"
+          name="mail" 
+          placeholder="your email" 
+          style="color: white;
+          background-color: black;
+          border-style: dashed;
+          width: 95%;
+          font-size: 24px;
+          margin: 10px;
+          padding: 10px;"></input>
+        </form> 
+      </div>
+        <button id="send2" style="margin-left: 10px; background-color: black; color: white; font-family: inline; border-style: hidden;"
+        onclick="subscribe('2');">
+          <img src="pics/html/send.png"></button>   
+      
+        <div style="margin-left: 30px; width: 25%" ><a target="_blank" class="available" href="https://store.steampowered.com/app/2202400/SoundStorm/"><img src="pics/html/steam.png"></a></div>
+      </div>
+      <div id="mailerror2" style="margin-top: -40px; font-family: solid; font-size: 18px; color: red"></div>
+      
+      <span style="font-size: 18px; font-family: solid;" >WE WILL ONLY SEND MAILS ABOUT FREE PLAYTESTS OF SOUNDSTORM. YOU CAN CANCEL YOUR SUBSCRIPTION ANYTIME.</SPAN>
+      </div>
+
+    <img style="background-color: transparent; max-width: 100%; width: 800px; display: block;
+  margin-left: auto;
+  margin-right: auto;" src="pics/html/soundstorm.png"><img>
+
+
+
+
+
+  <div style="width: 100%; display: flex">
+
+    <!--FIREFOX-->
+    <div id="browser" style="text-align: center; width:25%;padding-top: 30px">
+      <!--<div id="cookies">GAME WILL NOT BE SAVED</div>-->
+      
+    </div> 
+     
+    <!--PLAY-->
+    <div id="startgame" style="width:50%; text-align: center;">
+      <img id="loading" src="pics/html/wait.png" style="height: 70px; width: auto; min-width: 200px; margin: auto; padding: 20px; display: block;"">
+      PRESS ESC TO EXIT FULLSCREEN MODE
+    </div> 
+
+
+  </div>
+
+  <script>
+
+    var frameskip=false;
+    var e=0;
+
+    calcFPS();
+
+function calcFPS(a){function b(){if(f--)c(b);
+  else{
+    var e=1E3*d/(performance.now()-g);
+    "function"===typeof a.callback&&a.callback(e);
+    addFPS(e)}}
+    var c=window.requestAnimationFrame||window.webkitRequestAnimationFrame||window.mozRequestAnimationFrame;if(!c)return!0;a||(a={});var d=a.count||20,f=d,g=performance.now();b()}
+
+    var FPS=[];
+
+    function addFPS(e){
+      FPS.push(e);
+
+      if (FPS.length>5){
+        frameskipset(Math.max(...FPS))
+      }
+      else{
+        calcFPS();
+      }
+    }
+
+function frameskipset(e){
+  if (e>65 || e<55){
+    document.getElementById('frameskip').value='skip';
+    frameskip=true;
+    document.getElementById('frameskiptext').innerHTML=Math.round(e)+'hz detected. try set system settings to 60hz.'
+  }
+  else{
+    document.getElementById('frameskiptext').innerHTML='60HZ DETECTED. PERFECT!'
+  
+  }
+}
+
+
+function generateString(length) {
+  const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = ' ';
+    const charactersLength = characters.length;
+    for ( let i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return result;
+}
+</script>
+
+      <div id="progresswrapper" style="background-color: black; width: 100%; height: 10px; border: 1px solid; margin-bottom: 10px;">
+    
+      <div id="progress" style="background-color: white; max-width: 100%; width: 0px; height: 10px;">
+    </div>
+    </div>
+
+    <div style="margin-bottom: 50px; margin-top: 50px;">EPILEPSY WARNING: A very small percentage of people may experience a seizure when exposed to flashing lights or other effects used in this game. Play or watch this game at own risk! Viewer discretion is advised.
+    </div>
+
+    <div class="allblock">
+
+    <div class="bigblock">
+    <div style="display: inline-flex;"><div class="subtitle">INPUT CONTROL: </div>
+    <select style="height: 100%" id="control" onchange="
+    val();
+    inputcontrol = document.getElementById('control').value;
+    setCookie('inputcontrol', inputcontrol, 36500); 
+    ">
+      <option  value="key" selected>STANDARD</option>
+      <!--<option  value="touch">TOUCH</option>
+      <option  value="mouse">MOUSE</option>-->
+      <option  value="gamepad">CUSTOM (GAMEPAD)</option>
+    </select>
+    </div>
+    <div style="display: flex;">
+      <div style="width: 100%">
+      <img id="manual" style="background-color: transparent; width: 100%; display: none;" src="pics/html/mousecontrols.jpg">
+      <div style="display: none" id="setcontrols">
+      <select onchange="gpload(this.value);" style="width: 80%;margin-left: 10%;margin-bottom: 10%;margin-right: 10%;" id="selectgamepad">
+        <option selected disabled>SELECT A GAMEPAD</option>
+      </select><br/>
+      <div id="connectgp">PRESS ANY BUTTON ON A GAMEPAD TO CONNECT</div>
+      <div id="setgp" style="display: none;">
+        <div class="inputwrapper">
+          <label class="input">LEFT</label>
+          <button id ="left" style="background-color: lightgrey;" class="inputbutton" onclick="gpset(this, 'left', currentindex)">SET<br/>KEY</button>
+        </div>
+      <div class="inputwrapper">
+        <label class="input">RIGHT</label>
+        <button id ="right" style="background-color: lightgrey;" class="inputbutton" onclick="gpset(this, 'right', currentindex)">SET<br/>KEY</button>
+      </div>
+      <div class="inputwrapper">
+        <label class="input">SHIELD</label>
+        <button id ="shield" style="background-color: lightgrey;" class="inputbutton" onclick="gpset(this, 'shield', currentindex)">SET<br/>KEY</button>
+      </div>
+      <div class="inputwrapper">
+        <label class="input">DOWN</label>
+        <button id ="down" style="background-color: lightgrey;" class="inputbutton" onclick="gpset(this, 'down', currentindex)">SET<br/>KEY</button>
+      </div>
+      <div class="inputwrapper">
+        <label class="input">UP</label>
+        <button id ="up" style="background-color: lightgrey;" class="inputbutton" onclick="gpset(this, 'up', currentindex)">SET<br/>KEY</button>
+      </div>
+      <div class="inputwrapper">
+        <label class="input">PAUSE</label>
+        <button id ="pause" style="background-color: lightgrey;" class="inputbutton" onclick="gpset(this, 'pause', currentindex)">SET<br/>KEY</button>
+      </div>        
+    </div>
+    </div>
+  </div>
+    </div>
+
+
+  <div style="display: flex;">
+  <div style="width: 50%; display: flex;">
+    <div id="manualleft" style="margin: auto; font-size: 15px;">Move with A, S, D and W or the arrow keys</div>
+    </div>
+  <div style="width: 50%; display: flex; font-size: 15px;">
+  <div id="manualright" style="margin: auto">USE SHIELD BY PRESSING THE SPACE KEY</div>
+    </div>
+
+    
+  </div>
+
+</div>
+      
+
+<div class="bigblock">
+<div>
+<div class="subtitle">
+SYSTEM SETTINGS:
+    </div>
+    </div>
+    <!--LANGUAGE-->
+    <div id="language" style="padding-top: 30px; text-align: center; position: block">
+      <!--
+      <div id="demo">LANGUAGE</div>
+      <select id="frameskip" onchange="if (this.value == 'english'){frameskip=true;}else{frameskip=false}">
+        <option value="english">English</option>
+      </select>-->
+    <!--FRAMESKIP-->
+    <div id="framemode" style="padding-top: 30px; text-align: center; position: block">
+      <div id="demo">MONITOR REFRESH RATE</div>
+      <select id="frameskip" onchange="if (this.value == 'skip'){frameskip=true;}else{frameskip=false}">
+        <option value="normal">60HZ</option>
+        <option value="skip">NOT 60HZ</option>
+      </select>
+      <div id="frameskiptext">SET YOUR SYSTEMS REFRESH RATE TO 60HZ IF POSSIBLE</div>
+      </div> 
+    </div>
+
+    <!--if cookie lowdetail isset and 1: select value low and change settings-->
+    <div id="detailmode" style="padding-top: 30px; text-align: center; position: block">
+      <div id="demo">GRAPHIC DETAIL</div>
+      <select id="detail" onchange="if (this.value == 'low'){settings.shadow=false;settings.outline=false;console.log(settings.outline);setCookie('lowdetail', true, 36500);}else{settings.shadow=true;settings.outline=true;setCookie('lowdetail', false, 36500);}">
+        <option value="high">HIGH</option>
+        <option value="low">LOW</option>
+      </select>
+      <div id="detailmodetext">DISABLE SHADOWS AND OUTLINE FILTERS</div>
+      </div> 
+    </div>
+
+</div>
+
+
+
+
+<!--functions startpage-->
+<script>
+  
+        //Read or Create unique user id 
+  
+    
+//Gamepad console.lo Layout
+var controlkeys=['left','right','up','down','shield','pause'];
+var controlmap = [[],[],[],[]];
+var gamepad_id=-1;
+
+controlmap[0]['up']= false;
+controlmap[0]['down']= false;
+controlmap[0]['left']= false;
+controlmap[0]['right']= false;
+controlmap[0]['shield']= false;
+controlmap[0]['shoot']= false;
+controlmap[0]['pause']= false;
+controlmap[1]=controlmap[0];
+controlmap[2]=controlmap[0];
+controlmap[3]=controlmap[0];
+currentindex=0;
+
+function getkey(button){
+  gamepad = navigator.getGamepads()[gamepad_id];
+  if (
+    typeof controlmap[gamepad_id] !== 'undefined' && 
+    typeof gamepad !== 'undefined' &&
+    gamepad &&
+    typeof gamepad.connected !== 'undefined' &&
+    gamepad.connected == true
+  )
+  {
+    if (!controlmap[gamepad_id][button].axis)
+    {
+      var i=controlmap[gamepad_id][button].index;
+      if (typeof gamepad !== 'undefined' && typeof gamepad.buttons !== 'undefined' && typeof gamepad.buttons[i] !== 'undefined' && typeof gamepad.buttons[i].pressed !== 'undefined'){
+        return gamepad.buttons[i].pressed;
+      }
+      else{
+        return false;
+      }
+    }
+    else {
+      var i=controlmap[gamepad_id][button].index;
+      if (typeof gamepad !== 'undefined' && typeof gamepad.buttons[i] !== 'undefined'  && typeof gamepad.buttons[i].pressed !== 'undefined'){
+        if (gamepad.axes[i]*controlmap[gamepad_id][button].axis>0.5){
+          return 1;
+        }
+        else{
+          return 0;
+        }
+      }
+    }
+  }
+  else{
+    return 0;
+  }
+}
+
+function allpads(button){
+  //return 0;
+  var gamepads = navigator.getGamepads();
+  var pressed = 0;
+  var returnvalue=0;
+  gamepads.forEach((pad)=>{
+    if (pad && pad.mapping=='standard')
+    {
+      if (button == 'shield' && ((pad.buttons[0] && pad.buttons[0].pressed) || (pad.buttons[1] && pad.buttons[1].pressed) || (pad.buttons[2] && pad.buttons[2].pressed) || (pad.buttons[3] && pad.buttons[3].pressed))){returnvalue= 1;}
+      else if (button == 'pause' && ((pad.buttons[8] && pad.buttons[8].pressed) || (pad.buttons[9] && pad.buttons[9].pressed) || (pad.buttons[16] && pad.buttons[16].pressed))){returnvalue= 1;}
+      else if (button == 'up' && ((pad.buttons[12] && pad.buttons[12].pressed) || (pad.axes[1] && pad.axes[1]<-0.5))){returnvalue= 1;}
+      else if (button == 'down' && ((pad.buttons[13] && pad.buttons[13].pressed) || (pad.axes[1] && pad.axes[1]>0.5))){returnvalue= 1;}
+      else if (button == 'left' && ((pad.buttons[14] && pad.buttons[14].pressed) || (pad.axes[0] && pad.axes[0]<-0.5))){returnvalue= 1;}
+      else if (button == 'right' && ((pad.buttons[15] && pad.buttons[15].pressed) || ( pad.axes[0] && pad.axes[0]>0.5))){returnvalue= 1;}
+    }
+  });
+  return returnvalue;
+}
+
+//Connect and Disconnect Gamepad Listeners
+//
+//Connect Gamepad
+window.addEventListener("gamepadconnected", function(e) {
+
+    var gpid = e.gamepad.index;
+    var gpname = e.gamepad.id;
+
+    console.log(e.gamepad);
+    var option = document.createElement("option");
+    option.text = gpname;
+    option.value = gpid;
+    if (!play){
+      var select = document.getElementById("selectgamepad");
+      select.appendChild(option);
+    
+      select.value=option.value; 
+    }
+    gpload(option.value);
+    document.getElementById("loading").click();
+});
+
+//Remove Gamepad
+window.addEventListener("gamepaddisconnected", function(e) {
+  if (!play){
+    var selectobject = document.getElementById("selectgamepad");
+  for (var i=0; i<selectobject.length; i++) 
+  {
+    if (selectobject.options[i].value == e.gamepad.index)
+    {
+        selectobject.remove(i);
+    }
+  }
+  }
+});
+
+
+//Firefox Alert
+if(navigator.userAgent.indexOf("Firefox") != -1 ){
+  //document.getElementById("browser").innerHTML = '<img  onclick="alert(\'Firefox has problems with the sound-synchronisation and input lag which are both crucial for playing this game. Try another browser. Chrome, Edge and Safari all run well.\');" style=\"width: 100px;\" id=\"nofirefox\" src=\"pics/html/nofirefox.png\">';
+}
+
+//Get and return key from gamepad from index 0-3
+function gpkeyget(index){
+var returnval = false;
+var gpdata = navigator.getGamepads()[index];
+gpdata.buttons.forEach(function(button, number)
+{
+  if (button.pressed)
+  {
+    returnval = {axis: 0, index: number, name: 'Button '+number};
+  }
+})
+gpdata.axes.forEach(function(axis, number)
+{
+  if (axis>0.7)
+  {
+    returnval = {axis: 1, index: number, name: 'Axis '+number};
+  }
+  else if (axis<-0.7)
+  {
+    returnval = {axis: -1, index: number, name:  'Axis '+number+'-'};
+  }
+});
+return returnval;
+}
+
+//all red buttons become grey
+function unred(){
+  inputbuttons = document.getElementsByClassName('inputbutton');
+  for (let button of inputbuttons) {
+    if (button.style.backgroundColor==='red'){
+      button.style.backgroundColor='lightgrey';
+      button.innerHTML='SET<br/>KEY';
+    }
+  }
+}
+//Stop listening to pad input
+function unselect(){
+  if (typeof myInterval !== 'undefined'){clearInterval(myInterval);}
+  unred();
+}
+
+//cookies2gpset
+function gpload(gpid){
+  currentindex=gpid;
+  gamepad_id=gpid;
+  gpname = (navigator.getGamepads()[gpid].id);
+
+  if (!play){
+  document.getElementById('connectgp').style.display ='none';
+  document.getElementById('setgp').style.display ='inherit';
+  }
+
+  controlkeys.forEach(function (value){
+    var button = JSON.parse(getCookie('C_'+value+'_'+gpname));
+    if (button){
+        controlmap[gpid][value] = button;
+        if (!play){
+        caller=document.getElementById(value);
+        caller.style.backgroundColor = 'green';
+        caller.innerHTML = button.name;
+        }
+    }
+  }
+);}
+
+//Start listening to pad input
+function gpset(caller, button, index=0){
+  unselect();
+  caller.style.backgroundColor='red';
+  caller.innerHTML='PRESS<br/>BUTTON';
+  myInterval = setInterval(function(){
+    var controlkey = gpkeyget(index);
+    if (controlkey){
+      setCookie('C_'+button+'_'+navigator.getGamepads()[index].id, JSON.stringify(controlkey), 36500); 
+      controlmap[index][button] = controlkey;
+      caller.style.backgroundColor = 'green';
+      caller.innerHTML = controlkey.name;
+      clearInterval(myInterval);
+    }
+  }, 30);
+}
+
+val();
+
+
+//Display control manual or gamepad controls (on startup and inputcontrol change)
+function val() {
+    var control = document.getElementById("control").value;
+    var manual = document.getElementById("manual");
+    var setcontrols = document.getElementById("setcontrols");
+    var manualleft = document.getElementById("manualleft");
+    var manualright = document.getElementById("manualright");
+
+    var manualtext = [];
+    manualtext['mouse']={
+      left: 'THE PLAYER MOVES TOWARDS THE COURSOR. MOVE THE MOUSE TO NAVIGATE.',
+      right: 'CLICK TO ACTIVATE YOUR SHIELD.'
+    };
+
+    manualtext['touch']={
+      left: 'TOUCH THE SCREEN TO MOVE THE PLAYER TOWARDS THAT POSITION.',
+      right: 'TOUCH THE PLAYER TO ACTIVATE YOUR SHIELD.'
+    };
+
+    manualtext['key']={
+      left: 'USE A, W, S AND D OR THE ARROW KEYS TO NAVIGATE.',
+      right: 'PRESS SPACE TO ACTIVATE YOUR SHIELD'
+    };
+
+    manualtext['gamepad']={
+      left: 'SELECT YOUR GAMEPAD FROM THE DROP DOWN MENU.',
+      right: 'CLICK ANY FIELD AND PRESS THE DESIRED BUTTON.'
+    };
+
+    manualleft.innerHTML=manualtext[control].left;
+    manualright.innerHTML=manualtext[control].right;
+
+    if (control=='mouse' || control=='touch' || control=='key'){
+      manual.src='pics/html/'+control+'controls.jpg';
+      manual.style.display='inherit';
+      setcontrols.style.display='none';
+    }
+    else{
+      //SET, PRESS BUTTON, NAME
+      //INPUT FIELDS: UP, DOWN, LEFT, RIGHT, SHIELD, PAUSE
+      manual.style.display='none';
+      setcontrols.style.display='inherit';
+    }
+}
+
+//Update loading bar
+function updateloading(n){
+      //document.getElementById("loading").innerHTML = 'Now Test';
+      //console.log(ntextures);
+      //console.log(nmusicloaded);
+      n=ntextures+nmusicloaded;
+      if (n<ntexmax+nmusicloadmax){
+        //console.log(n+'-'+(ntexmax+nmusicloadmax));
+        document.getElementById("progress").style.width = ''+(100*(n||0)/((ntexmax+nmusicloadmax)||0))+'%';
+      }
+      else{
+        document.getElementById("progress").style.width = '100%';
+        document.getElementById("loading").src = "pics/html/play.png";
+        document.getElementById("loading").onclick=function() {
+          if (document.getElementById('control').value=='gamepad' && gamepad_id<0)
+          {
+            document.getElementById('gamepad').innerHTML='No gamepad selected. Connect a gamepad or select a different input control type.';
+          }
+          else
+          {
+            unselect();
+            inputcontrol = document.getElementById('control').value;  
+            canvas[0].style.display = "block";
+            canvas[0].style.position = "fixed";
+            canvas[0].style.top = "0";
+
+            fullscreen(canvas[0]); 
+
+            play=true;
+            done=1;
+          }
+        }
+      }
+    }
+    </script>
+
+
+<!--GAME & CODE-->
+
+<br/><br/><br/><br/> <br/><br/><br/><br/>
+
+    <script>
+      var play = false;
+    </script>
+
+  </div>
+    
+  <script id="fragShader" type="shader-code">
+		uniform sampler2D tex;//The main texture
+		uniform sampler2D norm;//The normal texture
+		uniform vec2 res;//Our screen dimensions
+		uniform vec4 light;//Our light source information
+	  varying vec2 vTextureCoord;
+		void main() {
+        vec2 pixel = vTextureCoord;
+        vec4 color = texture2D(tex,pixel);
+        vec4 normalVector = texture2D(norm,pixel);//We get the normal value of this pixel
+        vec2 lightPosition = light.xy;//We normalize the light source
+
+        //We calculate the direction from the light to this pixel
+        vec3 LightVector = vec3(lightPosition.x - pixel.x,lightPosition.y - pixel.y,light.z);
+        
+        //By "up" direction of our normal map has the value (0.5,0.5,1.0) in terms of rgb
+        //So we offset by that amount
+        normalVector.x -= 0.5;
+        normalVector.y -= 0.5;
+        //We normalize our vectors to compute the direction
+        vec3 NormalVector = normalize(normalVector.xyz);
+        LightVector = normalize(LightVector);
+
+        // Compute the diffuse term for the Phong equation
+        float diffuse      = 1.0 * max(dot( NormalVector, LightVector ),0.0);
+  
+        //Toggle light system on or off
+        if(light.w == 0.0){
+           gl_FragColor = color;
+        } else {
+          gl_FragColor = color * diffuse;
+        }
+
+		 }
+	</script>
+
+    <script src="code/vendor/ga.js"></script>
+    <script src="code/vendor/jquery.js"></script>
+    <script src="code/vendor/stats.js"></script>
+    <script src="code/vendor/pixi.js"></script>
+    <script src="code/vendor/pixi-filters.js"></script>
+    <script src="code/vendor/pixi-damian.js"></script>
+    <script src="code/vendor/pixi-spine.js"></script>
+    <script src="code/vendor/pixi-projection.js"></script>
+
+    <script src="code/vendor/howler.min.js"></script>
+    <script src="code/vendor/misc.js"></script>
+    <script src="code/vendor/Math2.js"></script>
+
+    <script src="code/system/initialize.js"></script>
+    <script src="code/system/globals.js"></script>
+
+    <script>if (!getCookie('user_id')){setCookie('user_id', generateString(20)); }
+  if (getCookie('user_id')){var user_id=getCookie('user_id'); }
+    if (getCookie('inputcontrol')){document.getElementById('control').value=getCookie('inputcontrol');}
+    if (getCookie('lowdetail')){document.getElementById('detail').value='low'; settings.shadow=false;settings.outline=false; }
+    else {settings.shadow=true;settings.outline=true; }
+    val();
+console.log(settings);
+</script>
+    <script src="env.js"></script>
+    <script src="code/system/mainloop.js"></script>
+    <script src="code/system/texture.js"></script>
+    <script src="code/system/sound.js"></script>
+    <script src="code/system/beat.js"></script>
+    <script src="code/system/filters.js"></script>
+
+    <script src="code/ai/general.js"></script>
+		<script src="code/ai/light.js"></script>
+		<script src="code/ai/plains.js"></script>
+    <script src="code/ai/limit.js"></script>
+    <script src="code/ai/timing.js"></script>
+    <script src="code/ai/collision.js"></script>
+    <script src="code/ai/hero.js"></script>
+    <script src="code/ai/movement.js"></script>
+    <script src="code/ai/shooting.js"></script>
+    <script src="code/ai/update.js"></script>
+    <script src="code/ai/explosion.js"></script>
+    <script src="code/ai/zoom.js"></script>
+    <script src="code/ai/debug.js"></script>
+    <script src="code/ai/beat.js"></script>
+    <script src="code/ai/shader.js"></script>
+
+		<script src="code/sprites/particles.js"></script>
+    <script src="code/sprites/general.js"></script>
+    <script src="code/sprites/sprites.js"></script>
+    <script src="code/sprites/extras.js"></script>
+    <script src="code/sprites/hero.js"></script>
+    <script src="code/sprites/text.js"></script>
+    <script src="code/sprites/picture.js"></script>
+    <script src="code/sprites/stage-1.js"></script>
+    <script src="code/sprites/stage1.js"></script>
+    <script src="code/sprites/stage2.js"></script>
+    <script src="code/sprites/stage3.js"></script>
+    <script src="code/sprites/stage4.js"></script>
+    <script src="code/sprites/stage5.js"></script>
+
+    <script src="code/stages/stage-1.js"></script>
+    <script src="code/stages/stage0.js"></script>
+    <script src="code/stages/stage1.js"></script>
+    <script src="code/stages/stage2.js"></script>
+    <script src="code/stages/stage3.js"></script>
+    <script src="code/stages/stage4.js"></script>
+    <script src="code/stages/stage5.js"></script>
+    <script src="code/stages/gameover.js"></script>
+    <script src="code/stages/stage.js"></script>
+    <script src="code/stages/functions.js"></script>
+    <script>
+      if (settings.version !== 'demo'){
+        const demoversion = document.getElementById('demoversion')
+        demoversion.style.display = 'none';
+
+        var s = document.createElement("script");
+        s.type = "text/javascript";
+        s.src = "code/stages/stage5.js";
+        document.head.appendChild(s);
+
+        var s = document.createElement("script");
+        s.type = "text/javascript";
+        s.src = "code/stages/stage2.js";
+        document.head.appendChild(s);
+        
+        var s = document.createElement("script");
+        s.type = "text/javascript";
+        s.src = "code/stages/stage3.js";
+        document.head.appendChild(s);
+
+        var s = document.createElement("script");
+        s.type = "text/javascript";
+        s.src = "code/stages/stage4.js";
+        document.head.appendChild(s);
+      }
+
+    log2db('started game');
+    if (settings.version !== 'full' && settings.plattform == 'web'){
+      const available = document.getElementById('available')
+      available.style.display = 'block';
+    }
+    </script>
+	</body>
+</html>

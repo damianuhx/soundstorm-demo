@@ -1,0 +1,142 @@
+{"frames": {
+
+"fear01":
+{
+	"frame": {"x":485,"y":689,"w":904,"h":300},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":904,"h":300},
+	"sourceSize": {"w":904,"h":300},
+	"anchor": {"x":0,"y":0}
+},
+"grass1":
+{
+	"frame": {"x":1,"y":1653,"w":100,"h":170},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":170},
+	"sourceSize": {"w":100,"h":170},
+	"anchor": {"x":0,"y":0}
+},
+"grass2":
+{
+	"frame": {"x":105,"y":1653,"w":100,"h":170},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":170},
+	"sourceSize": {"w":100,"h":170},
+	"anchor": {"x":0,"y":0}
+},
+"grass3":
+{
+	"frame": {"x":209,"y":1653,"w":100,"h":170},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":170},
+	"sourceSize": {"w":100,"h":170},
+	"anchor": {"x":0,"y":0}
+},
+"grassborder":
+{
+	"frame": {"x":1,"y":689,"w":960,"h":480},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":960,"h":480},
+	"sourceSize": {"w":960,"h":480},
+	"anchor": {"x":0,"y":0}
+},
+"hero":
+{
+	"frame": {"x":911,"y":1482,"w":290,"h":220},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":290,"h":220},
+	"sourceSize": {"w":290,"h":220},
+	"anchor": {"x":0,"y":0}
+},
+"mushanime_01":
+{
+	"frame": {"x":1205,"y":1,"w":422,"h":215},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":422,"h":215},
+	"sourceSize": {"w":422,"h":215},
+	"anchor": {"x":0,"y":0}
+},
+"mushanime_02":
+{
+	"frame": {"x":1205,"y":427,"w":422,"h":215},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":422,"h":215},
+	"sourceSize": {"w":422,"h":215},
+	"anchor": {"x":0,"y":0}
+},
+"mushanime_03":
+{
+	"frame": {"x":485,"y":1597,"w":422,"h":215},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":422,"h":215},
+	"sourceSize": {"w":422,"h":215},
+	"anchor": {"x":0,"y":0}
+},
+"mushanime_04":
+{
+	"frame": {"x":1200,"y":853,"w":422,"h":215},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":422,"h":215},
+	"sourceSize": {"w":422,"h":215},
+	"anchor": {"x":0,"y":0}
+},
+"mushanime_05":
+{
+	"frame": {"x":1173,"y":1279,"w":422,"h":215},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":422,"h":215},
+	"sourceSize": {"w":422,"h":215},
+	"anchor": {"x":0,"y":0}
+},
+"mushdefeated":
+{
+	"frame": {"x":911,"y":689,"w":420,"h":285},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":420,"h":285},
+	"sourceSize": {"w":420,"h":285},
+	"anchor": {"x":0,"y":0}
+},
+"mushroom":
+{
+	"frame": {"x":1,"y":1,"w":1200,"h":684},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1200,"h":684},
+	"sourceSize": {"w":1200,"h":684},
+	"anchor": {"x":0,"y":0}
+},
+"sunflower":
+{
+	"frame": {"x":789,"y":1113,"w":365,"h":380},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":365,"h":380},
+	"sourceSize": {"w":365,"h":380},
+	"anchor": {"x":0,"y":0}
+}},
+"animations": {
+	"grass": ["grass1","grass2","grass3"],
+	"mushanime": ["mushanime_01","mushanime_02","mushanime_03","mushanime_04","mushanime_05"]
+},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.1",
+	"image": "trip1.png",
+	"format": "RGBA8888",
+	"size": {"w":1421,"h":1824},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:a402fbf9b81d11b5706e2ab35955fa7b:e5f042b27449cdf6ea1bc1b28583d948:60c6b9877afbc28a86a5bd86caed4466$"
+}
+}

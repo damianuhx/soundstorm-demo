@@ -1,0 +1,80 @@
+
+0.8.8 2024-04-01 Difficulty levels
+
+3 difficulty levels:
+casual: for most players the best option for the first playtrough
+serious: for shmup veterans and people who have completed the casual course
+insane: for players looking for the ultimate challenge
+Bullets glow in complementary color
+Various minor improvements
+
+
+0.8.7 2024-02-14 Fully animated and with shaders
+
+Animations for all enemies and bosses
+Shadow- and displacmentfilters for background images
+Shadows for enemies
+Effects synchronized with the music.
+Outline or glow filters for enemies that indicate the beat
+Various Filters
+
+0.8.6 2023-10-10
+
+Better performance due to new Pixi.js version 7
+Standard gamepads are automatically recognized
+Simplified startup screen
+Range and charge of shield is indicated with a circle
+New lifebar style
+Cancels all bullets when hit
+New sounds for combos
+
+0.8.5 2023-06-01
+
+Combosystem
+Judges precision of the beat
+Particles fly to enemy
+Star collectables
+Adjusted the animation before a beat
+New gameover screen and music
+The hardest 2 acts are a bit easier
+
+0.8.4 2023-03-01
+
+Animations before bullets flash make it easier to keep the rhythm
+Bullets pulsate to the rhythm and outline white when flashing
+Stage 3-2: New enemy behaviour
+Score animation towards total score
+Enhanced particle effect for exploding bullets
+Epilepsy warning
+Various bug fixes
+
+
+0.8.3 2023-01-15
+
+Health feedback on bosses, more aggressive when low on health
+Faster shield recharge and new particle effects
+Shadowed sprites and other adjustments
+Minimized framerate drops
+Compatible mode with not 60 hz monitor refresh rates. Autodetect refresh rate.
+Various bug fixes
+
+0.8.2 2022-12-2
+
+Fixed bug with animation when died or exited at mushroom boss
+Gameplay tweaks.
+Full manual.
+More intuitive intro and act 1-1.
+Shield recharge new icon and sound.
+Better HUD
+Performance improvements.
+
+0.8.1
+
+Note to exit fullscreen mode
+Difficulty tweaks level 5
+Bullets flash in colors
+Warning if refresh rate is under 55 FPS
+
+0.8.0
+
+Initial release

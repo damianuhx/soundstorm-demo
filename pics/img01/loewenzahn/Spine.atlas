@@ -1,0 +1,30 @@
+Spine.png
+size:221,204
+filter:Linear,Linear
+pma:true
+Auge Links
+bounds:213,89,5,6
+Auge Rechts
+bounds:213,97,6,7
+Blatt1
+bounds:173,5,21,43
+offsets:2,0,23,43
+Blatt2
+bounds:146,50,31,54
+offsets:5,4,36,58
+Blatt3
+bounds:146,2,25,46
+Blatt4
+bounds:179,52,32,52
+offsets:0,0,36,53
+Bluete
+bounds:2,6,196,142
+offsets:0,0,196,143
+rotate:90
+Gesicht
+bounds:146,106,96,70
+offsets:1,0,99,71
+rotate:90
+Mund
+bounds:196,7,43,19
+rotate:90
