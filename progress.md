@@ -67,8 +67,12 @@ Ergänzung im laufenden Auftrag: Linux bauen und ebenfalls privat hochladen
 Die native Mac-Prüfung des endgültigen Wrappers hat bereits Titel/Start,
 29 Texturen, 8 Musikdateien, Menü, Tutorial mit echten Tastatureingaben,
 Schilde, Pause/Fortsetzen und den Übergang in Stage 1 ohne JavaScript-Fehler
-bestätigt. Der abschließende Native-Bericht und die Ende-Prüfung werden vom
-Hauptauftrag ergänzt.
+bestätigt. Der abschließende Native-Bericht bestätigt Stage 1, Act 1, Szene >=10 ohne
+Renderer-Ausnahmen, lokale Ladefehler oder spätere Level-Anfragen. Weitere
+native Stage-1-Steuerungs-/Screenshotprüfungen und ein nativer kompletter
+Durchlauf bleiben wegen CDP-Zeitüberschreitungen unbestätigt. Alle temporären
+Native-Testprozesse, Kopien und Profile wurden entfernt. Die vollständige
+Demo-Ende-Prüfung wurde im Browser bestätigt.
 
 Der Linux-Test läuft in einer x64-Emulation auf dem Mac. Dort traten
 wechselnde `net::ERR_FAILED` beim Laden vorhandener Skripte auf, auch mit
