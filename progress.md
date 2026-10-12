@@ -64,26 +64,26 @@ Ergänzung im laufenden Auftrag: Linux bauen und ebenfalls privat hochladen
 
 ## Native Prüfungen und offene Schritte
 
-Die native Mac-Prüfung des endgültigen Wrappers hat bereits Titel/Start,
-29 Texturen, 8 Musikdateien, Menü, Tutorial mit echten Tastatureingaben,
-Schilde, Pause/Fortsetzen und den Übergang in Stage 1 ohne JavaScript-Fehler
-bestätigt. Der abschließende Native-Bericht bestätigt Stage 1, Act 1, Szene >=10 ohne
-Renderer-Ausnahmen, lokale Ladefehler oder spätere Level-Anfragen. Weitere
-native Stage-1-Steuerungs-/Screenshotprüfungen und ein nativer kompletter
-Durchlauf bleiben wegen CDP-Zeitüberschreitungen unbestätigt. Alle temporären
-Native-Testprozesse, Kopien und Profile wurden entfernt. Die vollständige
-Demo-Ende-Prüfung wurde im Browser bestätigt.
+Die native Mac-Prüfung der unveränderten temporären Kopie des tatsächlich
+von Steam installierten Builds 25882325 hat Titel/Start, 29 Texturen,
+8 Musikdateien, NORMAL/CASUAL-Menüs, Tutorial mit echten Tastatureingaben,
+Schilde, Pause/Fortsetzen sowie Stage 1 nach dem Intro mit Bewegung und
+Schild bestätigt. Keine Renderer-/Konsolenfehler, lokalen Ladefehler,
+WebGL-Kontextverluste oder späteren Level-Anfragen. Screenshots wurden
+visuell geprüft; alle temporären Native-Testprozesse/Kopien/Profile entfernt.
+Ein vollständiger nativer Durchlauf bleibt unbestätigt. Die vollständige
+Demo-Ende-Prüfung wurde mit identischem Inhalt im Browser bestanden.
 
-Der Linux-Test läuft in einer x64-Emulation auf dem Mac. Dort traten
+Der Linux-Test lief in einer x64-Emulation auf dem Mac. Dort traten
 wechselnde `net::ERR_FAILED` beim Laden vorhandener Skripte auf, auch mit
 resident kopierten Dateien und dem sicheren Standard-Ursprung. Dies ist kein
 bestätigter erfolgreicher Linux-Spieltest; der Ursprungwechsel wird nicht als
 Lösung dieses Befunds behauptet. Ein echter Windows-Start ist hier ebenfalls
 noch nicht bestätigt.
 
-Authentifizierter Upload, Steam-Build-/Depot-Manifest-IDs, private
-Branch-Zuordnung und Steam-Installation/Start werden im Hauptauftrag
-dokumentiert. Bis dahin wird kein Upload oder Installationserfolg behauptet.
+Authentifizierter Upload und private Branch-Zuordnung sind im folgenden
+Status bestätigt. Die SteamCMD-Installationen und native macOS-Prüfung sind
+bestanden; native Windows-/Linux- und grafische Steam-Client-Prüfungen bleiben offen.
 Eine öffentliche Freigabe ist nicht autorisiert.
 
 
@@ -100,29 +100,39 @@ Eine öffentliche Freigabe ist nicht autorisiert.
   kein bestätigter nativer Windows-Start. Bestehende Linux-VM blieb unverändert.
 - Linux-Docker-Emulation wurde beendet; ihr wechselndes Skript-Ladeversagen
   erlaubt keine bestätigte native Gameplay-Prüfung.
-- Steamworks ist für die Demo-App 2284540 angemeldet. Direkte SteamCMD-
-  Anmeldung meldet „Cached credentials not found“ und verlangt ein Passwort.
-- Der ausdrücklich zuerst gewünschte Web-Upload wurde versucht. Die vom
-  Nutzer aktivierte Chrome-Dateifreigabe funktioniert; die finalen ZIPs wurden
-  ausgewählt. Windows/macOS wurden von Steam mit Fehler 9 „Did not receive
-  entire file“ abgewiesen. Ein abgeschlossener einzelner Windows-
-  Wiederholungsversuch lieferte denselben Fehler. Linux hatte vor dem
-  Neuladen der Seite kein bestätigtes Manifest. Eine Ursache für den
-  unvollständigen Dateiempfang ist nicht bewiesen.
-- Der geprüfte direkte Uploadstarter wurde auf Wunsch im Finder geöffnet.
-  SteamCMD beendete die Anmeldung um 13:38:54 mit `ERROR (Timeout)`.
-  Erfolgreiche Authentifizierung ist unbestätigt; es entstanden keine neuen
-  Demo-Buildlogs. Passwort/Steam Guard müssen direkt im Terminal eingegeben
-  werden und gehören nicht in den Chat.
-- Daher keine neue Steam-Build-ID, keine neuen Depot-Manifeste, keine private
-  Branch-Aktivierung und keine neue Steam-Installation/Startprüfung.
-  Demo default/beta bleiben im beobachteten Stand 17130127; private
-  codexstaging im beobachteten Stand 24431107. Kein Zugriffsschritt adressierte
-  die Vollversion zum Schreiben. Keine öffentliche Freigabe durchgeführt.
-- Login- und geprüfter Demo-Uploadstarter liegen im Work-Ausgabeordner.
-  Uploadstarter validiert alle finalen Pakete erneut und adressiert nur
-  2284540 sowie 2284541/2/3 ohne SetLive.
+- Nach direkter Anmeldung durch den Nutzer hat SteamCMD den Build 25882325
+  für Demo-App 2284540 am 12.10.2026 um 14:44:18 erfolgreich abgeschlossen.
+  Windows 2284541: Manifest 2099039018106072395 (237 Dateien);
+  macOS 2284542: Manifest 4879303814563553486 (266 Dateien);
+  Linux 2284543: Manifest 5694010941410543529 (238 Dateien).
+- Steamworks bestätigt den Build ausschliesslich im privaten Branch
+  `codexstaging`. Default und beta bleiben auf 17130127. Keine öffentliche
+  Freigabe und keine Änderung an Vollversions-App 2202400. Bestehende
+  unveröffentlichte Metadaten wurden nicht veröffentlicht.
+- Alle drei aktuellen lokalen Payloads stimmen unverändert mit den finalen
+  Build-Berichten überein. Steam-Builddetails bestätigen alle drei Manifeste.
+- Die Chrome-Dateifreigabe funktioniert. Zuvor mehrfach gescheiterte HTTP-
+  Uploads (Fehler 9, unvollständiger Dateiempfang) wurden durch den oben
+  bestätigten SteamCMD-Upload abgelöst.
+- Alle drei Pakete wurden aus dem privaten Branch mit SteamCMD `app_update`
+  tatsächlich installiert und validiert. Steam-generierte Manifeste bestätigen
+  Build 25882325, Installationsstatus 4, `codexstaging` und jeweils das richtige
+  Depot/Manifest. Alle 741 Payload-Dateien sind SHA-256-/grössengenau identisch
+  mit den finalen Builds; keine fehlenden/zusätzlichen/veränderten Dateien.
+  Unix-Startberechtigungen sind vorhanden. Der erste reine Depot-Download-
+  Versuch ohne privaten Branch-Kontext scheiterte; der korrigierte
+  `app_update`-Installationslauf war erfolgreich.
+- Native macOS-Start-/Spielprüfung aus einer unveränderten Kopie der Steam-
+  Installation bestanden: exakter Titel/Assets, Menüs, Tutorial, Bewegung/
+  Schild, Pause/Fortsetzen und Stage 1 mit Bewegung/Schild nach dem Intro.
+  Keine Renderer-/Konsolenfehler, lokalen Ladefehler oder Kontextverluste.
+- Normaler Start über die grafische Steam-Bibliothek ist unbestätigt, weil
+  Fernbedienung am macOS-Aufnahmefehler SCStreamError -3811 scheitert.
+  SteamCMD-Installation und nativer macOS-Spielstart sind getrennt bestätigt.
 
-Offen: erfolgreiche direkte SteamCMD-Authentifizierung;
-anschließend Upload, private Zuordnung und Steam-Installation/Start prüfen.
-Echter Windows-/Linux-Testzugang wird für deren native Gameplay-Prüfung benötigt.
+Offen: native Windows-/Linux-Starts und Spielverläufe. Erforderlich sind ein
+nutzbares natives Windows-Testsystem (vorhandener QEMU-Gastagent fehlt) und
+ein natives Linux-x64-Testsystem statt ARM-Emulation. Zusätzlicher Start über
+den grafischen Steam-Client benötigt bei fortbestehendem Aufnahmefehler
+direkte Bedienung. PR bleibt wegen dieser Prüfgrenzen Draft. Keine öffentliche
+Freigabe durchgeführt oder ohne separaten Auftrag autorisiert.
