@@ -1,29 +1,8 @@
-
-//reduces the speed of the sprite to maxspeed
-//direction of the original speed is considered
-function maxspeedf(maxspeed){
-    var buffer=Math.sqrt(this.speedX*this.speedX+this.speedY*this.speedY);
-    if (buffer>maxspeed)
-    {
-        this.speedX/=buffer/maxspeed;
-        this.speedY/=buffer/maxspeed;
-    }
-}
-
-
 //set the values of accX and accY
 function accchangef(x, y)
 {
     this.accY=x;
     this.accY=y;
-}
-
-
-//set the values of speedX and speedY
-function speedchangef(x, y)
-{
-    this.speedX=x;
-    this.speedY=y;
 }
 
 
@@ -59,18 +38,6 @@ function shiftf(x, y)
     this.position.x += x*2*(this.scale.x);
     this.position.y += y*2*(this.scale.y);
 }*/
-
-function timedmovef()
-{
-    this.position.x += this.speedX*difftime*bgspeedx/16.66666;
-    this.position.y += this.speedY*difftime*bgspeedy/16.66666;
-
-    if (bgspeedy==0)
-    {
-        this.phase++;
-    }
-}
-
 
 //accelarates speed of object by its accelorator values
 function accf(limit=9999)
@@ -123,11 +90,6 @@ function moveanglef(speed)
     this.position.y += Math.sin(this.rotation)*speed;
 }
 
-function rotationchangef(speed)
-{
-    this.rotation+=speed;
-}
-
 //rotates object towards hero by 'speed'
 function aim2hero(speed, offset=0) {
     var direction=directionh(this.x, this.y)+offset;
@@ -175,14 +137,3 @@ function zset()
     this.scale.x=1/(this.z+1);
     this.scale.y=1/(this.z+1);
 }
-
-
-//squeezes object (grass)
-function squeezef(change)
-{
-    this.ogscale.y-=change;
-    this.scale.y=this.ogscale.y * (1+beat[2]);
-    this.scale.x=(1+beat[2]);
-    
-}
-

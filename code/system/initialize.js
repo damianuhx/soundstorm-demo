@@ -19,7 +19,14 @@ function onReady()
     }
 
 
-    renderer = PIXI.autoDetectRenderer(renderwidth, renderheight, { /*view: canvas, */resolution: 1, /*forceCanvas: true,*/ forceFXAA: true});
+    var automationCapture = new URLSearchParams(window.location.search).get("automation") === "1";
+    renderer = PIXI.autoDetectRenderer({
+        width: renderwidth,
+        height: renderheight,
+        resolution: 1,
+        antialias: false,
+        preserveDrawingBuffer: automationCapture,
+    });
     //renderer = PIXI.CanvasRenderer(1920, 1080, { /*view: canvas, */resolution: 1 , /*forceCanvas: true*/ forceFXAA: true});
     renderer.background.color = 0x000000;
     if (renderheight>renderwidth){
@@ -38,9 +45,8 @@ function onReady()
 
 
     stats = new Stats();
-    requestAnimationFrame(update);
-
     setStage();
+    startGameLoop();
     
     
     //Set event listeners for controls
@@ -84,20 +90,18 @@ function onReady()
         if(e.keyCode == 32){keys.shoot.alt2=0;} //17 78
         if(e.keyCode == 77){keys.shield.alt=0;} //77
         if(e.keyCode == 77){keys.shield.alt=0;} //77
-        if(e.keyCode == 48){debug=0;}
     }
-    function getMouseDown(e){
-        keys.shoot.mouse=1;
+    function getTouchDown(){
+        keys.shoot.touch=1;
     }
-    function getMouseUp(e){
-        keys.shoot.mouse=0;
+    function getTouchUp(){
+        keys.shoot.touch=0;
     }
 
     document.addEventListener("keydown", getKeyDown);
     document.addEventListener("keyup", getKeyUp); 
-    document.addEventListener("mousedown", getMouseDown); 
-    document.addEventListener("touchstart", getMouseDown); 
-    document.addEventListener("mouseup", getMouseUp); 
+    document.addEventListener("touchstart", getTouchDown);
+    document.addEventListener("touchend", getTouchUp);
 
 
 
@@ -122,7 +126,10 @@ function onReady()
 
 
 function setStage(){
-    if (typeof stage == 'object'){stage.destroy();}
+    if (typeof stage == 'object'){
+        ScreenEffects.disposeStageGraph(stage, background, backlayer);
+        stage.destroy();
+    }
     stage = new PIXI.Container();
     stage.x=(1-screensize)*960;
     stage.y=(1-screensize)*540;
@@ -148,10 +155,7 @@ function setStage(){
     textlayer = new PIXI.Container();
     stage.addChild(textlayer);
     
-    stage.filters=[
-        globalfilters.shockwave,
-        globalfilters.twist,
-    ];
+    ScreenEffects.attachStage(stage);
 }
 //adjust the canvas to the screen size
 function resize()
@@ -161,9 +165,7 @@ function resize()
     var height = 1080;
 
     maxX = width;
-    minX = 0;
     maxY = height;
-    minY = 0;
 
 
     stats.domElement.style.left = "0px";
@@ -171,4 +173,3 @@ function resize()
 
     renderer.resize(width, height);
 }
-

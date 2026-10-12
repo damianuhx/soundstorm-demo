@@ -1,32 +1,3 @@
-
-//title screen
-function cpicturetitle(subtype)
-{
-    var sprite=setsprite(
-        new PIXI.Sprite(subtype),
-    {anchor: false, active: 0, x: 0, y: -0, speedX:0, speedY:0, accX:0, accY:0.1});
-
-    sprite.alpha=0;
-
-    sprite.ai = [[]];
-
-    
-    sprite.ai[0].push(function () {
-        if (this.accY>=0 && this.position.y > -50){
-            this.accY=-0.01;
-        }
-        if (this.accY<=0 && this.position.y < -1500){
-            this.accY=0.01;
-        }
-    }.bind(sprite));
-
-    sprite.ai[0].push(movef.bind(sprite));
-    sprite.ai[0].push(accf.bind(sprite, 1));
-    sprite.ai[0].push(fadein.bind(sprite, 0.01));
-
-    backlayer.addChild(sprite);
-}
-
 set.menupic=function(texture, x, y, thisscene, options={}){
     if (typeof texture === 'string' || texture instanceof String){
         var sprite=setsprite(
@@ -49,16 +20,34 @@ set.menupic=function(texture, x, y, thisscene, options={}){
         sprite.scale.y=options.scale || 0.5;
     }
 
+    var glowFilter=null;
     if (options.glow){
-        sprite.filters=[
-            new PIXI.filters.GlowFilter({outerStrength: 1, color: 0xFFFFAA, distance: 50, quality: 0.01})
-        ];
+        glowFilter=GameEffects.stack(sprite).add(
+            "glow",
+            new PIXI.filters.GlowFilter({
+                outerStrength: 1,
+                color: 0xFFFFAA,
+                distance: 50,
+                quality: 0.01
+            })
+        );
     }
     sprite.max= false || options.max;
     sprite.phase=1;
     sprite.alpha=0;
     sprite.scene=thisscene;
     sprite.ai = [[],[],[],[],[]];
+
+
+    if (options.glow){
+        sprite.ai[0].push(function(){
+            glowFilter.outerStrength=1+beat[0]*10;
+            this.y=y-beat[0]*10;
+            //this.scale.x=1+0.1*beat[0];
+            //this.scale.y=1+0.1*beat[0];
+       }.bind(sprite));
+    }
+    
 
     sprite.ai[1].push(fadein.bind(sprite, 0.01, 0.9, true));
     
@@ -67,7 +56,7 @@ set.menupic=function(texture, x, y, thisscene, options={}){
              this.phase++;  
          }
     }.bind(sprite));
-    sprite.ai[3].push(ai.zoom.bind(sprite, 0.99, 0));
+    sprite.ai[3].push(ai.zoomAndFade.bind(sprite, 0.99, 0));
     frontlayer.addChild(sprite);
 }
 
@@ -82,12 +71,6 @@ function cmenu(text, position, x, y, options){
                 //letterSpacing: 25
             }),
         {anchor: true, active: 0, x: x, y: y});
-        //Reset to default
-        startstage=1;
-        cantdie=0;
-        nobullets=0;
-        trystock=3;
-        
         sprite.scene = options.scene || 0;
         sprite.menuposition=position;
         sprite.key=options.key || 0;
@@ -119,29 +102,7 @@ function cmenu(text, position, x, y, options){
                     this.text=this.settings[this.i];
                     menuselected[this.key]=0;
 
-                    if (this.setvalue=='startstage'){
-                        startstage=this.i+1;
-                    }
-                    else if (this.setvalue=='cantdie'){
-                        cantdie=this.i;
-                    }
-                    else if (this.setvalue=='stage'){
-                        startstage=this.i;
-                    }
-                    else if (this.setvalue=='nobullets'){
-                        nobullets=this.i;
-                    }
-                    else if (this.setvalue=='trystock'){
-                        if (this.i){
-                            trystock= 42;
-                        }
-                        else {
-                            trystock= 3;
-                        }
-                    }
-                    else if (this.setvalue=='difficulty'){
-                        difficulty.set(this.i+1);
-                    }
+                    MenuController.applyOption(this.setvalue, this.i);
                 }
                 if (this.scene>=scene)
                 {
@@ -160,8 +121,8 @@ function cmenu(text, position, x, y, options){
 
             }
         }.bind(sprite));
-        sprite.ai[3].push(ai.zoom.bind(sprite, 1.04, 4));
-        sprite.ai[4].push(ai.zoom.bind(sprite, 0.99, 0));
+        sprite.ai[3].push(ai.zoomAndFade.bind(sprite, 1.04, 4));
+        sprite.ai[4].push(ai.zoomAndFade.bind(sprite, 0.99, 0));
         frontlayer.addChild(sprite);
 }
 
@@ -182,7 +143,26 @@ function cpicture(texture, options){
         sprite.alpha=  options.alpha || 1;
         sprite.scale.x=options.size || 1;
         sprite.scale.y=options.size || 1;
+        if (typeof options.grow !== 'undefined')
+            {
+                sprite.grow=options.grow;
+            }
+            else{
+                sprite.grow=0.1;
+            }
         
+            if (options.beatcolor){
+                sprite.ai[0].push(function(){
+                    this.tint=xyz2hex(acolor(100, 100));
+                }.bind(sprite));
+            }
+            else if (typeof options.beatlayer !== 'undefined' && typeof options.beatlayer!== 'undefined'){
+                sprite.ai[0].push(function(){
+                    this.scale.x = 1 + this.grow*beat[options.beatlayer];
+                    this.scale.y = 1 + this.grow*beat[options.beatlayer];
+                }.bind(sprite));
+            }
+
         if (options.tint){
             sprite.tint=options.tint;
         }
@@ -195,7 +175,12 @@ function cpicture(texture, options){
         sprite.ai[0].push(movef.bind(sprite));
         sprite.ai[0].push(accf.bind(sprite));
         if (options.zoom>0){
-            sprite.ai[0].push(ai.zoom.bind(sprite, options.zoom, options.zoommax || 3, options.fadeout  || 0.05));
+            sprite.ai[0].push(ai.zoomAndFade.bind(
+                sprite,
+                options.zoom,
+                options.zoommax || 3,
+                options.fadeout || 0.05
+            ));
         }
         if (options.fadein>0){
             sprite.ai[0].push(fadein.bind(sprite, 0.01, options.alpha));
@@ -205,7 +190,6 @@ function cpicture(texture, options){
             sprite.ai[0].push(rotatef.bind(sprite, options.rotspeed || 0.01));
         }
 
-
         //fadein
         //fadeout
         //wait
@@ -213,18 +197,6 @@ function cpicture(texture, options){
         //lightout
         sprite.ai[0].push(offborderf.bind(sprite, 1000));
 }
-
-set.animation= function (options){
-    var sprite=setsprite(
-        new PIXI.AnimatedSprite(tex.mushanime),
-    {anchor: true, active: 0 || options.active, layer: 'background',
-        x: options.x || 500, y: options.y || 500});
-
-        sprite.atimer=0;
-        sprite.parent=options.parent || null;
-        sprite.ai = [[]];
-        sprite.ai[0].push(ai.mushanime.bind(sprite));
-    }
 
     //only used for mushroom
     set.simple=function(texture, options){
@@ -239,27 +211,4 @@ set.animation= function (options){
                 cpicture(tParticle02, {size: 1, zoom: 1.02, zoommax: 1.8, x: Math.random()*390+820, y: 440, speedX: 0, speedY:-2, accY: -0.1, alpha: 0.5, light: 0.5, layer:'frontlayer'})
                 cpicture(tParticle02, {size: 1, zoom: 1.02, zoommax: 1.8, x: Math.random()*390+820, y: 440, speedX: 0, speedY:-3, accY: -0.1, alpha: 0.5, light: 0.5, layer:'frontlayer'})
             }.bind(sprite));
-    }
-
-    set.test=function(options){
-        var sprite=setsprite(
-         new PIXI.projection.Sprite2d(tex.mushdefeated),
-        {anchor: true, active: 0 || options.active, layer: options.layer || 'frontlayer',
-            x: options.x || 0, y: options.y || 0});
-            
-            sprite.anchor.set(0.5, 0.5);
-
-sprite.proj.affine = PIXI.projection.AFFINE.AXIS_X; // return to affine after rotating
-sprite.position.set(0, 0);
-
-            sprite.ai=[[]];
-            sprite.buffer=0;
-            sprite.ai[0].push(function(){
-                //this.buffer+=0.01;
-                //this.proj.setAxisX({x:this.buffer, y:0});
-                //this.proj.world.mat3[1]+=0.1;
-                //this.rotation+=0.01;   
-                
-            }.bind(sprite));
-            
     }

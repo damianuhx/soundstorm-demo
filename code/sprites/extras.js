@@ -1,20 +1,68 @@
+set.preflash = function (x, y, beatlayer, options)
+{
+    //get from beat.js
+    const graphics = new PIXI.Graphics();
+
+    var sprite=setsprite(
+    graphics,
+    {anchor: true, active: 0, x: x, y: y});
+
+    // Set fill color (e.g., blue)
+
+    // Draw rectangle: x, y, width, height
+    sprite.alpha= 1.0; //2*prebeat[beatlayer];
+    
+    //sprite.radius=-400*(prebeat[beatlayer])+425;
+    sprite.ai[0].push(function(){
+        sprite.geometry.clear();
+        for (let index=0; index<prebeat2[beatlayer].length; index++)
+            {
+                let linethick=1;
+                let radius=(1-prebeat2[beatlayer][index])*settings.preflashradius;
+                if (options.color.z-options.color.x-options.color.y>0){
+                     linethick=2;
+                }
+                
+                this.lineStyle(10*Math.max(linethick, linethick*(15*prebeat2[beatlayer][index]-12)), rgbToHex(options.color.x/1.2 || 0, options.color.y/1.2 || 0, options.color.z/1.2 || 0), 0.15*Math.min(1, 4*prebeat2[beatlayer][index]));
+                if (options.subtype == 'stick'){
+                    this.drawRoundedRect(-1*(radius/2+24), -1*(1.5*radius+92), radius+24, 3*radius+92, radius/2);
+                }
+                else if (options.subtype == 'grain'){
+                    this.drawEllipse (0, 0, radius, radius*1.25);
+                    this.rotation=options.rotation || 0;
+                }
+                else if (options.subtype=='whitecluster' || options.subtype=='cluster'){
+                    this.drawStar (0,0, 30, radius, radius*1.05, this.rotation)
+                    this.rotation=options.rotation || 0;
+                }
+                else{
+                    this.drawCircle(0, 0, radius+25);
+                }
+                
+        }
+
+    }.bind(sprite));
+    EntityManager.markStepVisual(sprite);
+}
+
 function extra (x, y, type)
 {
+    var texture;
     if (type=='life'){
         texture=tLife;
 
         var sprite=setsprite(
             new PIXI.Sprite(texture),
         {anchor: true, active: 0, x: x, y: y});
-    
-        sprite.filters=[
-            get.glowsingle({color: 0xFF4444})
-        ];
+
+        var glowFilter = GameEffects
+            .stack(sprite)
+            .add("glow", get.glowsingle({color: 0xFF4444}));
 
         sprite.speedX=0;
         sprite.speedY=5;
     
-        sprite.ai[0].push(ai.glowbeat.bind(sprite, sprite.filters[0], 0, 1, 3));
+        sprite.ai[0].push(ai.glowbeat.bind(sprite, glowFilter, 0, 1, 3));
         sprite.ai[0].push(movef.bind(sprite));
         sprite.ai[0].push(extrahitf.bind(sprite, 'life'));
         sprite.ai[0].push(offborderf.bind(sprite, 50));
@@ -38,7 +86,7 @@ function extra (x, y, type)
     
         sprite.ai[0].push(function(){
             if (Math.abs(this.x-herox)<difficulty.collectrange && Math.abs(this.y-heroy)<difficulty.collectrange){
-                buffer = directionh(this.x, this.y);
+                var buffer = directionh(this.x, this.y);
                 this.speedX+=0.05;
                 this.y+=Math.sin(buffer)*this.speedX;
                 this.x+=Math.cos(buffer)*this.speedX;
@@ -70,7 +118,7 @@ function extra (x, y, type)
         sprite.ai[0].push(offborderf.bind(sprite, 50));
         sprite.ai[0].push(function(){
             if (Math.abs(this.x-herox)<difficulty.collectrange && Math.abs(this.y-heroy)<difficulty.collectrange){
-                buffer = directionh(this.x, this.y);
+                var buffer = directionh(this.x, this.y);
                 this.speedX+=0.05;
                 this.y+=Math.sin(buffer)*this.speedX;
                 this.x+=Math.cos(buffer)*this.speedX;

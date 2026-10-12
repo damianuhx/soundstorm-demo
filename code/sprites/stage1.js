@@ -1,3 +1,25 @@
+function scrollGrassTexturef(change)
+{
+    if (bgchange==change)
+    {
+        this.tilePosition.y += this.speedY;
+    }
+    else{
+        this.y+=this.speedY;
+        if (this.y>1500)
+        {
+            this.del=true;
+        }
+    }
+}
+
+function squeezeGrassf(change)
+{
+    this.ogscale.y-=change;
+    this.scale.y=this.ogscale.y * (1+beat[2]);
+    this.scale.x=(1+beat[2]);
+}
+
 //Test
 
 
@@ -23,7 +45,11 @@ set.forestground = function ()
         sprite.ai[1].push(scenephasechangef.bind(sprite, 17, 2));
         sprite.ai[2].push(ai.syncscroll.bind(sprite, 30, 2837, -2, 'tilePosition.y', -1701, 1));
 
-        sprite.displacementfilter = get.heightfiler(tex.forestground, heightsprite, tex.forestground_n, {});
+        sprite.displacementfilter = GameEffects.stack(sprite).add(
+            "heightmap",
+            get.heightmap(tex.forestground, heightsprite, tex.forestground_n, {})
+        );
+        EntityManager.addDependent(sprite, heightsprite);
         sprite.displacementfilter.offset.y=120;
         sprite.ai[0].push(ai.beatadjust.bind(sprite, globalfilters.adjust));
         sprite.ai[0].push(ai.stagelight.bind(sprite, sprite.displacementfilter));
@@ -32,9 +58,6 @@ set.forestground = function ()
 
             }.bind(sprite));
 
-    
-    sprite.filters = [sprite.displacementfilter];
-    
 };
 
 
@@ -66,8 +89,9 @@ set.sound=function(options={})
     }.bind(sprite));
 };
 
-set.ghost = function(active, type, x=1000, y=1000, options={})  
+function buildTutorialGhost(options)
 {
+    var type=options.type;
     var texture;
     var beatlayer;
 
@@ -91,42 +115,53 @@ set.ghost = function(active, type, x=1000, y=1000, options={})
         texture = tTutbig;
         beatlayer=2;
     }
-    new PIXI.spine.Spine(tex.tut1);
+    let buffer = rgbToHex(255,255,255);
+    if (beatlayer==2){
+         buffer = rgbToHex(100,255,255);
+    }
+    else {
+         buffer = rgbToHex(255,100,255);
+    }
+
     if (type<4){
         
         var sprite=setsprite(
             new PIXI.spine.Spine(texture),
-            {anchor: true, active: active, x: x, y: y});
-            let buffer = rgbToHex(255,255,255);
-            if (beatlayer==2){
-                 buffer = rgbToHex(100,255,255);
-            }
-            else {
-                 buffer = rgbToHex(255,100,255);
-            }
-            //play animation
-            sprite.state.addAnimation(0, 'animation', true, 0);
-            sprite.filters=[
-                new PIXI.filters.GlowFilter({outerStrength: 0.5, color: buffer, distance: 50})
-            ]
-            //sprite.ai[0].push(ai.glowbeat.bind(sprite, sprite.filters[0], beatlayer, 0.5, 2));
+            {
+                anchor: true,
+                active: options.active,
+                x: options.x,
+                y: options.y
+            });
+        //play animation
+        sprite.state.addAnimation(0, 'animation', true, 0);
     }
     else{
         var sprite=setsprite(
             new PIXI.Sprite(texture),
-        {anchor: true, active: active, x: x, y: y, layer:'front'});       
+        {
+            anchor: true,
+            active: options.active,
+            x: options.x,
+            y: options.y,
+            layer:'front'
+        });
     }
 
+    var glowfilter = GameEffects.stack(sprite).add(
+        "glow",
+        new PIXI.filters.GlowFilter({
+            outerStrength: 0.5,
+            color: buffer,
+            distance: 50
+        })
+    );
+    //sprite.ai[0].push(ai.glowbeat.bind(sprite, glowfilter, beatlayer, 0.5, 2));
     
         sprite.alpha=0.1;
         sprite.phase=1;
 
-        if (options.speedX>0 || options.speedX<0){
-            sprite.speedX=options.speedX;
-        }
-        else{
-            sprite.speedX=0;
-        }
+        sprite.speedX=EnemyFactory.option(options, "speedX", 0);
 
         sprite.ai = [[], [], [], []];
         sprite.floatcounter=-1;
@@ -136,7 +171,7 @@ set.ghost = function(active, type, x=1000, y=1000, options={})
         sprite.ai[2].push(countf.bind(sprite));
         sprite.floatcounter=0;
         sprite.ai[2].push(ai.float.bind(sprite, 0.02, 60));
-        sprite.ai[0].push(ai.glowbeat.bind(sprite, sprite.filters[0], beatlayer, 0.5, 2));
+        sprite.ai[0].push(ai.glowbeat.bind(sprite, glowfilter, beatlayer, 0.5, 2));
 
         if (type==0 || type==1)
         {
@@ -208,8 +243,11 @@ set.ghost = function(active, type, x=1000, y=1000, options={})
             sprite.health=200;
         }
 
-        collision='enemy';
-};
+        sprite.collision='enemy';
+        return sprite;
+}
+
+EnemyFactory.register("tutorialGhost", buildTutorialGhost);
 
 
 
@@ -223,6 +261,10 @@ set.tutorialnumber=function(options={})
             fontSize: 160,
         }),
     {anchor: true, active: options.active || 0, x: 1150, y: 940, layer:'background'});
+
+    this.text = this.text + ' ' + this.text + ' ' + this.text + ' ' + this.text + ' ' + this.text + ' ' + this.text + ' ' + this.text + ' ' + this.text + ' ' + this.text + ' ' + this.text + ' ' + this.text + ' ' + this.text + '  \n ';
+        this.text= this.text+this.text+this.text+this.text+this.text+this.text+this.text+this.text+this.text+this.text+this.text+this.text; 
+        
     sprite.highlight = options.highlight || [2,3];
     sprite.alpha=0.3;
     sprite.ai = [[]];
@@ -283,7 +325,11 @@ set.foresttitle = function ()
 
         sprite.ai = [[]];
 
-        sprite.displacementfilter = get.heightfiler(tex.foresttitle, heightsprite, tex.foresttitle_n);
+        sprite.displacementfilter = GameEffects.stack(sprite).add(
+            "heightmap",
+            get.heightmap(tex.foresttitle, heightsprite, tex.foresttitle_n)
+        );
+        EntityManager.addDependent(sprite, heightsprite);
         //sprite.displacementfilter = new HeightmapFilter(heightsprite, 20);
         sprite.displacementfilter.scale.x=0;
         sprite.displacementfilter.scale.y=120;
@@ -310,7 +356,5 @@ set.foresttitle = function ()
                 }
             }.bind(sprite));
 
-    
-    sprite.filters = [sprite.displacementfilter];
     
 };

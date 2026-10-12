@@ -1,9 +1,13 @@
-//required global: ex_timer, ex_cicles;
-function alien_ex(cicles){
+// Runs a timed sequence of boss explosions.
+// Required sprite state: ex_timer and ex_cicles.
+function explosionSequencef(cicles, effect, cancelBullets=false){
+    if (cancelBullets){
+        cancel_all_bullets();
+    }
     if (this.ex_cicles<cicles){
         if (this.ex_timer == 0)
         {
-            effectf.call(this, this.x, this.y, 'alienexploding');
+            effectf.call(this, this.x, this.y, effect);
             this.ex_cicles++;
             this.ex_timer=30;
         }
@@ -12,42 +16,6 @@ function alien_ex(cicles){
     else{
         this.phase++;
     }
-    
-}
-
-function mushroom_ex(cicles){
-    cancel_all_bullets();
-    if (this.ex_cicles<cicles){
-        if (this.ex_timer == 0)
-        {
-            effectf.call(this, this.x, this.y, 'mushroomexploding');
-            this.ex_cicles++;
-            this.ex_timer=30;
-        }
-        this.ex_timer--;
-    }
-    else{
-        //effectf.call(this, this.x, this.y, 1);
-        this.phase++;
-    }
-    
-}
-
-function cloud_ex(cicles){
-    if (this.ex_cicles<cicles){
-        if (this.ex_timer == 0)
-        {
-            effectf.call(this, this.x, this.y, 'cloudexploding');
-            this.ex_cicles++;
-            this.ex_timer=30;
-        }
-        this.ex_timer--;
-    }
-    else{
-        //effectf.call(this, this.x, this.y, 1);
-        this.phase++;
-    }
-    
 }
 
 function smoke(x, y, max, value, factor=-1){
@@ -79,4 +47,3 @@ function smoke(x, y, max, value, factor=-1){
             }
         }
     }
-

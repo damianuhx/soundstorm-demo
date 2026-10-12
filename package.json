@@ -1,48 +1,24 @@
 {
   "name": "soundstorm-demo-electron",
-  "version": "0.8.8",
+  "version": "0.8.11",
   "private": true,
-  "description": "Steam desktop package of the first-stage SoundStorm web demo.",
+  "description": "Exact first-stage SoundStorm web demo in the verified full-version Electron runtime.",
+  "productName": "SoundStorm Demo",
   "main": "electron/main.cjs",
   "scripts": {
     "start": "electron .",
+    "check": "node electron/verify-demo.cjs && node electron/verify-icon.cjs",
+    "test": "node --test electron/*.test.cjs",
     "verify:demo": "node electron/verify-demo.cjs",
-    "build:mac": "npm run verify:demo && node electron/verify-icon.cjs && electron-builder --mac --universal --dir --publish never",
-    "build:win": "npm run verify:demo && node electron/verify-icon.cjs && electron-builder --win --x64 --dir --publish never",
+    "build:mac": "node electron/build-demo.cjs mac",
+    "build:win": "node electron/build-demo.cjs win",
+    "build:linux": "node electron/build-demo.cjs linux",
+    "steam:vdf": "node steam/generate-demo-vdf.cjs all",
     "steam:vdf:mac": "node steam/generate-demo-vdf.cjs mac",
-    "steam:vdf:win": "node steam/generate-demo-vdf.cjs win"
+    "steam:vdf:win": "node steam/generate-demo-vdf.cjs win",
+    "steam:vdf:linux": "node steam/generate-demo-vdf.cjs linux"
   },
   "devDependencies": {
-    "electron": "^39.0.0",
-    "electron-builder": "^26.0.0"
-  },
-  "build": {
-    "appId": "ch.uhx.soundstorm.demo",
-    "productName": "SoundStorm Demo",
-    "copyright": "Copyright UHX",
-    "asar": true,
-    "directories": {
-      "buildResources": "build",
-      "output": "dist"
-    },
-    "files": [
-      "index.html",
-      "env.js",
-      "code/**/*",
-      "pics/**/*",
-      "sounds/**/*",
-      "electron/main.cjs",
-      "electron/preload.cjs",
-      "package.json",
-      "!**/.DS_Store",
-      "!**/*.map"
-    ],
-    "mac": {
-      "category": "public.app-category.games"
-    },
-    "win": {},
-    "linux": {
-      "category": "Game"
-    }
+    "electron": "21.1.1"
   }
 }
