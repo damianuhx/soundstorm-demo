@@ -1,0 +1,24 @@
+{
+  "name": "soundstorm-demo-electron",
+  "version": "0.8.11",
+  "private": true,
+  "description": "Exact first-stage SoundStorm web demo in the verified full-version Electron runtime.",
+  "productName": "SoundStorm Demo",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "check": "node electron/verify-demo.cjs && node electron/verify-icon.cjs",
+    "test": "node --test electron/*.test.cjs",
+    "verify:demo": "node electron/verify-demo.cjs",
+    "build:mac": "node electron/build-demo.cjs mac",
+    "build:win": "node electron/build-demo.cjs win",
+    "build:linux": "node electron/build-demo.cjs linux",
+    "steam:vdf": "node steam/generate-demo-vdf.cjs all",
+    "steam:vdf:mac": "node steam/generate-demo-vdf.cjs mac",
+    "steam:vdf:win": "node steam/generate-demo-vdf.cjs win",
+    "steam:vdf:linux": "node steam/generate-demo-vdf.cjs linux"
+  },
+  "devDependencies": {
+    "electron": "21.1.1"
+  }
+}

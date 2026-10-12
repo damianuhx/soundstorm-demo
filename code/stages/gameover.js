@@ -1,9 +1,11 @@
 function reset(){
+    clearAnonymousGameSession();
     for (var i = frontlayer.children.length - 1; i >= 0; i--) {	frontlayer.removeChild(frontlayer.children[i]);};            
     for (var i = background.children.length - 1; i >= 0; i--) {	background.removeChild(background.children[i]);};  
     for (var i = backlayer.children.length - 1; i >= 0; i--) {	backlayer.removeChild(backlayer.children[i]);};     
     for (var i = container.children.length - 1; i >= 0; i--) {	container.removeChild(container.children[i]);};     
-   
+    //globalfilters.forEach((filter) => filter.enabled=false);
+
     clear_sprites();
     globalreset();
     stagecount=0;
@@ -57,7 +59,15 @@ function ending()
 {
     if (scene<=1)
     {
-        
+        var earnedScore=scoretotal;
+        scoretotal=Math.round(earnedScore+(trystock*500)+(lifestock*200));
+        var recordKey='highscore'+difficulty.general;
+        highscore=Math.max(Number(highscore) || 0, Number(getCookie(recordKey)) || 0);
+        if (scoretotal>highscore){
+            highscore=scoretotal;
+            setCookie(recordKey, highscore, 36500);
+        }
+
         log2db('game cleared');
         stage.alpha=1;
         renderer.background.color = 0x000000;
@@ -80,11 +90,11 @@ function ending()
         ssprite.y=250;
         frontlayer.addChild(ssprite);
 
-        var tsprite = new PIXI.BitmapText('SCORE EARNED    ='+gstringformat(scoretotal)+
-        '\n'+Math.floor(trystock/10)+(trystock%10)+' TRIES  X 400 ='+gstringformat(trystock*400)+'\n'
-        +Math.floor(lifestock)+Math.round(lifestock*10)%10+' HEALTH X  20 ='+gstringformat(Math.round(lifestock*200))
+        var tsprite = new PIXI.BitmapText('SCORE EARNED    ='+gstringformat(earnedScore)+
+        '\n'+Math.floor(trystock/10)+(trystock%10)+' TRIES  X 500 ='+gstringformat(trystock*500)+'\n'
+        +(Math.round(lifestock*200)/200)+' HEALTH X 200 ='+gstringformat(Math.round(lifestock*200))
         +'\n------------------------'
-        +'\nFINAL SCORE     ='+gstringformat(Math.round(scoretotal+(trystock*500)+(lifestock*200)))
+        +'\nFINAL SCORE     ='+gstringformat(scoretotal)
         , { 
             fontName: "monospace",
             anchor: (0.5,0.5),
@@ -124,14 +134,15 @@ function ending()
             set.creditstext('MARTIN RENOLD', 2820, {font:'solid',fontsize: 60});
             set.creditstext('IRINA MEIER', 2900, {font:'solid',fontsize: 60});
             set.creditstext('CHRISTIAN JENNI', 2980, {font:'solid',fontsize: 60});
+            set.creditstext('ALBERTNEZ', 3060, {font:'solid',fontsize: 60});
 
-            set.creditstext('HELPERS', 3300, {font:'inline'});
-            set.creditstext('PIXI.JS', 3380, {font:'solid',fontsize: 60});
-            set.creditstext('HOWLER.JS', 3460, {font:'solid',fontsize: 60});
-            set.creditstext('FREESOUND.ORG', 3540, {font:'solid',fontsize: 60});
+            set.creditstext('HELPERS', 3380, {font:'inline'});
+            set.creditstext('PIXI.JS', 3460, {font:'solid',fontsize: 60});
+            set.creditstext('HOWLER.JS', 3540, {font:'solid',fontsize: 60});
+            set.creditstext('FREESOUND.ORG', 3620, {font:'solid',fontsize: 60});
 
-            set.creditstext('THANK YOU FOR PLAYING', 3800, {font:'solid',fontsize: 60});
-            set.creditstext('SOUNDSTORM', 3880, {font:'inline'});
+            set.creditstext('THANK YOU FOR PLAYING', 3880, {font:'solid',fontsize: 60});
+            set.creditstext('SOUNDSTORM', 3960, {font:'inline'});
             
             create(900, 'picture', 540, 540, {speedY: 0, subtype: tEnding, misc1: 100, misc2:500, misc3:100, misc4: 1, misc5: 1});
             create(1600, 'picture', 540, 540, {speedY: 0, subtype: tex.end1, misc1: 100, misc2:300, misc3:100, misc4: 1, misc5: 1});

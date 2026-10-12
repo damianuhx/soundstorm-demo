@@ -1,4 +1,4 @@
-ai.zoom = function (zoom, max, fadeout=0.05){
+ai.zoomAndFade = function (zoom, max, fadeout=0.05){
     this.scale.x*=zoom;
     this.scale.y*=zoom;
 
@@ -14,7 +14,7 @@ ai.zoom2 = function (zoom, max, dark=1){
     if ((zoom>=1 && Math.abs(this.scale.x)<max) || (zoom<=1 && Math.abs(this.scale.x)>max)){
         this.scale.x*=zoom;
         this.scale.y*=zoom;
-        buffer=(Math.abs(this.scale.x*dark))*255;
+        var buffer=(Math.abs(this.scale.x*dark))*255;
         this.tint=rgbToHex(buffer,buffer,buffer);
     }
     else{
@@ -27,7 +27,7 @@ ai.zoom2 = function (zoom, max, dark=1){
 ai.float = function (factor, steps){
     this.floatcounter+=1/steps;
     if (this.floatcounter>1){this.floatcounter=-1;}
-    zoom=1+Math.sin(this.floatcounter*pi)*factor;
+    var zoom=1+Math.sin(this.floatcounter*pi)*factor;
     this.scale.x=zoom;
     this.scale.y=zoom;
 }

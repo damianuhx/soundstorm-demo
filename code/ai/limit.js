@@ -10,28 +10,6 @@ function offborderf(size)
 }
 
 
-//pushes hero back into screen
-function pushborder(distance)
-{
-    if (this.x<distance)
-    {
-        this.x+=shipspeed*2;
-    }
-    else if (this.x>maxX-distance)
-    {
-        this.x-=shipspeed*2;
-    }
-
-    if (this.y<distance)
-    {
-        this.y+=shipspeed*2;
-    }
-    else if (this.y>maxY-distance)
-    {
-        this.y-=shipspeed*2;
-    }
-}
-
 //deletes the sprite immediately
 function removef()
 {
@@ -58,9 +36,30 @@ function dief(explosion){
         else{
             this.blendMode=PIXI.BLEND_MODES.ADD;
             this.collision='none';
-            if (beat[0]>0.1 && this.nobeat==true && this.ohealth<=0 && !this.delete)
+            var beatParticleExplosionAt=Number(this.beatParticleExplosionAt);
+            var hasBeatParticleExplosion=Number.isFinite(beatParticleExplosionAt);
+            var beatParticleExplosionReached=(
+                hasBeatParticleExplosion
+                && musictime+1/120>=beatParticleExplosionAt
+            );
+            if (
+                (
+                    beatParticleExplosionReached
+                    || (beat[0]>0.1 && this.nobeat==true)
+                )
+                && this.ohealth<=0
+                && !this.delete
+            )
             {
                 this.delete=true;
+                if (hasBeatParticleExplosion){
+                    this.beatParticleExplosionFrame=(
+                        typeof currentBeatParticleStep==='function'
+                            ? currentBeatParticleStep()
+                            : ticks
+                    );
+                    this.beatParticleExplosionTime=musictime;
+                }
                 tutorialgoals++;
 
                 if ((this.score || 0)>0)
@@ -87,7 +86,7 @@ function dief(explosion){
                 }
 
             }
-            else if (beat[0]==0)
+            else if (!hasBeatParticleExplosion && beat[0]==0)
             {
                 this.nobeat=true;
             }
@@ -107,12 +106,6 @@ function autofadeout(speed){
     }
 }
 
-//destroys object
-function autodestroy()
-{
-    this.delete=true;
-}
-
 function timeoutdief(){
     if (scoretimer<=0)
     {
@@ -120,5 +113,3 @@ function timeoutdief(){
         this.health=-1;
     }
 }
-
-

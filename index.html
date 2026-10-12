@@ -2,22 +2,19 @@
 
 <!DOCTYPE html>
 <head>
-<link rel="shortcut icon" type="image/png" href="pics/favicon.png"/>
+<link rel="shortcut icon" type="image/png" href="pics/favicon.png?v=e5036ac66b6c039d"/>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GFC1HB3WSN"></script>
-  <script src='code/vendor/electron-cookies.js'></script>
+  <script src='code/vendor/electron-cookies.js?v=0dbc17228a05'></script>
   <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-GFC1HB3WSN');
+  window.SOUNDSTORM_AUTOMATION = new URLSearchParams(window.location.search).get('automation') === '1';
+  window.SOUNDSTORM_LOG_ENDPOINT = 'https://log.uhx.ch/api/v2';
 
 //Cookies
-  function setCookie(name,value,days=36500) {
-    var expires = "";
+	  function setCookie(name,value,days=36500) {
+      if (window.SOUNDSTORM_AUTOMATION){return;}
+	    var expires = "";
     if (days) {
         var date = new Date();
         date.setTime(date.getTime() + (days*24*60*60*1000));
@@ -25,8 +22,9 @@
     }
     document.cookie = name + "=" + (value || "")  + expires + "; path=/";
   }
-  function getCookie(name) {
-    var nameEQ = name + "=";
+	  function getCookie(name) {
+      if (window.SOUNDSTORM_AUTOMATION){return null;}
+	    var nameEQ = name + "=";
     var ca = document.cookie.split(';');
     for(var i=0;i < ca.length;i++) {
         var c = ca[i];
@@ -39,6 +37,12 @@
     document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
   }
 
+  // Remove legacy cross-session telemetry identifiers. Game statistics now use
+  // only an in-memory identifier that is cleared at the end of each run.
+  [
+    'user_id', 'share_replays', '_ga', '_ga_GFC1HB3WSN',
+    '__utma', '__utmb', '__utmc', '__utmz', '__utmv', '__utmx', '__utmxx'
+  ].forEach(eraseCookie);
 
   function mail2db(data, mode=''){
 
@@ -52,7 +56,6 @@
       const urlParams = new URLSearchParams(queryString);
       var paras='';
       paras+='mail='+data.mail;
-      paras+='&user='+user_id;
       paras+='&link='+urlParams.get('l');
       paras+='&mode='+mode;
 
@@ -99,7 +102,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 
-        <link rel="stylesheet" href="code/vendor/main.css">
+        <link rel="stylesheet" href="code/vendor/main.css?v=e5036ac66b6c039d">
         <style>
         
         *{text-transform: uppercase;}
@@ -110,7 +113,423 @@
         button.input{height: 40px; width: 60px; font-size: 10px; background-color: #CC4444;}
         .inputwrapper{display: inline-block; width: 80px; margin: 20px; margin-top: 0;}
         .inputbutton{width: 100%}
+        #startgame{
+          width: 50%;
+          text-align: center;
+        }
+        #loading{
+          display: block;
+          box-sizing: border-box;
+          min-width: 220px;
+          min-height: 84px;
+          margin: 0 auto;
+          padding: 10px 30px 7px;
+          border: 1px solid #3f4334;
+          border-radius: 8px;
+          background: linear-gradient(180deg, #12130f, #080908);
+          color: #62645e;
+          box-shadow: inset 0 0 24px rgba(255, 255, 255, 0.025);
+          font-family: "inline";
+          font-size: 47px;
+          font-weight: normal;
+          line-height: 1;
+          text-align: center;
+          cursor: wait;
+          transition: border-color 100ms ease, box-shadow 100ms ease, color 100ms ease, transform 100ms ease;
+        }
+        #loading.is-ready{
+          border-color: #8b9560;
+          color: #f2f0e7;
+          box-shadow: inset 0 0 25px rgba(124, 142, 62, 0.1), 0 4px 14px rgba(0, 0, 0, 0.5);
+          cursor: pointer;
+        }
+        #loading.is-ready:hover,
+        #loading.is-ready:focus-visible{
+          border-color: #dce7a4;
+          color: #ffffff;
+          box-shadow: inset 0 0 30px rgba(124, 142, 62, 0.18), 0 0 12px rgba(163, 185, 89, 0.25);
+          outline: none;
+          transform: translateY(-2px);
+        }
+        #loading.is-ready:active{
+          transform: translateY(1px);
+        }
+        #fullscreenhint,
+        #epilepsywarning{
+          color: #777a72;
+          font-family: monospace;
+          font-size: 10px;
+          letter-spacing: 0.13em;
+          line-height: 1.55;
+        }
+        #fullscreenhint{
+          margin-top: 12px;
+        }
+        #epilepsywarning{
+          width: min(100%, 850px);
+          margin: 44px auto 26px;
+        }
+        #soundstorm-contact{
+          box-sizing: border-box;
+          width: min(100%, 678px);
+          margin: 20px 0 32px;
+          padding: 20px;
+          border: 1px solid rgba(231, 225, 203, 0.2);
+          border-radius: 16px;
+          background: #0b0d09;
+          font: 12px/1.5 monospace;
+          color: #b7b7ae;
+        }
+        #soundstorm-contact h2{margin: 0; color: #eee; font: 24px "inline"; font-weight: normal;}
+        #soundstorm-contact p{padding: 0; margin: 0 0 15px; font-size: 11px;}
+        #soundstorm-contact .contact-heading{display: flex; align-items: center; flex-wrap: wrap; gap: 5px 14px; margin-bottom: 15px;}
+        #soundstorm-contact .contact-heading p{margin: 0;}
+        #soundstorm-contact-form{display: grid; grid-template-columns: 1fr 1.4fr; gap: 12px 18px;}
+        #soundstorm-contact-form label{display: block; margin-bottom: 5px; font-size: 10px; letter-spacing: 0.08em;}
+        #soundstorm-contact-form .contact-control{
+          display: block;
+          box-sizing: border-box;
+          width: 100%;
+          padding: 9px 11px;
+          border: 1px solid #545b3b;
+          border-radius: 5px;
+          background: #050605;
+          color: #f0eee5;
+          font: 13px/1.5 monospace;
+          text-transform: none;
+        }
+        #soundstorm-contact-form .contact-control:focus{outline: 1px solid #c2d08e; border-color: #c2d08e;}
+        #soundstorm-contact-form textarea{resize: vertical; min-height: 108px;}
+        #soundstorm-contact-form .contact-message-field{grid-column: 2; grid-row: 1 / span 2;}
+        #soundstorm-contact-form .contact-trap{position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden;}
+        #soundstorm-contact-send{
+          min-height: 38px;
+          padding: 9px 15px;
+          border: 1px solid #8b9560;
+          border-radius: 5px;
+          background: #14180e;
+          color: #f2f0e7;
+          font: 12px monospace;
+          cursor: pointer;
+        }
+        #soundstorm-contact-send:hover,#soundstorm-contact-send:focus-visible{border-color: #dce7a4; background: #202719;}
+        #soundstorm-contact-send:disabled{opacity: 0.55; cursor: wait;}
+        #soundstorm-contact-status{grid-column: 1 / -1; margin: 0 !important; min-height: 0; text-transform: none;}
+        #soundstorm-contact-status:empty{display: none;}
+        #soundstorm-contact-status[data-state="error"]{color: #ffb2a5;}
+        #soundstorm-contact-status[data-state="success"]{color: #dce7a4;}
+        #soundstorm-contact .contact-note{margin: 12px 0 0; color: #777a72; font-size: 10px; text-transform: none;}
+        #soundstorm-contact .contact-note a{text-transform: none;}
+        @media(max-width: 560px){
+          #soundstorm-contact-form{grid-template-columns: 1fr;}
+          #soundstorm-contact-form .contact-message-field{grid-column: auto; grid-row: auto;}
+          #soundstorm-contact-form .contact-actions{grid-row: 3;}
+        }
+        #manualvisual{
+          width: 100%;
+        }
+        #inputtestvisual{
+          display: none;
+          grid-template-columns: 390px 270px;
+          align-items: stretch;
+          gap: 18px;
+          width: min(100%, 678px);
+          margin: 12px 0 4px;
+        }
+        #keyboardtestgraphic{
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          box-sizing: border-box;
+          gap: 1px;
+          min-width: 0;
+          height: 266px;
+          padding: 18px 14px 12px;
+          border: 1px solid rgba(231, 225, 203, 0.2);
+          border-radius: 24px;
+          background: radial-gradient(circle at 50% 42%, rgba(124, 142, 62, 0.13), rgba(4, 4, 4, 0) 68%);
+          box-shadow: inset 0 0 32px rgba(255, 255, 255, 0.025);
+          color: #eeeeee;
+          font-family: monospace;
+        }
+        .keyboard-test-row{
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0;
+          width: 100%;
+        }
+        .keyboard-test-row.keyboard-top-row{
+          justify-content: flex-start;
+          padding-left: calc(50% - 33px);
+          box-sizing: border-box;
+        }
+        .keyboard-test-row.keyboard-top-row .keyboard-pause{
+          margin-left: 19px;
+        }
+        .keyboard-test-key{
+          position: relative;
+          display: inline-flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          box-sizing: border-box;
+          width: 66px;
+          height: 66px;
+          border: 0;
+          background: url('pics/html/keycap-input-v2.png?v=e5036ac66b6c039d') center / 132% 132% no-repeat;
+          color: #f4efe2;
+          font-family: "inline";
+          font-size: 24px;
+          line-height: 0.85;
+          filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.7));
+          isolation: isolate;
+          transition: filter 60ms linear, transform 60ms linear;
+        }
+        .keyboard-test-key::after{
+          content: "";
+          position: absolute;
+          z-index: -1;
+          inset: 16%;
+          border-radius: 15%;
+          background: transparent;
+          transition: background-color 60ms linear, box-shadow 60ms linear;
+        }
+        .keyboard-test-key small{
+          margin-top: 4px;
+          color: #ef5d55;
+          font-family: monospace;
+          font-size: 10px;
+          line-height: 1;
+        }
+        .keyboard-test-key.keyboard-pause{
+          width: 54px;
+          height: 54px;
+          margin-top: 6px;
+          font-size: 18px;
+        }
+        .keyboard-test-key.keyboard-pause small{
+          color: #9dcc62;
+        }
+        .keyboard-test-key.keyboard-shield{
+          width: 198px;
+          height: 62px;
+          font-size: 18px;
+        }
+        .keyboard-test-key.keyboard-shield small{
+          color: #778bff;
+        }
+        .keyboard-test-key.is-active{
+          filter: brightness(1.18) drop-shadow(0 0 5px #dfff68) drop-shadow(0 0 12px rgba(122, 255, 76, 0.75));
+          transform: translateY(2px);
+        }
+        .keyboard-test-key.is-active::after{
+          background: rgba(181, 255, 74, 0.7);
+          box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.72), 0 0 13px #77ff4c;
+        }
+        .keyboard-test-caption{
+          margin-top: 5px;
+          color: #87877e;
+          font-size: 10px;
+          letter-spacing: 0.18em;
+          text-align: center;
+        }
+        #inputcontrolgamepadcolumn{
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+          height: 266px;
+        }
+        #gamepadtestwrap{
+          display: flex;
+          flex: 1 1 auto;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          box-sizing: border-box;
+          min-width: 0;
+          min-height: 0;
+          padding: 4px 9px 7px;
+          border: 1px solid rgba(231, 225, 203, 0.2);
+          border-radius: 24px;
+          background: radial-gradient(circle at 50% 48%, rgba(124, 142, 62, 0.12), rgba(4, 4, 4, 0) 70%);
+          box-shadow: inset 0 0 38px rgba(255, 255, 255, 0.025);
+        }
+        #gamepadtestgraphic{
+          display: block;
+          width: 100%;
+          min-height: 0;
+          max-height: 185px;
+          overflow: visible;
+          transform: translateX(-7px);
+        }
+        .gamepad-test-control{
+          fill: transparent;
+          stroke: transparent;
+          stroke-width: 2;
+          transition: fill 50ms linear, stroke 50ms linear, filter 50ms linear;
+        }
+        .gamepad-test-control.is-active{
+          fill: rgba(183, 255, 78, 0.85);
+          stroke: #ffffff;
+          filter: drop-shadow(0 0 4px #efffa8) drop-shadow(0 0 10px #71ff49);
+        }
+        .gamepad-test-label{
+          font-family: "solid";
+          font-size: 12px;
+          letter-spacing: 0.06em;
+          text-anchor: middle;
+        }
+        .gamepad-test-label.gamepad-move-label{fill: #ef5d55;}
+        .gamepad-test-label.gamepad-pause-label{fill: #9dcc62;}
+        .gamepad-test-label.gamepad-shield-label{fill: #778bff;}
+        #gamepadtestsignal{
+          display: none;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          min-height: 15px;
+          margin: -6px 10px 1px;
+          color: #8f918a;
+          font-family: monospace;
+          font-size: 10px;
+          letter-spacing: 0.08em;
+        }
+        #gamepadtestsignal[data-connected="true"]{
+          display: flex;
+        }
+        #gamepadtestsignalindicator{
+          display: block;
+          width: 9px;
+          height: 9px;
+          border-radius: 50%;
+          background: #536438;
+          box-shadow: 0 0 5px rgba(140, 183, 72, 0.45);
+          transition: background-color 50ms linear, box-shadow 50ms linear, transform 50ms linear;
+        }
+        #gamepadtestsignal[data-active="true"]{
+          color: #f3f1e8;
+        }
+        #gamepadtestsignal[data-active="true"] #gamepadtestsignalindicator{
+          background: #caff5b;
+          box-shadow: 0 0 5px #efffa8, 0 0 13px #71ff49;
+          transform: scale(1.25);
+        }
+        #gamepadteststatus{
+          min-width: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        #connectgp{
+          min-height: 12px;
+          margin: 0 6px 1px;
+          color: #777a72;
+          font-family: monospace;
+          font-size: 9px;
+          letter-spacing: 0.08em;
+          line-height: 1.2;
+          text-align: center;
+        }
+        .input-control-panel.bigblock{
+          box-sizing: border-box;
+          width: 718px;
+        }
+        .input-control-heading{
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          box-sizing: border-box;
+          flex: 0 0 38px;
+          gap: 10px;
+          padding-left: 10px;
+        }
+        #control,
+        #selectgamepad{
+          box-sizing: border-box;
+          border: 1px solid #6f7648;
+          border-radius: 5px;
+          background: #11130f;
+          color: #f0eee5;
+          font-family: monospace;
+          font-size: 11px;
+          letter-spacing: 0.04em;
+        }
+        #control{
+          min-height: 28px;
+          padding: 3px 8px;
+        }
+        #setcontrols{
+          box-sizing: border-box;
+          width: 390px;
+          max-width: 100%;
+          margin: 12px 0 0;
+        }
+        #manualcopy{
+          display: none;
+          justify-content: center;
+          box-sizing: border-box;
+          width: 390px;
+          max-width: 100%;
+          margin: 12px 0 0;
+          color: #b7b7ae;
+          font-size: 13px;
+          text-align: center;
+        }
+        @media only screen and (max-width: 720px) {
+          #soundstorm-contact{
+            width: min(100%, 430px);
+            margin-left: auto;
+            margin-right: auto;
+          }
+          #inputtestvisual{
+            grid-template-columns: minmax(0, 1fr);
+            gap: 14px;
+            width: min(100%, 430px);
+            margin-left: auto;
+            margin-right: auto;
+          }
+          #keyboardtestgraphic{
+            height: auto;
+            min-height: 238px;
+            padding-top: 11px;
+            padding-bottom: 8px;
+          }
+          .keyboard-test-key{
+            width: 58px;
+            height: 58px;
+          }
+          .keyboard-test-key.keyboard-pause{
+            width: 48px;
+            height: 48px;
+          }
+          .keyboard-test-key.keyboard-shield{
+            width: 174px;
+            height: 55px;
+          }
+          .keyboard-test-row.keyboard-top-row{
+            padding-left: calc(50% - 29px);
+          }
+          #gamepadtestwrap{
+            min-height: 218px;
+            padding: 4px 8px 8px;
+          }
+          #inputcontrolgamepadcolumn{
+            height: auto;
+          }
+          .input-control-heading{
+            justify-content: center;
+            padding-left: 0;
+          }
+          #setcontrols,
+          #manualcopy{
+            margin-left: auto;
+            margin-right: auto;
+          }
+        }
         canvas{
+          cursor: none;
           z-index: -1;
           width: 100%;
           height: auto;
@@ -169,8 +588,8 @@
             }
           }
 
-          @font-face {font-family: "inline"; src: url("pics/html/PhosphateInline.ttf") format("truetype") }
-          @font-face {font-family: "solid"; src: url("pics/html/PhosphateSolid.ttf") format("truetype") }
+          @font-face {font-family: "inline"; src: url("pics/html/PhosphateInline.ttf?v=e5036ac66b6c039d") format("truetype") }
+          @font-face {font-family: "solid"; src: url("pics/html/PhosphateSolid.ttf?v=e5036ac66b6c039d") format("truetype") }
           
           h1{
             font-weight: normal;
@@ -239,9 +658,9 @@
 </div>
   <button id="send" style="margin-left: 10px; background-color: black; color: white; font-family: inline; border-style: hidden;"
   onclick="subscribe('');">
-  <img src="pics/html/send.png"></button>   
+  <img src="pics/html/send.png?v=e5036ac66b6c039d"></button>   
 
-  <div style="margin-left: 30px; width: 25%; display: block;" ><a target="_blank" class="available" href="https://store.steampowered.com/app/2202400/SoundStorm/"><img src="pics/html/steam.png"></a></div>
+  <div style="margin-left: 30px; width: 25%; display: block;" ><a target="_blank" class="available" href="https://store.steampowered.com/app/2202400/SoundStorm/"><img src="pics/html/steam.png?v=e5036ac66b6c039d"></a></div>
 </div>
 <div id="mailerror" style="margin-top: -40px; font-family: solid; font-size: 18px; color: red"></div>
 <span style="font-size: 18px; font-family: solid;" >WE WILL ONLY SEND MAILS ABOUT FREE PLAYTESTS OF SOUNDSTORM. YOU CAN CANCEL YOUR SUBSCRIPTION ANYTIME.</SPAN>
@@ -281,9 +700,9 @@
       </div>
         <button id="send2" style="margin-left: 10px; background-color: black; color: white; font-family: inline; border-style: hidden;"
         onclick="subscribe('2');">
-          <img src="pics/html/send.png"></button>   
+          <img src="pics/html/send.png?v=e5036ac66b6c039d"></button>   
       
-        <div style="margin-left: 30px; width: 25%" ><a target="_blank" class="available" href="https://store.steampowered.com/app/2202400/SoundStorm/"><img src="pics/html/steam.png"></a></div>
+        <div style="margin-left: 30px; width: 25%" ><a target="_blank" class="available" href="https://store.steampowered.com/app/2202400/SoundStorm/"><img src="pics/html/steam.png?v=e5036ac66b6c039d"></a></div>
       </div>
       <div id="mailerror2" style="margin-top: -40px; font-family: solid; font-size: 18px; color: red"></div>
       
@@ -292,7 +711,7 @@
 
     <img style="background-color: transparent; max-width: 100%; width: 800px; display: block;
   margin-left: auto;
-  margin-right: auto;" src="pics/html/soundstorm.png"><img>
+  margin-right: auto;" src="pics/html/soundstorm.png?v=e5036ac66b6c039d"><img>
 
 
 
@@ -307,65 +726,13 @@
     </div> 
      
     <!--PLAY-->
-    <div id="startgame" style="width:50%; text-align: center;">
-      <img id="loading" src="pics/html/wait.png" style="height: 70px; width: auto; min-width: 200px; margin: auto; padding: 20px; display: block;"">
-      PRESS ESC TO EXIT FULLSCREEN MODE
+    <div id="startgame">
+      <button id="loading" type="button" disabled aria-busy="true">LOADING</button>
+      <div id="fullscreenhint">PRESS RETURN TO EXIT/ENTER FULLSCREEN MODE</div>
     </div> 
 
 
   </div>
-
-  <script>
-
-    var frameskip=false;
-    var e=0;
-
-    calcFPS();
-
-function calcFPS(a){function b(){if(f--)c(b);
-  else{
-    var e=1E3*d/(performance.now()-g);
-    "function"===typeof a.callback&&a.callback(e);
-    addFPS(e)}}
-    var c=window.requestAnimationFrame||window.webkitRequestAnimationFrame||window.mozRequestAnimationFrame;if(!c)return!0;a||(a={});var d=a.count||20,f=d,g=performance.now();b()}
-
-    var FPS=[];
-
-    function addFPS(e){
-      FPS.push(e);
-
-      if (FPS.length>5){
-        frameskipset(Math.max(...FPS))
-      }
-      else{
-        calcFPS();
-      }
-    }
-
-function frameskipset(e){
-  if (e>65 || e<55){
-    document.getElementById('frameskip').value='skip';
-    frameskip=true;
-    document.getElementById('frameskiptext').innerHTML=Math.round(e)+'hz detected. try set system settings to 60hz.'
-  }
-  else{
-    document.getElementById('frameskiptext').innerHTML='60HZ DETECTED. PERFECT!'
-  
-  }
-}
-
-
-function generateString(length) {
-  const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = ' ';
-    const charactersLength = characters.length;
-    for ( let i = 0; i < length; i++ ) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-
-    return result;
-}
-</script>
 
       <div id="progresswrapper" style="background-color: black; width: 100%; height: 10px; border: 1px solid; margin-bottom: 10px;">
     
@@ -373,56 +740,102 @@ function generateString(length) {
     </div>
     </div>
 
-    <div style="margin-bottom: 50px; margin-top: 50px;">EPILEPSY WARNING: A very small percentage of people may experience a seizure when exposed to flashing lights or other effects used in this game. Play or watch this game at own risk! Viewer discretion is advised.
+    <div id="epilepsywarning">EPILEPSY WARNING: A very small percentage of people may experience a seizure when exposed to flashing lights or other effects used in this game. Play or watch this game at own risk! Viewer discretion is advised.
     </div>
 
     <div class="allblock">
 
-    <div class="bigblock">
-    <div style="display: inline-flex;"><div class="subtitle">INPUT CONTROL: </div>
-    <select style="height: 100%" id="control" onchange="
-    val();
-    inputcontrol = document.getElementById('control').value;
-    setCookie('inputcontrol', inputcontrol, 36500); 
-    ">
-      <option  value="key" selected>STANDARD</option>
-      <!--<option  value="touch">TOUCH</option>
-      <option  value="mouse">MOUSE</option>-->
-      <option  value="gamepad">CUSTOM (GAMEPAD)</option>
-    </select>
-    </div>
+    <div class="bigblock input-control-panel">
     <div style="display: flex;">
       <div style="width: 100%">
-      <img id="manual" style="background-color: transparent; width: 100%; display: none;" src="pics/html/mousecontrols.jpg">
+      <div id="manualvisual">
+      <img id="manual" style="background-color: transparent; width: 100%; display: none;" src="pics/html/touchcontrols.jpg?v=e5036ac66b6c039d" alt="TOUCH CONTROLS">
+      <div id="inputtestvisual">
+        <div id="inputcontrolgamepadcolumn">
+          <div class="input-control-heading"><div class="subtitle">INPUT CONTROL: </div>
+          <select id="control" onchange="
+          val();
+          inputcontrol = document.getElementById('control').value;
+          setCookie('inputcontrol', inputcontrol, 36500);
+          ">
+            <option value="key" selected>STANDARD</option>
+            <!--<option value="touch">TOUCH</option>-->
+            <option value="gamepad">CUSTOM (GAMEPAD)</option>
+          </select>
+          </div>
+          <div id="gamepadtestwrap">
+          <svg id="gamepadtestgraphic" viewBox="0 0 320 220" role="img" aria-label="LIVE GAMEPAD INPUT TEST">
+            <image href="pics/html/controller-input-v2.png?v=e5036ac66b6c039d" x="0" y="3" width="320" height="213" preserveAspectRatio="xMidYMid meet"/>
+            <g id="gamepadtestoverlay">
+              <rect class="gamepad-test-control" x="82" y="50" width="14" height="28" rx="4" data-gamepad-button="12" data-gamepad-action="up"/>
+              <rect class="gamepad-test-control" x="94" y="66" width="26" height="16" rx="4" data-gamepad-button="15" data-gamepad-action="right"/>
+              <rect class="gamepad-test-control" x="82" y="75" width="14" height="28" rx="4" data-gamepad-button="13" data-gamepad-action="down"/>
+              <rect class="gamepad-test-control" x="68" y="66" width="17" height="16" rx="4" data-gamepad-button="14" data-gamepad-action="left"/>
+              <circle class="gamepad-test-control" cx="115" cy="111" r="19" data-gamepad-axis="0" data-gamepad-action="move"/>
+              <circle class="gamepad-test-control" cx="232" cy="57" r="10" data-gamepad-button="3" data-gamepad-action="shield"/>
+              <circle class="gamepad-test-control" cx="248" cy="73" r="10" data-gamepad-button="1" data-gamepad-action="shield"/>
+              <circle class="gamepad-test-control" cx="232" cy="88" r="10" data-gamepad-button="0" data-gamepad-action="shield"/>
+              <circle class="gamepad-test-control" cx="216" cy="73" r="10" data-gamepad-button="2" data-gamepad-action="shield"/>
+              <rect class="gamepad-test-control" x="141" y="87" width="12" height="8" rx="4" data-gamepad-button="8" data-gamepad-action="pause"/>
+              <rect class="gamepad-test-control" x="169" y="87" width="12" height="8" rx="4" data-gamepad-button="9" data-gamepad-action="pause"/>
+              <rect class="gamepad-test-control" x="155" y="87" width="12" height="8" rx="4" data-gamepad-button="16" data-gamepad-action="pause"/>
+            </g>
+            <text class="gamepad-test-label gamepad-pause-label" x="161" y="77">PAUSE</text>
+            <text class="gamepad-test-label gamepad-move-label" x="115" y="143">MOVE</text>
+            <text class="gamepad-test-label gamepad-shield-label" x="232" y="111">SHIELD</text>
+          </svg>
+          <div id="gamepadtestsignal" data-connected="false" data-active="false" role="status" aria-live="polite" aria-hidden="true">
+            <span id="gamepadtestsignalindicator" aria-hidden="true"></span>
+            <span id="gamepadteststatus"></span>
+          </div>
+          <div id="connectgp">PRESS ANY BUTTON ON A GAMEPAD TO CONNECT</div>
+          </div>
+        </div>
+        <div id="keyboardtestgraphic" aria-label="KEYBOARD INPUT TEST">
+          <div class="keyboard-test-row keyboard-top-row">
+            <span class="keyboard-test-key" data-key-codes="KeyW ArrowUp">W<small>↑</small></span>
+            <span class="keyboard-test-key keyboard-pause" data-key-codes="KeyP">P<small>PAUSE</small></span>
+          </div>
+          <div class="keyboard-test-row">
+            <span class="keyboard-test-key" data-key-codes="KeyA ArrowLeft">A<small>←</small></span>
+            <span class="keyboard-test-key" data-key-codes="KeyS ArrowDown">S<small>↓</small></span>
+            <span class="keyboard-test-key" data-key-codes="KeyD ArrowRight">D<small>→</small></span>
+          </div>
+          <div class="keyboard-test-row">
+            <span class="keyboard-test-key keyboard-shield" data-key-codes="Space">SPACE<small>SHIELD</small></span>
+          </div>
+          <div class="keyboard-test-caption">KEYBOARD</div>
+        </div>
+      </div>
+      </div>
       <div style="display: none" id="setcontrols">
       <select onchange="gpload(this.value);" style="width: 80%;margin-left: 10%;margin-bottom: 10%;margin-right: 10%;" id="selectgamepad">
         <option selected disabled>SELECT A GAMEPAD</option>
       </select><br/>
-      <div id="connectgp">PRESS ANY BUTTON ON A GAMEPAD TO CONNECT</div>
       <div id="setgp" style="display: none;">
         <div class="inputwrapper">
           <label class="input">LEFT</label>
-          <button id ="left" style="background-color: lightgrey;" class="inputbutton" onclick="gpset(this, 'left', currentindex)">SET<br/>KEY</button>
+          <button id ="left" style="background-color: lightgrey;" class="inputbutton" onclick="gpset(this, 'left', Math.max(gamepad_id, 0))">SET<br/>KEY</button>
         </div>
       <div class="inputwrapper">
         <label class="input">RIGHT</label>
-        <button id ="right" style="background-color: lightgrey;" class="inputbutton" onclick="gpset(this, 'right', currentindex)">SET<br/>KEY</button>
+        <button id ="right" style="background-color: lightgrey;" class="inputbutton" onclick="gpset(this, 'right', Math.max(gamepad_id, 0))">SET<br/>KEY</button>
       </div>
       <div class="inputwrapper">
         <label class="input">SHIELD</label>
-        <button id ="shield" style="background-color: lightgrey;" class="inputbutton" onclick="gpset(this, 'shield', currentindex)">SET<br/>KEY</button>
+        <button id ="shield" style="background-color: lightgrey;" class="inputbutton" onclick="gpset(this, 'shield', Math.max(gamepad_id, 0))">SET<br/>KEY</button>
       </div>
       <div class="inputwrapper">
         <label class="input">DOWN</label>
-        <button id ="down" style="background-color: lightgrey;" class="inputbutton" onclick="gpset(this, 'down', currentindex)">SET<br/>KEY</button>
+        <button id ="down" style="background-color: lightgrey;" class="inputbutton" onclick="gpset(this, 'down', Math.max(gamepad_id, 0))">SET<br/>KEY</button>
       </div>
       <div class="inputwrapper">
         <label class="input">UP</label>
-        <button id ="up" style="background-color: lightgrey;" class="inputbutton" onclick="gpset(this, 'up', currentindex)">SET<br/>KEY</button>
+        <button id ="up" style="background-color: lightgrey;" class="inputbutton" onclick="gpset(this, 'up', Math.max(gamepad_id, 0))">SET<br/>KEY</button>
       </div>
       <div class="inputwrapper">
         <label class="input">PAUSE</label>
-        <button id ="pause" style="background-color: lightgrey;" class="inputbutton" onclick="gpset(this, 'pause', currentindex)">SET<br/>KEY</button>
+        <button id ="pause" style="background-color: lightgrey;" class="inputbutton" onclick="gpset(this, 'pause', Math.max(gamepad_id, 0))">SET<br/>KEY</button>
       </div>        
     </div>
     </div>
@@ -430,67 +843,48 @@ function generateString(length) {
     </div>
 
 
-  <div style="display: flex;">
-  <div style="width: 50%; display: flex;">
-    <div id="manualleft" style="margin: auto; font-size: 15px;">Move with A, S, D and W or the arrow keys</div>
-    </div>
-  <div style="width: 50%; display: flex; font-size: 15px;">
-  <div id="manualright" style="margin: auto">USE SHIELD BY PRESSING THE SPACE KEY</div>
-    </div>
-
-    
+  <div id="manualcopy">
+    <div id="manualright">CLICK ANY FIELD AND PRESS THE DESIRED BUTTON.</div>
   </div>
+
+  <section id="soundstorm-contact" aria-labelledby="soundstorm-contact-title">
+    <div class="contact-heading">
+      <h2 id="soundstorm-contact-title">Contact</h2>
+      <p>Send Damian a message.</p>
+    </div>
+    <form id="soundstorm-contact-form" action="https://uhx.ch/api/soundstorm-contact.php" method="post">
+      <div>
+        <label for="soundstorm-contact-email">Your email address</label>
+        <input class="contact-control" id="soundstorm-contact-email" name="email" type="email" autocomplete="email" maxlength="254" required>
+      </div>
+      <div class="contact-message-field">
+        <label for="soundstorm-contact-message">Your message</label>
+        <textarea class="contact-control" id="soundstorm-contact-message" name="message" rows="4" maxlength="5000" required></textarea>
+      </div>
+      <div class="contact-trap" aria-hidden="true">
+        <label for="soundstorm-contact-website">Website</label>
+        <input id="soundstorm-contact-website" name="website" type="text" tabindex="-1" autocomplete="off">
+      </div>
+      <div class="contact-actions">
+        <button id="soundstorm-contact-send" type="submit">Send message</button>
+      </div>
+      <p id="soundstorm-contact-status" role="status" aria-live="polite"></p>
+    </form>
+    <p class="contact-note">Your details are used only to reply to your message. <a href="https://uhx.ch/datenschutz.php#kontaktformular" target="_blank" rel="noopener noreferrer">Privacy</a> · <a href="https://uhx.ch/kontakt.php?lang=en#nachricht" target="_blank" rel="noopener noreferrer">Open contact page</a></p>
+  </section>
 
 </div>
       
-
-<div class="bigblock">
-<div>
-<div class="subtitle">
-SYSTEM SETTINGS:
-    </div>
-    </div>
-    <!--LANGUAGE-->
-    <div id="language" style="padding-top: 30px; text-align: center; position: block">
-      <!--
-      <div id="demo">LANGUAGE</div>
-      <select id="frameskip" onchange="if (this.value == 'english'){frameskip=true;}else{frameskip=false}">
-        <option value="english">English</option>
-      </select>-->
-    <!--FRAMESKIP-->
-    <div id="framemode" style="padding-top: 30px; text-align: center; position: block">
-      <div id="demo">MONITOR REFRESH RATE</div>
-      <select id="frameskip" onchange="if (this.value == 'skip'){frameskip=true;}else{frameskip=false}">
-        <option value="normal">60HZ</option>
-        <option value="skip">NOT 60HZ</option>
-      </select>
-      <div id="frameskiptext">SET YOUR SYSTEMS REFRESH RATE TO 60HZ IF POSSIBLE</div>
-      </div> 
-    </div>
-
-    <!--if cookie lowdetail isset and 1: select value low and change settings-->
-    <div id="detailmode" style="padding-top: 30px; text-align: center; position: block">
-      <div id="demo">GRAPHIC DETAIL</div>
-      <select id="detail" onchange="if (this.value == 'low'){settings.shadow=false;settings.outline=false;console.log(settings.outline);setCookie('lowdetail', true, 36500);}else{settings.shadow=true;settings.outline=true;setCookie('lowdetail', false, 36500);}">
-        <option value="high">HIGH</option>
-        <option value="low">LOW</option>
-      </select>
-      <div id="detailmodetext">DISABLE SHADOWS AND OUTLINE FILTERS</div>
-      </div> 
-    </div>
-
 </div>
 
 
 
 
 <!--functions startpage-->
+<script src="code/system/gamepad-input-test.js?v=7208015fb632"></script>
+<script src="code/system/contact-form.js?v=c1816e23d786"></script>
 <script>
   
-        //Read or Create unique user id 
-  
-    
-//Gamepad console.lo Layout
 var controlkeys=['left','right','up','down','shield','pause'];
 var controlmap = [[],[],[],[]];
 var gamepad_id=-1;
@@ -505,23 +899,21 @@ controlmap[0]['pause']= false;
 controlmap[1]=controlmap[0];
 controlmap[2]=controlmap[0];
 controlmap[3]=controlmap[0];
-currentindex=0;
-
 function getkey(button){
-  gamepad = navigator.getGamepads()[gamepad_id];
+  var selectedGamepad = navigator.getGamepads()[gamepad_id];
   if (
     typeof controlmap[gamepad_id] !== 'undefined' && 
-    typeof gamepad !== 'undefined' &&
-    gamepad &&
-    typeof gamepad.connected !== 'undefined' &&
-    gamepad.connected == true
+    typeof selectedGamepad !== 'undefined' &&
+    selectedGamepad &&
+    typeof selectedGamepad.connected !== 'undefined' &&
+    selectedGamepad.connected == true
   )
   {
     if (!controlmap[gamepad_id][button].axis)
     {
       var i=controlmap[gamepad_id][button].index;
-      if (typeof gamepad !== 'undefined' && typeof gamepad.buttons !== 'undefined' && typeof gamepad.buttons[i] !== 'undefined' && typeof gamepad.buttons[i].pressed !== 'undefined'){
-        return gamepad.buttons[i].pressed;
+      if (typeof selectedGamepad !== 'undefined' && typeof selectedGamepad.buttons !== 'undefined' && typeof selectedGamepad.buttons[i] !== 'undefined' && typeof selectedGamepad.buttons[i].pressed !== 'undefined'){
+        return selectedGamepad.buttons[i].pressed;
       }
       else{
         return false;
@@ -529,8 +921,8 @@ function getkey(button){
     }
     else {
       var i=controlmap[gamepad_id][button].index;
-      if (typeof gamepad !== 'undefined' && typeof gamepad.buttons[i] !== 'undefined'  && typeof gamepad.buttons[i].pressed !== 'undefined'){
-        if (gamepad.axes[i]*controlmap[gamepad_id][button].axis>0.5){
+      if (typeof selectedGamepad.axes !== 'undefined' && typeof selectedGamepad.axes[i] !== 'undefined'){
+        if (selectedGamepad.axes[i]*controlmap[gamepad_id][button].axis>0.5){
           return 1;
         }
         else{
@@ -571,18 +963,23 @@ window.addEventListener("gamepadconnected", function(e) {
     var gpid = e.gamepad.index;
     var gpname = e.gamepad.id;
 
-    console.log(e.gamepad);
     var option = document.createElement("option");
     option.text = gpname;
     option.value = gpid;
     if (!play){
       var select = document.getElementById("selectgamepad");
-      select.appendChild(option);
+      var existingOption = select.querySelector('option[value="'+gpid+'"]');
+      if (existingOption){
+        existingOption.text = gpname;
+        option = existingOption;
+      }
+      else{
+        select.appendChild(option);
+      }
     
       select.value=option.value; 
     }
     gpload(option.value);
-    document.getElementById("loading").click();
 });
 
 //Remove Gamepad
@@ -597,6 +994,10 @@ window.addEventListener("gamepaddisconnected", function(e) {
     }
   }
   }
+  if (Number(gamepad_id) === e.gamepad.index){
+    gamepad_id=-1;
+    if (!play){val();}
+  }
 });
 
 
@@ -609,6 +1010,7 @@ if(navigator.userAgent.indexOf("Firefox") != -1 ){
 function gpkeyget(index){
 var returnval = false;
 var gpdata = navigator.getGamepads()[index];
+if (!gpdata){return returnval;}
 gpdata.buttons.forEach(function(button, number)
 {
   if (button.pressed)
@@ -632,7 +1034,7 @@ return returnval;
 
 //all red buttons become grey
 function unred(){
-  inputbuttons = document.getElementsByClassName('inputbutton');
+  var inputbuttons = document.getElementsByClassName('inputbutton');
   for (let button of inputbuttons) {
     if (button.style.backgroundColor==='red'){
       button.style.backgroundColor='lightgrey';
@@ -642,130 +1044,122 @@ function unred(){
 }
 //Stop listening to pad input
 function unselect(){
-  if (typeof myInterval !== 'undefined'){clearInterval(myInterval);}
+  if (typeof gpset.interval !== 'undefined'){clearInterval(gpset.interval);}
   unred();
 }
 
 //cookies2gpset
 function gpload(gpid){
-  currentindex=gpid;
-  gamepad_id=gpid;
-  gpname = (navigator.getGamepads()[gpid].id);
-
-  if (!play){
-  document.getElementById('connectgp').style.display ='none';
-  document.getElementById('setgp').style.display ='inherit';
+  gamepad_id=Number(gpid);
+  var selectedPad = navigator.getGamepads()[gamepad_id];
+  if (!selectedPad){
+    gamepad_id=-1;
+    if (!play){val();}
+    return;
   }
+  var gpname = selectedPad.id;
 
   controlkeys.forEach(function (value){
     var button = JSON.parse(getCookie('C_'+value+'_'+gpname));
     if (button){
         controlmap[gpid][value] = button;
         if (!play){
-        caller=document.getElementById(value);
+        var caller=document.getElementById(value);
         caller.style.backgroundColor = 'green';
         caller.innerHTML = button.name;
         }
     }
   }
-);}
+  );
+  if (!play){val();}
+}
 
 //Start listening to pad input
 function gpset(caller, button, index=0){
   unselect();
   caller.style.backgroundColor='red';
   caller.innerHTML='PRESS<br/>BUTTON';
-  myInterval = setInterval(function(){
+  gpset.interval = setInterval(function(){
     var controlkey = gpkeyget(index);
     if (controlkey){
       setCookie('C_'+button+'_'+navigator.getGamepads()[index].id, JSON.stringify(controlkey), 36500); 
       controlmap[index][button] = controlkey;
       caller.style.backgroundColor = 'green';
       caller.innerHTML = controlkey.name;
-      clearInterval(myInterval);
+      clearInterval(gpset.interval);
     }
   }, 30);
 }
 
 val();
+GamepadInputTest.start();
 
 
 //Display control manual or gamepad controls (on startup and inputcontrol change)
 function val() {
     var control = document.getElementById("control").value;
     var manual = document.getElementById("manual");
+    var inputtestvisual = document.getElementById("inputtestvisual");
     var setcontrols = document.getElementById("setcontrols");
-    var manualleft = document.getElementById("manualleft");
+    var setgp = document.getElementById("setgp");
+    var manualcopy = document.getElementById("manualcopy");
     var manualright = document.getElementById("manualright");
+    var gamepads = typeof navigator.getGamepads === 'function' ? navigator.getGamepads() : [];
+    var selectedGamepad = gamepad_id>=0 && gamepads && gamepads[gamepad_id];
+    var customGamepadSelected = control=='gamepad' && Boolean(selectedGamepad);
 
-    var manualtext = [];
-    manualtext['mouse']={
-      left: 'THE PLAYER MOVES TOWARDS THE COURSOR. MOVE THE MOUSE TO NAVIGATE.',
-      right: 'CLICK TO ACTIVATE YOUR SHIELD.'
-    };
+    manualright.textContent=control=='touch'
+      ? 'TOUCH THE PLAYER TO ACTIVATE YOUR SHIELD.'
+      : 'CLICK ANY FIELD AND PRESS THE DESIRED BUTTON.';
 
-    manualtext['touch']={
-      left: 'TOUCH THE SCREEN TO MOVE THE PLAYER TOWARDS THAT POSITION.',
-      right: 'TOUCH THE PLAYER TO ACTIVATE YOUR SHIELD.'
-    };
-
-    manualtext['key']={
-      left: 'USE A, W, S AND D OR THE ARROW KEYS TO NAVIGATE.',
-      right: 'PRESS SPACE TO ACTIVATE YOUR SHIELD'
-    };
-
-    manualtext['gamepad']={
-      left: 'SELECT YOUR GAMEPAD FROM THE DROP DOWN MENU.',
-      right: 'CLICK ANY FIELD AND PRESS THE DESIRED BUTTON.'
-    };
-
-    manualleft.innerHTML=manualtext[control].left;
-    manualright.innerHTML=manualtext[control].right;
-
-    if (control=='mouse' || control=='touch' || control=='key'){
-      manual.src='pics/html/'+control+'controls.jpg';
+    if (control=='touch'){
+      manual.src='pics/html/touchcontrols.jpg?v=e5036ac66b6c039d';
       manual.style.display='inherit';
+      inputtestvisual.style.display='none';
       setcontrols.style.display='none';
+      setgp.style.display='none';
+      manualcopy.style.display='flex';
     }
     else{
-      //SET, PRESS BUTTON, NAME
-      //INPUT FIELDS: UP, DOWN, LEFT, RIGHT, SHIELD, PAUSE
       manual.style.display='none';
-      setcontrols.style.display='inherit';
+      inputtestvisual.style.display='grid';
+      setcontrols.style.display=control=='gamepad' ? 'block' : 'none';
+      setgp.style.display=customGamepadSelected ? 'block' : 'none';
+      manualcopy.style.display=customGamepadSelected ? 'flex' : 'none';
     }
 }
 
 //Update loading bar
 function updateloading(n){
-      //document.getElementById("loading").innerHTML = 'Now Test';
-      //console.log(ntextures);
-      //console.log(nmusicloaded);
       n=ntextures+nmusicloaded;
       if (n<ntexmax+nmusicloadmax){
-        //console.log(n+'-'+(ntexmax+nmusicloadmax));
         document.getElementById("progress").style.width = ''+(100*(n||0)/((ntexmax+nmusicloadmax)||0))+'%';
       }
       else{
         document.getElementById("progress").style.width = '100%';
-        document.getElementById("loading").src = "pics/html/play.png";
-        document.getElementById("loading").onclick=function() {
-          if (document.getElementById('control').value=='gamepad' && gamepad_id<0)
-          {
-            document.getElementById('gamepad').innerHTML='No gamepad selected. Connect a gamepad or select a different input control type.';
-          }
-          else
-          {
-            unselect();
-            inputcontrol = document.getElementById('control').value;  
-            canvas[0].style.display = "block";
-            canvas[0].style.position = "fixed";
-            canvas[0].style.top = "0";
+        var playButton=document.getElementById("loading");
+        playButton.disabled=false;
+        playButton.setAttribute('aria-busy', 'false');
+        playButton.classList.add('is-ready');
+        playButton.textContent='PLAY';
+        playButton.onclick=function() {
+          playButton.disabled=true;
+          var selectedControl = document.getElementById('control');
+          unselect();
+          GamepadInputTest.stop();
+          inputcontrol = selectedControl.value;
+          canvas[0].style.display = "block";
+          canvas[0].style.position = "fixed";
+          canvas[0].style.top = "0";
+          canvas[0].style.cursor = "none";
+          fullscreen(canvas[0]);
 
-            fullscreen(canvas[0]); 
-
-            play=true;
-            done=1;
+          var replay=ReplaySystem.startRecording();
+          if (replay && ReplaySystem.replayUploadEnabled()){
+            beginAnonymousGameSession();
           }
+          play=true;
+          done=1;
         }
       }
     }
@@ -782,140 +1176,103 @@ function updateloading(n){
 
   </div>
     
-  <script id="fragShader" type="shader-code">
-		uniform sampler2D tex;//The main texture
-		uniform sampler2D norm;//The normal texture
-		uniform vec2 res;//Our screen dimensions
-		uniform vec4 light;//Our light source information
-	  varying vec2 vTextureCoord;
-		void main() {
-        vec2 pixel = vTextureCoord;
-        vec4 color = texture2D(tex,pixel);
-        vec4 normalVector = texture2D(norm,pixel);//We get the normal value of this pixel
-        vec2 lightPosition = light.xy;//We normalize the light source
+    <script src="code/vendor/jquery.js?v=ba6eda7945ab"></script>
+    <script src="code/vendor/stats.js?v=6d176e8b6438"></script>
+    <script src="code/vendor/pixi.js?v=28a00c450fd0"></script>
+    <script src="code/vendor/pixi-filters.js?v=05ba36173ada"></script>
+    <script src="code/system/fast-filters.js?v=82b48910c58e"></script>
+    <script src="code/system/heightmap-filter.js?v=b44a6622460f"></script>
+    <script src="code/vendor/pixi-spine.js?v=4fcc6e1e5bc4"></script>
+    <script src="code/vendor/pixi-projection.js?v=6015662343c9"></script>
+    <script src="code/vendor/graphics-extras.min.js?v=f049b3982a94"></script>
 
-        //We calculate the direction from the light to this pixel
-        vec3 LightVector = vec3(lightPosition.x - pixel.x,lightPosition.y - pixel.y,light.z);
-        
-        //By "up" direction of our normal map has the value (0.5,0.5,1.0) in terms of rgb
-        //So we offset by that amount
-        normalVector.x -= 0.5;
-        normalVector.y -= 0.5;
-        //We normalize our vectors to compute the direction
-        vec3 NormalVector = normalize(normalVector.xyz);
-        LightVector = normalize(LightVector);
+    <script src="code/vendor/howler.min.js?v=0febfd99e273"></script>
+    <script src="code/vendor/misc.js?v=44dd02af9f1e"></script>
+    <script src="code/vendor/Math2.js?v=552dec0d535e"></script>
 
-        // Compute the diffuse term for the Phong equation
-        float diffuse      = 1.0 * max(dot( NormalVector, LightVector ),0.0);
-  
-        //Toggle light system on or off
-        if(light.w == 0.0){
-           gl_FragColor = color;
-        } else {
-          gl_FragColor = color * diffuse;
-        }
+    <script src="code/system/initialize.js?v=62a57434c99d"></script>
+    <script src="code/system/globals.js?v=f9cdcecb8213"></script>
+    <script src="code/system/state.js?v=d773fba03ac2"></script>
+    <script src="code/system/entities.js?v=2d147de14cac"></script>
 
-		 }
-	</script>
-
-    <script src="code/vendor/ga.js"></script>
-    <script src="code/vendor/jquery.js"></script>
-    <script src="code/vendor/stats.js"></script>
-    <script src="code/vendor/pixi.js"></script>
-    <script src="code/vendor/pixi-filters.js"></script>
-    <script src="code/vendor/pixi-damian.js"></script>
-    <script src="code/vendor/pixi-spine.js"></script>
-    <script src="code/vendor/pixi-projection.js"></script>
-
-    <script src="code/vendor/howler.min.js"></script>
-    <script src="code/vendor/misc.js"></script>
-    <script src="code/vendor/Math2.js"></script>
-
-    <script src="code/system/initialize.js"></script>
-    <script src="code/system/globals.js"></script>
-
-    <script>if (!getCookie('user_id')){setCookie('user_id', generateString(20)); }
-  if (getCookie('user_id')){var user_id=getCookie('user_id'); }
-    if (getCookie('inputcontrol')){document.getElementById('control').value=getCookie('inputcontrol');}
-    if (getCookie('lowdetail')){document.getElementById('detail').value='low'; settings.shadow=false;settings.outline=false; }
-    else {settings.shadow=true;settings.outline=true; }
+    <script>if (getCookie('inputcontrol')==='gamepad'){
+      inputcontrol='gamepad';
+      document.getElementById('control').value='gamepad';
+    }
+    else{
+      inputcontrol='key';
+      document.getElementById('control').value='key';
+    }
+    settings.ntoenemy=5;
+    settings.shadow=true;
+    settings.outline=true;
     val();
-console.log(settings);
+
 </script>
-    <script src="env.js"></script>
-    <script src="code/system/mainloop.js"></script>
-    <script src="code/system/texture.js"></script>
-    <script src="code/system/sound.js"></script>
-    <script src="code/system/beat.js"></script>
-    <script src="code/system/filters.js"></script>
+    <script src="env.js?v=a87df15ba545"></script>
+    <script src="code/system/clock.js?v=d47a87d0e2eb"></script>
+    <script src="code/system/replay.js?v=3c17b0291449"></script>
+    <script src="code/system/mainloop.js?v=a1297443d75b"></script>
+    <script src="code/system/texture.js?v=c896b3a2f9a2"></script>
+    <script src="code/system/sound.js?v=ef79abaf9400"></script>
+    <script src="code/system/beat-colors.js?v=6707b25f2f7c"></script>
+    <script src="code/system/rhythm-data.js?v=feda973f5070"></script>
+    <script src="code/system/rhythm-engine.js?v=47662279b97b"></script>
+    <script src="code/system/beat.js?v=a4a9af97d5a1"></script>
+    <script src="code/system/filters.js?v=5ea68da29630"></script>
+    <script src="code/system/menu.js?v=c86f07e3c788"></script>
 
-    <script src="code/ai/general.js"></script>
-		<script src="code/ai/light.js"></script>
-		<script src="code/ai/plains.js"></script>
-    <script src="code/ai/limit.js"></script>
-    <script src="code/ai/timing.js"></script>
-    <script src="code/ai/collision.js"></script>
-    <script src="code/ai/hero.js"></script>
-    <script src="code/ai/movement.js"></script>
-    <script src="code/ai/shooting.js"></script>
-    <script src="code/ai/update.js"></script>
-    <script src="code/ai/explosion.js"></script>
-    <script src="code/ai/zoom.js"></script>
-    <script src="code/ai/debug.js"></script>
-    <script src="code/ai/beat.js"></script>
-    <script src="code/ai/shader.js"></script>
+    <script src="code/ai/general.js?v=31d4bbf7e4f3"></script>
+		<script src="code/ai/light.js?v=672375358c3f"></script>
+		<script src="code/ai/plains.js?v=e0dff5816756"></script>
+    <script src="code/ai/limit.js?v=15f955d6eb00"></script>
+    <script src="code/ai/timing.js?v=3c6645794905"></script>
+    <script src="code/system/collision.js?v=ce771292c274"></script>
+    <script src="code/sprites/hero-behaviors.js?v=a76c2f7f84db"></script>
+    <script src="code/ai/movement.js?v=2f73f2707fb1"></script>
+    <script src="code/ai/shot-patterns.js?v=1ea2c2f144ba"></script>
+    <script src="code/ai/shooting.js?v=f93d559ddcf1"></script>
+    <script src="code/ai/explosion.js?v=ec9e3e05ea7e"></script>
+    <script src="code/ai/zoom.js?v=1cdb5315a6ae"></script>
+    <script src="code/sprites/projectile-behaviors.js?v=1c1c6921aaea"></script>
+    <script src="code/ai/shader.js?v=7c89879fe47c"></script>
 
-		<script src="code/sprites/particles.js"></script>
-    <script src="code/sprites/general.js"></script>
-    <script src="code/sprites/sprites.js"></script>
-    <script src="code/sprites/extras.js"></script>
-    <script src="code/sprites/hero.js"></script>
-    <script src="code/sprites/text.js"></script>
-    <script src="code/sprites/picture.js"></script>
-    <script src="code/sprites/stage-1.js"></script>
-    <script src="code/sprites/stage1.js"></script>
-    <script src="code/sprites/stage2.js"></script>
-    <script src="code/sprites/stage3.js"></script>
-    <script src="code/sprites/stage4.js"></script>
-    <script src="code/sprites/stage5.js"></script>
+		<script src="code/sprites/particles.js?v=fbfdcac2d3d8"></script>
+    <script src="code/sprites/hud-behaviors.js?v=a524c8f20cbe"></script>
+    <script src="code/sprites/general.js?v=41ba4da7075b"></script>
+    <script src="code/sprites/sprites.js?v=929287ad5d21"></script>
+    <script src="code/sprites/extras.js?v=551e401f14b9"></script>
+    <script src="code/sprites/hero.js?v=823f42566dbb"></script>
+    <script src="code/sprites/text.js?v=e9d4c4f14fd7"></script>
+    <script src="code/sprites/picture.js?v=6c221a6ec4d0"></script>
+    <script src="code/sprites/stage-1.js?v=e3b0c44298fc"></script>
+    <script src="code/sprites/stage1.js?v=2623d56ea175"></script>
+    
+    
+    
+    
+    <script src="code/sprites/enemies.js?v=7f8ad4809049"></script>
 
-    <script src="code/stages/stage-1.js"></script>
-    <script src="code/stages/stage0.js"></script>
-    <script src="code/stages/stage1.js"></script>
-    <script src="code/stages/stage2.js"></script>
-    <script src="code/stages/stage3.js"></script>
-    <script src="code/stages/stage4.js"></script>
-    <script src="code/stages/stage5.js"></script>
-    <script src="code/stages/gameover.js"></script>
-    <script src="code/stages/stage.js"></script>
-    <script src="code/stages/functions.js"></script>
+    <script src="code/stages/stage-1.js?v=f77380fdac4d"></script>
+    <script src="code/stages/stage0-menu.js?v=914f1afff8c2"></script>
+    <script src="code/stages/stage0.js?v=2942e8195a3a"></script>
+    <script src="code/stages/stage1.js?v=b38bc16d142b"></script>
+    
+    
+    
+    
+    <script src="code/stages/gameover.js?v=d71352623417"></script>
+    <script src="code/stages/demo-stubs.js?v=4f1dd5b1b12c"></script>
+    <script src="code/stages/registry.js?v=df19d0f94594"></script>
+    <script src="code/stages/stage.js?v=f9b804682d55"></script>
+    <script src="code/stages/functions.js?v=80a46dd36d1d"></script>
+    <script src="code/system/diagnostics.js?v=d0480269cb37"></script>
     <script>
       if (settings.version !== 'demo'){
         const demoversion = document.getElementById('demoversion')
-        demoversion.style.display = 'none';
-
-        var s = document.createElement("script");
-        s.type = "text/javascript";
-        s.src = "code/stages/stage5.js";
-        document.head.appendChild(s);
-
-        var s = document.createElement("script");
-        s.type = "text/javascript";
-        s.src = "code/stages/stage2.js";
-        document.head.appendChild(s);
-        
-        var s = document.createElement("script");
-        s.type = "text/javascript";
-        s.src = "code/stages/stage3.js";
-        document.head.appendChild(s);
-
-        var s = document.createElement("script");
-        s.type = "text/javascript";
-        s.src = "code/stages/stage4.js";
-        document.head.appendChild(s);
+        if (demoversion){demoversion.style.display = 'none';}
       }
 
-    log2db('started game');
     if (settings.version !== 'full' && settings.plattform == 'web'){
       const available = document.getElementById('available')
       available.style.display = 'block';

@@ -1,4 +1,11 @@
 
+function startLabelExitf(speedX, speedY)
+{
+    this.speedX=speedX;
+    this.speedY=speedY;
+    this.phase++;
+}
+
 //Adds act score to total score -- if boss: multiply by timer
 set.centertext=function(text='', active=100, wait=100, options={}){
 var sprite =  new PIXI.BitmapText(text, { 
@@ -66,7 +73,7 @@ set.oneup= function(string='', options={}){
 
     sprite.ai = [[]];
 
-    sprite.ai[0].push(ai.zoom.bind(sprite, 1.06, 2.5));
+    sprite.ai[0].push(ai.zoomAndFade.bind(sprite, 1.06, 2.5));
 
 }
 
@@ -117,7 +124,7 @@ set.laserrecharged= function(){
         this.x=herox;
         this.y=heroy;
     }.bind(sprite));
-    sprite.ai[0].push(ai.zoom.bind(sprite, 0.9, 0.2));
+    sprite.ai[0].push(ai.zoomAndFade.bind(sprite, 0.9, 0.2));
 }
 
 set.bonustext = function (active=0, boss=false)
@@ -185,8 +192,8 @@ set.bonustext = function (active=0, boss=false)
         sprite.ai[0].push(function(){
             this.text='';
             this.text+='\nBOSS:  '+gstringformat(Math.round(score));
-            this.text+='\nTIME:  x'+gstringformat(''+Math.round(100*scoretimer/60)/100);
-            this.text+='\nACT:   '+gstringformat(''+Math.round(score*scoretimer/60));
+            this.text+='\nTIME:  x'+gstringformat(''+Math.round(scoretimer/60));
+            this.text+='\nACT:   '+gstringformat(''+Math.round(score*Math.round(scoretimer/60)));
             this.text+='\nTOTAL: '+gstringformat(Math.round(scoretotal));
         }.bind(sprite));
     }
@@ -230,6 +237,9 @@ set.bonustext = function (active=0, boss=false)
             //saving-1
             log2db('act cleared');
             actcount++;
+            if (typeof ReplaySystem!=="undefined"){
+                ReplaySystem.markUploadEvent("level-cleared");
+            }
             this.phase++;
         }
     }.bind(sprite));
@@ -295,7 +305,7 @@ set.bonustext = function (active=0, boss=false)
             framesprite.delete=true;
 
             if (remember.scoreattack){
-                
+                clearAnonymousGameSession();
                 stagecount=0;
                 actcount=1;
                 scene=1;
@@ -360,7 +370,6 @@ function creadytext()
     });
 
     if (inputcontrol == 'key' || inputcontrol == 'gamepad'){sprite.text+='\n\n     Tries: '+gstringformat(trystock)+'\n     Score: '+gstringformat(scoretotal)+'\n     RECORD:'+gstringformat(highscore)+'\n\n  PRESS SHIELD TO START';}
-    else if (inputcontrol == 'mouse'){sprite.text+='\n\n  Tries:'+gstringformat(trystock)+'\n  Score:'+gstringformat(scoretotal)+'\n     RECORD:'+gstringformat(highscore)+'\n\n CLICK TO START';}
     else if (inputcontrol == 'touch'){sprite.text+='\n\n       Tries:'+gstringformat(trystock)+'\n       Score:'+gstringformat(scoretotal)+'\n     RECORD:'+gstringformat(highscore)+'\n\n  TOUCH THE SCREEN TO START';}
     else {sprite.text+='\n\n     Tries:'+gstringformat(trystock)+'\n     Score:'+gstringformat(scoretotal)+'\n     RECORD:'+gstringformat(highscore)+'\n\n';}
 
@@ -433,7 +442,7 @@ function ctutorialtext()
         this.background.highlight=[];
         if (inputcontrol=='key')
         { 
-            buffer=Math.floor((max(this.goals[0], 50)+max(this.goals[1], 50)+max(this.goals[2], 50)+max(this.goals[3], 50))/2);
+            var buffer=Math.floor((max(this.goals[0], 50)+max(this.goals[1], 50)+max(this.goals[2], 50)+max(this.goals[3], 50))/2);
             this.text='MOVE IN EACH DIRECTION \nPRESS LEFT, RIGHT, UP AND DOWN';
             
             if (up){this.goals[0]++;}
@@ -469,15 +478,6 @@ function ctutorialtext()
                 ticks=0;
             }
         }
-        else if (inputcontrol == 'mouse'){
-            this.text='MOVE WITH THE CURSOR\nMOVE TO THE LEFT SIDE';
-            if (herox<200){
-                this.goals=[[0],[0],[0],[0]];
-                remember.control=1;
-                this.phase++;
-                ticks=0;
-            }
-        }
     }.bind(sprite));
 
     sprite.ai[3].push(function (){
@@ -487,9 +487,6 @@ function ctutorialtext()
         }
         else if (inputcontrol == 'touch'){
             this.text='TOUCH THE PLAYER TO USE YOUR SHIELD';
-        }
-        else if (inputcontrol == 'mouse'){
-            this.text='CLICK TO USE YOUR SHIELD';
         }
         else if (inputcontrol == 'gamepad'){
             this.text='PRESS THE SHIELD BUTTON';
@@ -510,7 +507,7 @@ function ctutorialtext()
             this.phase++; 
             ticks=0;
             remember.wait=0;
-            set.ghost(0, 0, 400, 300, {full: true, layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 0, type: 0, x: 400, y: 300, full: true, layer: 'front'});
         }
     }.bind(sprite));
     
@@ -529,7 +526,7 @@ function ctutorialtext()
             ticks=0;
             remember.wait=-50;
             score=0;
-            set.ghost(0, 1, 1520, 300, {full: true, layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 0, type: 1, x: 1520, y: 300, full: true, layer: 'front'});
         }
     }.bind(sprite));
 
@@ -548,7 +545,7 @@ function ctutorialtext()
             ticks=0;
             remember.wait=-50;
             score=0;
-            set.ghost(0, 0, 500, 300, {full: true, layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 0, type: 0, x: 500, y: 300, full: true, layer: 'front'});
         }
     }.bind(sprite));
 
@@ -567,7 +564,7 @@ function ctutorialtext()
             ticks=0;
             remember.wait=-50;
             score=0;
-            set.ghost(0, 1, 1520, 300, {full: true, layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 0, type: 1, x: 1520, y: 300, full: true, layer: 'front'});
         }
     }.bind(sprite));
 
@@ -586,9 +583,9 @@ function ctutorialtext()
             ticks=0;
             remember.wait=-50;
             score=0;
-            set.ghost(0, 0, 500, 300, {layer: 'front'});
-            set.ghost(0, 1, 1400, 300, {layer: 'front'});
-            //set.ghost(0, 0, 1500, 200, {layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 0, type: 0, x: 500, y: 300, layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 0, type: 1, x: 1400, y: 300, layer: 'front'});
+            //spawnEnemy('tutorialGhost', {active: 0, type: 0, x: 1500, y: 200, layer: 'front'});
         }
     }.bind(sprite));
 
@@ -599,7 +596,7 @@ function ctutorialtext()
             this.phase++;
             tutorialgoals=0;
             ticks=0;
-            set.ghost(0, 1, 500, 200, {layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 0, type: 1, x: 500, y: 200, layer: 'front'});
         }
     }.bind(sprite));
 
@@ -611,8 +608,8 @@ function ctutorialtext()
             this.phase++;
             tutorialgoals=0;
             ticks=0;
-            set.ghost(0, 0, 500, 300, {layer: 'front'});
-            set.ghost(0, 1, 1400, 300, {layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 0, type: 0, x: 500, y: 300, layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 0, type: 1, x: 1400, y: 300, layer: 'front'});
         }
     }.bind(sprite));
 
@@ -624,8 +621,8 @@ function ctutorialtext()
             this.phase++;
             tutorialgoals=0;
             ticks=0;
-            set.ghost(100, 0, 500, 200, {layer: 'front'});
-            set.ghost(100, 1, 1400, 200, {layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 100, type: 0, x: 500, y: 200, layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 100, type: 1, x: 1400, y: 200, layer: 'front'});
         }
     }.bind(sprite));
 
@@ -637,8 +634,8 @@ function ctutorialtext()
             this.phase++;
             tutorialgoals=0;
             ticks=0;
-            set.ghost(100, 2, 400, 200, {layer: 'front'});
-            set.ghost(100, 3, 1500, 200, {layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 100, type: 2, x: 400, y: 200, layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 100, type: 3, x: 1500, y: 200, layer: 'front'});
             log2db('tutorial half');
         }
         }.bind(sprite));
@@ -646,14 +643,14 @@ function ctutorialtext()
 
     sprite.ai[13].push(function (){
         this.background.highlight=[2,3];
-        this.text='USE FLASHING BULLETS TO \nDESTROY NON-FLASHING BULLETS';
+        this.text='STAY AT THE BOTTOM OF THE SCREEN \nAND USE FLASHING BULLETS TO \nDESTROY NON-FLASHING BULLETS';
         if (heroy<900){heroshift.y+=10;}
         if (tutorialgoals>=2){
             this.phase++;
             tutorialgoals=0;
             ticks=0;
-            set.ghost(100, 2, 500, 200, {layer: 'front'});
-            set.ghost(100, 3, 1400, 200, {layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 100, type: 2, x: 500, y: 200, layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 100, type: 3, x: 1400, y: 200, layer: 'front'});
         }
     }.bind(sprite));
 
@@ -665,7 +662,7 @@ function ctutorialtext()
             this.phase=18;
             tutorialgoals=0;
             ticks=0;
-            //set.ghost(0, 4, 500, 400, {layer: 'front'});
+            //spawnEnemy('tutorialGhost', {active: 0, type: 4, x: 500, y: 400, layer: 'front'});
         }
     }.bind(sprite));
 
@@ -675,7 +672,7 @@ function ctutorialtext()
             this.phase++;
             tutorialgoals=0;
             ticks=0;
-            set.ghost(0, 4, 1600, 300, {layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 0, type: 4, x: 1600, y: 300, layer: 'front'});
         }
     }.bind(sprite));
 
@@ -685,16 +682,16 @@ function ctutorialtext()
             this.phase++;
             tutorialgoals=0;
             ticks=0;
-            set.ghost(0, 0, -0, 200, {speedX: 1, layer: 'front'});
-            set.ghost(100, 1, 1900, 300, {speedX: -1, layer: 'front'});
-            set.ghost(700, 0, -0, 200, {speedX: 1, layer: 'front'});
-            set.ghost(800, 1, 1900, 300, {speedX: -1, layer: 'front'});
-            set.ghost(1300, 0, -0, 200, {speedX: 1, layer: 'front'});
-            set.ghost(1400, 1, 1900, 300, {speedX: -1, layer: 'front'});
-            set.ghost(1900, 0, -0, 200, {speedX: 1, layer: 'front'});
-            set.ghost(2000, 1, 1900, 300, {speedX: -1, layer: 'front'});
-            set.ghost(2400, 0, -0, 200, {speedX: 1, layer: 'front'});
-            set.ghost(2400, 1, 1900, 300, {speedX: -1, layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 0, type: 0, x: -0, y: 200, speedX: 1, layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 100, type: 1, x: 1900, y: 300, speedX: -1, layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 700, type: 0, x: -0, y: 200, speedX: 1, layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 800, type: 1, x: 1900, y: 300, speedX: -1, layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 1300, type: 0, x: -0, y: 200, speedX: 1, layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 1400, type: 1, x: 1900, y: 300, speedX: -1, layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 1900, type: 0, x: -0, y: 200, speedX: 1, layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 2000, type: 1, x: 1900, y: 300, speedX: -1, layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 2400, type: 0, x: -0, y: 200, speedX: 1, layer: 'front'});
+            spawnEnemy('tutorialGhost', {active: 2400, type: 1, x: 1900, y: 300, speedX: -1, layer: 'front'});
         }
     }.bind(sprite));
 
@@ -734,202 +731,4 @@ function ctutorialtext()
     sprites.push(sprite);
     frontlayer.addChild(sprite);
     frontlayer.addChild(sprite.subtext);
-}
-
-set.menu = function () {
-
-
-    var sprite = new PIXI.BitmapText('', { 
-        fontName: "inline",
-        anchor: (0.5,0.5),
-        textAlign: 'right',
-        fontSize: 100,
-    });
-
-    sprite.pointer=0;
-    sprite.menu1=[
-            {'name': 'START STAGE', 'values':[1,2,3,4,5], 'function': function() {}},
-            {'name': 'INFINITE TRIES ', 'values':['OFF', 'ON'], 'function': function() {}},
-            {'name': 'INVINCIBLE', 'values':['OFF', 'ON'], 'function': function() {}},
-            {'name': 'NO BULLETS', 'values':['OFF', 'ON'], 'function': function() {}},
-            {'name': 'HARD MODE', 'values':['OFF', 'ON'], 'function': function() {}},
-            {'name': 'EXIT TO MAIN MENU', 'function': function() {}},
-    ];
-
-sprite.menu=sprite.menu1;
-
-    sprite.alpha=0;
-    sprite.phase=1;
-    sprite.active=active;
-    sprite.anchor.x=0.5;
-    sprite.anchor.y=0;
-    sprite.x=960;
-    sprite.y=100;
-    sprite.wait=30;
-    sprite.ai = [[],[],[],[]];
-
-    sprite.ai[1].push(fadein.bind(sprite, 0.01, 1, 1));
-    sprite.buffer=0;
-    sprite.ai[2].push(function (){
-        this.buffer++;
-        if (this.buffer>600){
-            this.phase++;
-        }
-        if (left+right+up+down+shoot+laser>=1){
-            this.buffer=0;
-        }
-    }.bind(sprite));
-
-    sprite.ai[0].push(function (){
-        this.text='';
-        for (i=0; i < sprite.menu.length; i++){
-            if (this.pointer==i){
-                this.text+='->'
-            }
-            else{
-                this.text+='  '
-            }
-            this.text+=this.menu[i].name
-            if (typeof(this.menu[i].pointer)=='number'){
-                this.text+=': '+this.menu[i].values[this.menu[i].pointer];
-            }
-            else if (typeof(this.menu[i].value)=='number' && this.menu[i].wait==false)
-            {
-                this.text+=': '+this.menu[i].value;
-            }
-            else if (typeof(this.menu[i].active)=='string' && this.menu[i].wait==true){
-                this.text+=': '+this.menu[i].active;
-            }
-            this.text+='\n';
-        }
-        //this.text='New Game\nContinue\nControls\nOptions'
-    }.bind(sprite));
-    sprite.ai[0].push(function (){
-        this.wait--;
-        if (down && this.wait<=0){this.pointer++; this.wait=10;}
-        if (up && this.wait<=0){this.pointer--; this.wait=10;}
-        if (this.pointer < 0){
-            this.pointer=this.menu.length-1;
-        }
-        if (this.pointer >= this.menu.length){
-            this.pointer= 0;
-        }
-        
-        if (typeof(this.menu[this.pointer].pointer)=='number'){
-            if (right && this.wait<=0){this.menu[this.pointer].pointer++; this.wait=10;}
-            if (this.menu[this.pointer].pointer >= this.menu[this.pointer].values.length){
-                this.menu[this.pointer].pointer=0
-            }
-            if (left && this.wait<=0){this.menu[this.pointer].pointer--; this.wait=10;}
-            if (this.menu[this.pointer].pointer < 0){
-                this.menu[this.pointer].pointer=this.menu[this.pointer].values.length-1
-            }
-            this.menu[this.pointer].function(this.menu[this.pointer].values[this.menu[this.pointer].pointer]);
-        }
-        else{
-            if (shoot && this.wait<=0){this.menu[this.pointer].function(); this.wait=10;}
-        }
-        
-    
-    }.bind(sprite));
-
-    sprite.ai[3].push(function(){
-        this.alpha-=0.01;
-        if (this.alpha<=0)
-        {
-            this.delete=true;   
-            scene--;
-        }
-    }.bind(sprite));
-
-    sprites.push(sprite);
-    frontlayer.addChild(sprite);
-    
-    function getpadkey()
-    {
-        gamepads = navigator.getGamepads();
-        if (gamepads.length-1>=gamepadindex && gamepads[gamepadindex]!==null){
-        var returnvalue = -1;
-        if (typeof(gamepads[gamepadindex])=='object'){
-            for (i=0; i<gamepads[gamepadindex].buttons.length; i++){
-                if (gamepads[gamepadindex].buttons[i].touched==true){
-                    returnvalue=i;
-                }
-            }
-        }
-        return returnvalue;
-    }
-    }
-    
-    function setpadkey(key){
-        var counter=100;
-        var x = -1;
-        this.wait=true;
-        while (x<0 && counter-->0){
-            sleep(50);
-            x=getpadkey();
-            
-        }
-        if (x>=0){
-            pad[key]=x;
-            this.wait=false;
-            this.value=x;
-        }
-        else{
-            this.value=0;
-            this.wait=false;
-        }
-    }
-}
-
-set.laserstar = function (index, active=0)
-{
-   
-    var sprite=setsprite(
-    new PIXI.Sprite(tex.p2),
-    {anchor: true, active: active, x: 400, y: 300});
-    //sprite.blendMode=PIXI.BLEND_MODES.ADD
-    sprite.alpha=0.4;
-    sprite.index=index;
-    sprite.rotate=0;
-    //sprite.scale.y=10;
-    //sprite.scale.x=10;
-    sprite.ai=[[]];
-    sprite.ai[0].push(function (){
-        this.rotation+=0.1;
-        this.offset+=0.01;
-        if (laserstock>=1){
-            this.rotate+=0.3;
-        }
-        else{
-            this.rotate+=0.03;
-        }
-        if (this.rotate>=2.0){
-            this.rotate=0;
-        }
-        this.x=herox+240*Math.sin((index+this.rotate)*0.02*pi); 
-        this.y=heroy-240*Math.cos((index+this.rotate)*0.02*pi);
-        if (laserstock*100<this.index){
-            this.tint=rgbToHex(0,0,0);
-        }
-        else {
-            if (lifestock >=3){
-                this.tint=rgbToHex(255,255,255);
-                this.alpha=0.3;
-            }
-            else if (lifestock >=2){
-                this.tint=rgbToHex(255,255,0);
-                this.alpha=0.4;
-            }
-            else if (lifestock >=1){
-                this.tint=rgbToHex(255,100,0);
-                this.alpha=0.45;
-            }
-            else {
-                this.tint=rgbToHex(255,0,0);
-                this.alpha=0.5;
-            }
-                
-        }
-    }.bind(sprite));
 }

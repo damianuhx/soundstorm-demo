@@ -1,6 +1,40 @@
+function attachHeroShadowEffects(sprite, blur)
+{
+    var effects=GameEffects.stack(sprite);
+    effects.add("outline", get.outline());
+    var shadowFilter=effects.add("shadow", get.shadow());
+    shadowFilter.offset={x: -100, y: -100};
+    if (blur!==undefined){
+        shadowFilter.blur=blur;
+    }
+    return shadowFilter;
+}
 
+function attachHeroGlowEffects(sprite)
+{
+    var effects=GameEffects.stack(sprite);
+    effects.add("outline", get.outline());
+    var glowFilter=effects.add(
+        "glow",
+        new PIXI.filters.GlowFilter({outerStrength: 1, distance: 30})
+    );
+    glowFilter.offset={x: -100, y: -100};
+    glowFilter.blur=8;
+    return glowFilter;
+}
 
-function create(active, type, x, y, options) //layer,
+function moveNearGroundWithBackgroundf()
+{
+    this.position.x += this.speedX * difftime * bgspeedx / 16.66666;
+    this.position.y += this.speedY * difftime * bgspeedy / 16.66666;
+
+    if (bgspeedy == 0)
+    {
+        this.phase++;
+    }
+}
+
+function createLegacySprite(active, type, x, y, options) //layer,
 {
     //
     
@@ -62,7 +96,11 @@ function create(active, type, x, y, options) //layer,
         sprite.ai[0].push(breakf.bind(sprite));
         sprite.ai[0].push(offborderf.bind(sprite, 10));
         sprite.ai[0].push(rotatef.bind(sprite, rotspeed));
-        sprite.ai[0].push(ai.zoom.bind(sprite, options.zoomX || 1, options.zoomY || 1));
+        sprite.ai[0].push(ai.zoomAndFade.bind(
+            sprite,
+            options.zoomX || 1,
+            options.zoomY || 1
+        ));
 
         layer='sprite';
 
@@ -80,6 +118,10 @@ function create(active, type, x, y, options) //layer,
     });
     //score=1234525252;
     sprite.ai = [[]];
+    sprite.ai[0].push(function(){
+        this.fontSize=58 + beat[0]*6;
+        this.letterSpacing = - beat[0]*6;
+    }.bind(sprite)); 
     sprite.alpha=options.alpha || 0.8;
     layer='front';
     sprite.ai[0].push(varupdate.bind(sprite, options.variable || 'score'));                     
@@ -108,9 +150,13 @@ function create(active, type, x, y, options) //layer,
         }
         //var sprite = new PIXI.Sprite(tHero);
         sprite.alpha=options.alpha || 0.8;
-        sprite.scale.x=0.35;
-        sprite.scale.y=0.35;
         sprite.ai = [[]];
+        sprite.ai[0].push(function(){
+            this.scale.x=0.35 + beat[0]*0.035;
+            this.scale.y=0.35 + beat[0]*0.035;
+        }.bind(sprite)); 
+        
+        
         layer='front';
     }
     if (type=='lasersprite'){
@@ -121,15 +167,27 @@ function create(active, type, x, y, options) //layer,
         sprite.ai = [[]];
         layer='front';
     }
-    /*if (type=='healthsprite'){
-        var sprite = new PIXI.Sprite(tLife);
+if (type=='preflash2')
+    {
+        layer='backfront';
+        layer='backfront';
+        var sprite = new PIXI.Graphics();
         sprite.alpha=options.alpha || 0.8;
-        sprite.scale.x=0.5;
-        sprite.scale.y=0.5;
+        
         sprite.ai = [[]];
-        layer='front';
-    }*/
-
+        sprite.ai[0].push(varupdate.bind(sprite, 'laser')); 
+        //var sprite = new Circle(100, 100, 50);
+        /*var sprite = new PIXI.Graphics();
+        sprite.alpha=options.alpha || 0.8;
+        
+        sprite.ai = [[]];
+        sprite.beginFill(0xA7FFF9, 0.8);
+            sprite.drawRect(3, -3, 14, (-194*(100)));
+            sprite.endFill();
+            sprite.beginFill(0xAAAAAA, 0.3);
+            sprite.drawRect(0, 0, 20, -200);
+            sprite.endFill();     */              
+    }
     if (type=='laserbars')
     {
         layer='backfront';
@@ -165,7 +223,7 @@ function create(active, type, x, y, options) //layer,
         else if (options.index==2){
             tint=rgbToHex(255, 255, 0);
         }
-        alpha= 0.1;
+        var alpha= 0.1;
         
         sprite.ai = [[]];
         sprite.ai[0].push(varupdate.bind(sprite, 'life'));                     
@@ -216,7 +274,7 @@ function create(active, type, x, y, options) //layer,
             var sprite = new PIXI.Sprite();
             sprite.ai = [[]];
             circle=200/Math.sqrt(difficulty.chain);
-            sprite.ai[0].push(autodestroy.bind(sprite));
+            sprite.ai[0].push(removef.bind(sprite));
         }
         else{
             remember.shieldframe=true;
@@ -259,6 +317,11 @@ function create(active, type, x, y, options) //layer,
             remember.shield=1;
         }
 
+        sprite.beatParticleChain = options.beatParticleChain || (
+            typeof set.createBeatParticleChain === 'function'
+                ? set.createBeatParticleChain(playing)
+                : null
+        );
 
         sprite.ai[0].push(laserhitf.bind(sprite));
         layer='front';
@@ -281,7 +344,7 @@ function create(active, type, x, y, options) //layer,
         sprite.scale.x=misc5;
         sprite.scale.y=misc5;
 
-        if (subtype==tGrassborder){
+        if (typeof(tGrassborder)!=='undefined' && subtype==tGrassborder){
             layer='backlayer';
             sprite.scale.x*=2;
             //sprite.scale.y/=2;
@@ -304,7 +367,7 @@ function create(active, type, x, y, options) //layer,
         sprite.ai[2].push(waitf.bind(sprite, misc2));
         sprite.ai[3].push(fadein.bind(sprite, -1/misc3, 1, true));
 
-        sprite.ai[4].push(autodestroy.bind(sprite));
+        sprite.ai[4].push(removef.bind(sprite));
     }
 
     else if (type=='hero')
@@ -320,14 +383,7 @@ function create(active, type, x, y, options) //layer,
         }
         if (stagecount==1){
             var sprite2 = new PIXI.spine.Spine(tex.butterfly);
-            
-        sprite.filters=[
-            //new PIXI.filters.OutlineFilter(2, 0x222222),
-            get.outline(),
-            get.shadow(),
-        ];
-        sprite.filters[1].offset={x: -100, y:-100};
-        sprite.filters[1].blur=8;
+            var heroSecondaryFilter=attachHeroShadowEffects(sprite, 8);
 
             sprite2.state.addAnimation(0, 'animation', true, 0);
             //var sprite2 = new PIXI.projection.Sprite2d(new PIXI.spine.Spine(tex.butterfly));
@@ -335,13 +391,7 @@ function create(active, type, x, y, options) //layer,
         else if (stagecount==2)
         {
                 var sprite2 = new PIXI.spine.Spine(tex.hero2);
-                
-                sprite.filters=[
-                    get.outline(),
-                    get.shadow(),
-                    //new PIXI.filters.DropShadowFilter({shadowOnly: false})
-                ];
-                sprite.filters[1].offset={x: -100, y:-100};
+                var heroSecondaryFilter=attachHeroShadowEffects(sprite);
 
                 sprite2.animation = sprite2.state.addAnimation(0, 'turn', true, 0);
                 sprite2.animation.timeScale=0; //stop animation, sets speed to animation 0=0%, 1=100%, use to make animation synchron
@@ -353,13 +403,7 @@ function create(active, type, x, y, options) //layer,
         {
             //var sprite2 = new PIXI.projection.Sprite2d(tHero4);
             var sprite2 = new PIXI.spine.Spine(tex.hero4);
-            
-            sprite.filters=[
-                get.outline(),
-                get.shadow(),
-            ];
-            sprite.filters[1].offset={x: -100, y:-100};
-            sprite.filters[1].blur=8;
+            var heroSecondaryFilter=attachHeroShadowEffects(sprite, 8);
 
             sprite2.state.addAnimation(0, 'animation', true, 0);
 
@@ -367,25 +411,13 @@ function create(active, type, x, y, options) //layer,
         else if (stagecount==4)
         {
             var sprite2 = new PIXI.spine.Spine(tex.hero3);
-            
-            sprite.filters=[
-                get.outline(),
-                get.shadow(),
-            ];
-            sprite.filters[1].offset={x: -100, y:-100};
-            sprite.filters[1].blur=8;
+            var heroSecondaryFilter=attachHeroShadowEffects(sprite, 8);
 
             sprite2.state.addAnimation(0, 'animation', true, 0);
         }
         else{
             var sprite2 = new PIXI.spine.Spine(tex.tuthero);
-            
-        sprite.filters=[
-            get.outline(),
-            new PIXI.filters.GlowFilter({outerStrength: 1, distance: 30})
-        ];
-        sprite.filters[1].offset={x: -100, y:-100};
-        sprite.filters[1].blur=8;
+            var heroSecondaryFilter=attachHeroGlowEffects(sprite);
 
             sprite2.state.addAnimation(0, 'animation', true, 0);
         }
@@ -401,9 +433,9 @@ function create(active, type, x, y, options) //layer,
         
         if (stagecount==2)
         {
-            sprite.ai[1].push(ai.shadow.bind(sprite, sprite.filters[1]));
+            sprite.ai[1].push(ai.shadow.bind(sprite, heroSecondaryFilter));
             //particle effect afterburner
-            sprite.ai[0].push(function () {
+            sprite.ai[1].push(function () {
                 create(0, 'picture', this.x, this.y+45, {
                 tint: rgbToHex(
                     Math.random()*100+100,
@@ -445,7 +477,7 @@ function create(active, type, x, y, options) //layer,
             }.bind(sprite2));
         }
         sprite.controlcounter=0;
-        sprite.ai[1].push(ai.shadow.bind(sprite, sprite.filters[1]));
+        sprite.ai[1].push(ai.shadow.bind(sprite, heroSecondaryFilter));
         sprite.ai[1].push(herodief.bind(sprite));
         sprite.ai[1].push(heromovef.bind(sprite, options.control));
         sprite.ai[1].push(movef.bind(sprite));
@@ -459,7 +491,7 @@ function create(active, type, x, y, options) //layer,
         }
         
         if (stagecount==1){
-            sprite.ai[1].push(ai.shadow.bind(sprite, sprite.filters[1]));
+            sprite.ai[1].push(ai.shadow.bind(sprite, heroSecondaryFilter));
         }
         
         
@@ -480,7 +512,7 @@ function create(active, type, x, y, options) //layer,
         tint=rgbToHex(options.r || 180, options.g || 180, options.b || 180);
 
         sprite.ai = [[]];
-        sprite.ai[0].push(scrollf.bind(sprite, 0));
+        sprite.ai[0].push(scrollGrassTexturef.bind(sprite, 0));
         sprite.ai[0].push(ai.beatadjust.bind(sprite, globalfilters.adjust));
 
         x=0;
@@ -490,7 +522,7 @@ function create(active, type, x, y, options) //layer,
 
 
     if (type=='b_grass'){
-        layer='backlayer';
+        layer='behindbacklayer';
         var buffer = Math.random();
         if (buffer<0.4)
         {
@@ -508,28 +540,10 @@ function create(active, type, x, y, options) //layer,
         sprite.ai = [[]];
         sprite.ai[0].push(movef.bind(sprite));
         sprite.ogscale={x: 1, y: 1};
-        sprite.ai[0].push(squeezef.bind(sprite, 0.005));
+        sprite.ai[0].push(squeezeGrassf.bind(sprite, 0.005));
         sprite.ai[0].push(offborderf.bind(sprite));
     }
 
-
-
-    /*if (type=='b_forestground'){
-        layer='behindbackground';
-        var sprite = new PIXI.TilingSprite(tForestground, 1920, 1080);
-        phase=1;
-
-        sprite.c1=0;
-
-        sprite.ai = [[], [], [], [], []];
-        sprite.ai[1].push(syncscrollf.bind(sprite, 20, 2837, -1, 'tilePosition.y', 0, 0));
-        sprite.ai[1].push(scenephasechangef.bind(sprite, 17, 2));
-
-        sprite.ai[2].push(syncscrollf.bind(sprite, 30, 2837, -2, 'tilePosition.y', -1701, 1));
-
-        x=0;
-        y=0;
-    }*/
 
     if (type=='b_space'){
         layer='behindbackground';
@@ -699,229 +713,23 @@ function create(active, type, x, y, options) //layer,
         sprite.ai[2].push(backgroundzoomf.bind(sprite, 0.005, 1));
         //sprite.ai[2].push(shiftf.bind(sprite, -0.25, 0.5));
         //sprite.ai[1].push(movef.bind(sprite));
-        sprite.ai[1].push(timedmovef.bind(sprite));
+        sprite.ai[1].push(moveNearGroundWithBackgroundf.bind(sprite));
         //sprite.ai[1].push(waitf.bind(sprite, 540));
         //sprite.ai[0].push(scrollf.bind(sprite, 1));
     }
-
-    if (type=='f_mushroom'){
-        offsetX= 300;
-        offsetY= -50;
-        layer='background';
-        var sprite = new PIXI.Sprite(tMushroom);
-        phase=1;
-        sprite.scale.x=0.333;
-        sprite.scale.y=0.333;
-        sprite.size=0.333;
-        sprite.c1=0;
-        if (difficulty.bullets>=2){
-            health=3300;
-        }
-        else{
-            health=2300;
-        }
-        sprite.angle=[directionh(x, y)];
-        squarex=500;
-        squarey=50;
-        sprite.score=100;
-        sprite.createanime=1;
-        sprite.beatbuffer=0;
-        sprite.beatbuffer2=0;
-        
-
-        sprite.ai = [[], [], [], [], [], [], []];
-
-        if (nobullets){
-            sprite.passed=0;
-            sprite.ai[0].push(ai.ziskadestroy.bind(sprite, 3500));
-        }
-
-        sprite.ai[0].push(function(){
-            if (this.health>=0){
-                scoretimer=120-musictime;
-                if (scoretimer<0){scoretimer=0};
-            }
-        }.bind(sprite));
-
-        sprite.ai[0].push(function(){
-            this.tint=rgbToHex(background.scale.x*255/5+(510/5),background.scale.x*255/5+(510/5),background.scale.x*255/5+(510/5));
-        }.bind(sprite));
-
-        sprite.ai[2].push(timeoutdief.bind(sprite));
-
-        sprite.ai[2].push(smoke.bind(sprite, 350, -100, 0.8*health, 0.8*health));
-        sprite.ai[2].push(smoke.bind(sprite, 175, -120, 0.8*health, 0.7*health));
-        sprite.ai[2].push(smoke.bind(sprite, -100, -100, 0.8*health, 0.6*health));
-        sprite.ai[2].push(smoke.bind(sprite, 250, -120, 0.8*health, 0.45*health));
-        sprite.ai[2].push(smoke.bind(sprite, -50, -180, 0.8*health, 0.3*health));
-        sprite.ai[2].push(smoke.bind(sprite, 100, -160, 0.8*health, 0.2*health));
-        sprite.ai[2].push(smoke.bind(sprite, -150, -140, 0.8*health, 0.1*health));
-
-        sprite.ai[3].push(smoke.bind(sprite, 350, -100, 0.8*health, 0.8*health));
-        sprite.ai[3].push(smoke.bind(sprite, 175, -120, 0.8*health, 0.7*health));
-        sprite.ai[3].push(smoke.bind(sprite, -100, -100, 0.8*health, 0.6*health));
-        sprite.ai[3].push(smoke.bind(sprite, 250, -120, 0.8*health, 0.45*health));
-        sprite.ai[3].push(smoke.bind(sprite, -50, -180, 0.8*health, 0.3*health));
-        sprite.ai[3].push(smoke.bind(sprite, 100, -160, 0.8*health, 0.2*health));
-        sprite.ai[3].push(smoke.bind(sprite, -150, -140, 0.8*health, 0.1*health));
-
-        //sprite.ai[1].push(timedmovef.bind(sprite));
-        sprite.ai[1].push(syncscrollf.bind(sprite, 30, 2837, -2, 'position.y', -350));
-        sprite.ai[1].push(scenechangef.bind(sprite, 20));
-        sprite.ai[1].push(function(){
-            this.health=health;//3500;
-            if (this.createanime){
-                set.animation({x: 537, y: 575, parent: this});
-                this.createanime=0;
-            }
-            
-        }.bind(sprite));
-
-
-        //sprite.ai[2].push(backgroundzoomf.bind(sprite, 0.005, 1));
-        //sprite.ai[2].push(shiftf.bind(sprite, -0.25, -0.5));
-
-        //sprite.ai[1].push(waitf.bind(sprite, 540));
-
-        counter[0]=[1, 50, 10, 0, 0, 0];
-        counter[1]=[100, 50, 10, 0, 0, 0];
-        sprite.ai[2].push(countf.bind(sprite));
-
-       sprite.ai[2].push(shootf.bind(sprite, 0, {type: 'bullet', subtype: 'whitecluster', beatlayer: 1}, [
-        [2, [
-                {fx: 'xyrandom', key: ['position'], gainx:400, gainy:100, offsetx:-200, offsety: -250},
-                {fx: 'aim', key: ['angle']},
-                {fx: 'xyrelative', key: ['speed'], speed: 5}
-            ]
-        ]
-    ]));
-
-        sprite.ai[2].push(phasechangef.bind(sprite, 1500, 'health'));
-        sprite.ai[2].push(hitf.bind(sprite));
-
-        sprite.ai[3].push(countf.bind(sprite));
-        sprite.ai[3].push(hitf.bind(sprite));
-
-        sprite.ai[3].push(shootf.bind(sprite, 0, {type: 'bullet', subtype: 'whitecluster', beatlayer: 1}, [
-            [3, [
-                {fx: 'xyrandom', key: ['position'], gainx:500, gainy:100, offsetx:-200, offsety: -250},
-                {fx: 'aim', key: ['angle']},
-                {fx: 'xyrelative', key: ['speed'], speed: 10}
-                ]
-            ]
-        ]));
-
-        if (difficulty.bullets>=2){
-            sprite.ai[2].push(function(){
-                if (beat[1]>0 && this.beatbuffer==0){
-                    for (let i=0; i<40; i++){
-                        create(0, 'bullet', i*48, 0, {
-                            parent: this, 
-                            speedX: 0, 
-                            speedY: difficulty.bullets, 
-                            subtype: 'whitecluster', 
-                            beatlayer: 2,
-                        });
-                    }
-                }
-                this.beatbuffer=beat[1];
-            }.bind(sprite));
-
-            sprite.ai[3].push(function(){
-                if (beat[1]>0 && this.beatbuffer==0){
-                    for (let i=0; i<40; i++){
-                        create(0, 'bullet', i*48, 0, {
-                            parent: this, 
-                            speedX: 0, 
-                            speedY: 2*difficulty.bullets, 
-                            subtype: 'whitecluster', 
-                            beatlayer: 2,
-                        });
-                    }
-                }
-                this.beatbuffer=beat[1];
-            }.bind(sprite));
-        }
-
-        /*if (difficulty.bullets>=3){
-            sprite.ai[2].push(function(){
-                if (beat[1]>0 && this.beatbuffer2==0){
-                    if (Math.random()>0.5){
-                        for (let i=0; i<20; i++){
-                            console.log(i);
-                            create(0, 'bullet', 0, 5+i*54, {
-                                parent: this, 
-                                speedX: difficulty.bullets*0.7, 
-                                speedY: 0, 
-                                subtype: 'whitecluster', 
-                                beatlayer: 2,
-                            });
-                        }
-                    }
-                    else{
-                        for (let i=0; i<20; i++){
-                            create(0, 'bullet', 1920, 5+i*54, {
-                                parent: this, 
-                                speedX: -difficulty.bullets*0.7, 
-                                speedY: 0, 
-                                subtype: 'whitecluster', 
-                                beatlayer: 2,
-                            });
-                        }
-                    }
-                    
-    
-                }
-                this.beatbuffer2=beat[1];
-            }.bind(sprite));
-
-            sprite.ai[3].push(function(){
-                if (beat[1]>0 && this.beatbuffer2==0){
-                    if (Math.random()>0.5){
-                        for (let i=0; i<20; i++){
-                            console.log(i);
-                            create(0, 'bullet', 0, 5+i*54, {
-                                parent: this, 
-                                speedX: difficulty.bullets, 
-                                speedY: 0, 
-                                subtype: 'whitecluster', 
-                                beatlayer: 2,
-                            });
-                        }
-                    }
-                    else{
-                        for (let i=0; i<20; i++){
-                            create(0, 'bullet', 1920, 5+i*54, {
-                                parent: this, 
-                                speedX: -difficulty.bullets, 
-                                speedY: 0, 
-                                subtype: 'whitecluster', 
-                                beatlayer: 2,
-                            });
-                        }
-                    }
-                    
-                }
-                this.beatbuffer2=beat[1];
-            }.bind(sprite));
-        }*/
-
-        sprite.ai[3].push(phasechangef.bind(sprite, 0, 'health', false));
-        sprite.ex_cicles=0;
-        sprite.ex_timer=0;
-        sprite.ai[4].push(mushroom_ex.bind(sprite, 5));
-        sprite.ai[6].push(dief.bind(sprite, 'mushroomexplosion'));
-        sprite.ai[5].push(scenenextf.bind(sprite));
-    }
-
 
     if (type=='label'){
         layer='front';
         var sprite = new PIXI.Sprite(subtype);
         phase=1;
-        sprite.filters=[
-            new PIXI.filters.GlowFilter({outerStrength: 1, distance: 30, color: options.glowcolor || 0xFFFFFF})
-        ]
+        GameEffects.stack(sprite).add(
+            "glow",
+            new PIXI.filters.GlowFilter({
+                outerStrength: 1,
+                distance: 30,
+                color: options.glowcolor || 0xFFFFFF
+            })
+        );
 
         sprite.alpha=0;
 
@@ -932,12 +740,12 @@ function create(active, type, x, y, options) //layer,
 
         sprite.ai[2].push(waitf.bind(sprite, options.wait || 200, 0));
 
-        sprite.ai[3].push(setspeedf.bind(sprite, -3.5, 0));
+        sprite.ai[3].push(startLabelExitf.bind(sprite, -3.5, 0));
 
         sprite.ai[4].push(moveuntil.bind(sprite, -160, 0));
         sprite.ai[4].push(fadein.bind(sprite, -0.02, 1));
 
-        sprite.ai[5].push(autodestroy.bind(sprite));
+        sprite.ai[5].push(removef.bind(sprite));
 
 
     }
@@ -958,854 +766,6 @@ function create(active, type, x, y, options) //layer,
         layer='sprite';
     }
 
-    else if (type=='e_sunflower') {
-        var sprite = new PIXI.Sprite(tSunflower);
-
-        sprite.filters=[ 
-            get.outline(),
-            get.glowsingle({color: 0xDDAA33}),
-            get.shadow(),
-            
-        ];
-        sprite.filters[1].offset={x: -100, y:-100};
-        sprite.filters[1].blur=5;
-
-        squarex=160;
-        squarey=160;
-
-        light=0.7;
-        red=0.7;
-        blue=0.7;
-        green=1;
-
-        accY=-0.11;
-        z=1;
-        sprite.score=10;
-
-        col=false;
-
-        phase=1;
-        sprite.ai = [[], [], [], [], []];
-
-        sprite.ai[0].push(ai.glowbeat.bind(sprite, sprite.filters[1], 1, 1, 4));
-        sprite.ai[0].push(movef.bind(sprite));
-        sprite.ai[0].push(zset.bind(sprite));
-        sprite.ai[0].push(lightset.bind(sprite));
-        sprite.ai[0].push(ai.shadow.bind(sprite, sprite.filters[2], 2));
-
-        sprite.ai[1].push(waitf.bind(sprite, 60));
-
-        sprite.ai[2].push(accf.bind(sprite));
-        sprite.ai[2].push(waitf.bind(sprite, 160));
-
-
-        sprite.ai[3].push(zoomf.bind(sprite, -0.01));
-        sprite.ai[3].push(lightf.bind(sprite, 0.01, 1.5));
-
-        sprite.ai[3].push(accchangef.bind(sprite, 0, 0.05));
-        sprite.ai[3].push(accf.bind(sprite));
-
-        sprite.ai[4].push(accchangef.bind(sprite, 0, 0.05));
-        sprite.ai[4].push(accf.bind(sprite));
-
-        sprite.ai[4].push(countf.bind(sprite));
-
-        sprite.ai[4].push(patternfn.bind(sprite, {
-            speed: 4, 
-            beatlayer: 4, 
-            type: 'grain', 
-            aim: 2, 
-            steps: 7,
-            offsetchange: 2*pi
-        })); //[50, 100, 100, 200, 3, false]
-        sprite.ai[0].push(rotatef.bind(sprite, 0.01));
-        
-        sprite.angle=[directionh(x, y)];
-        counter[0]=[300, 80, 10, 295, 0, 0];
-
-        sprite.ai[4].push(function(){
-            if (this.speedY>2){
-                this.col='none';
-                this.z+=0.003;
-                this.red-=0.002;
-                this.blue-=0.002;
-            }
-        }.bind(sprite));
-
-        sprite.ai[4].push(offborderf.bind(sprite));
-        sprite.ai[4].push(dief.bind(sprite, 5));
-        sprite.ai[4].push(hitf.bind(sprite));
-
-        health=5;
-
-        collision='enemy';
-    }
-
-    else if (type=='e_hawkbit') {
-
-        var sprite = new PIXI.spine.Spine(tex.hawkbit);
-        sprite.state.addAnimation(0, 'animation', true, 0);
-
-        sprite.filters=[
-            get.outline(),
-            get.glowsingle({color: 0xFFFF00}),
-            get.shadow(),
-        ];
-        sprite.filters[1].offset={x: -100, y:-100};
-        sprite.filters[1].blur=5;
-
-        //tex.hawkbit
-        squarex=80;
-        squarey=80;
-
-        light=0.7;
-        red=0.7;
-        blue=0.7;
-        green=1;
-
-        accY=-0.11;
-        z=1;
-
-        col=false;
-
-        phase=1;
-        sprite.ai = [[], [], [], [], []];
-
-        //filter ai
-        sprite.ai[0].push(ai.glowbeat.bind(sprite, sprite.filters[1], 2, 0.5, 2));
-        sprite.ai[0].push(ai.shadow.bind(sprite, sprite.filters[2], 4));
-
-        sprite.ai[0].push(movef.bind(sprite));
-        sprite.ai[0].push(zset.bind(sprite));
-        sprite.ai[0].push(lightset.bind(sprite));
-        
-
-        sprite.ai[1].push(waitf.bind(sprite, 60));
-
-        sprite.ai[2].push(accf.bind(sprite));
-        sprite.ai[2].push(waitf.bind(sprite, 160));
-
-
-        sprite.ai[3].push(zoomf.bind(sprite, -0.01));
-        sprite.ai[3].push(lightf.bind(sprite, 0.01, 1.5));
-
-        sprite.ai[3].push(accchangef.bind(sprite, 0, 0.05));
-        sprite.ai[3].push(accf.bind(sprite));
-
-        sprite.angle=[directionh(x, y)];
-        counter[0]=[300, 50, 50, 250, 0, 0];
-
-        sprite.ai[4].push(accchangef.bind(sprite, 0, 0.05));
-        sprite.ai[4].push(accf.bind(sprite));
-
-        sprite.ai[4].push(countf.bind(sprite));
-        sprite.ai[4].push(function(){
-            if (this.speedY>2){
-                this.col='none';
-                this.z+=0.003;
-                this.red-=0.002;
-                this.blue-=0.002;
-            }
-        }.bind(sprite));
-        //sprite.ai[4].push(patternfn.bind(sprite, {speed: 3, beatlayer: 2, type: 'grain', steps: 2, speedgain: 1, speedmulti: 6, offsetchange: 0.1, acc: [0, 0, 0, 0]})); //[50, 100, 100, 200, 3, false]
-
-        sprite.ai[4].push(patternfn.bind(sprite, {
-            speed: 3, 
-            beatlayer: 2, 
-            type: 'grain', 
-            steps: 1, 
-            speedgain: 0.5, 
-            speedmulti: 5, 
-            offsetchange: 0.03, 
-            acc: false})); //[50, 100, 100, 200, 3, false]
-
-        sprite.ai[4].push(offborderf.bind(sprite));
-        sprite.ai[4].push(dief.bind(sprite, 7));
-        sprite.ai[4].push(hitf.bind(sprite));
-        sprite.floatcounter=0.6;
-        sprite.ai[4].push(ai.float2.bind(sprite, 0.003, 50));
-        sprite.score=5;
-        health=12;
-
-        collision='enemy';
-    }
-
-    else if (type=='e_ghostcircle') {
-
-        if (options.white){
-            var sprite = new PIXI.spine.Spine(tex.ghostw2);
-            var beatlayer=1;
-            var explosion='citycloud';
-            var glowfilter=get.glowsingle({color: 0xAAAAFF});
-        }
-        else{
-            var sprite = new PIXI.spine.Spine(tex.ghostb2);
-            var beatlayer=2;
-            var explosion='zeppelin';
-            var glowfilter=get.glowsingle({color: 0xAA4444});
-        }
-        //var sprite = new PIXI.Sprite(tex.ghostb2);
-
-        sprite.angle=[directionh(x, y)];
-        sprite.state.addAnimation(0, 'animation', true, 0);
-
-        sprite.filters=[
-            glowfilter,
-        ];
-       
-
-        sprite.ai = [[], [], [], [], []];
-        sprite.alpha=0;
-        phase=1;
-
-        sprite.ai[0].push(ai.glowbeat.bind(sprite, sprite.filters[0], beatlayer, 1, 3));
-        //sprite.ai[1].push(fadein.bind(sprite, 0.01, 1, true));
-        sprite.ai[1].push(function () {
-            this.scale.x/=1.01;
-            this.scale.y/=1.01;
-            this.alpha=(1.2/(this.scale.x))-0.25;
-            if (this.scale.x<1.1){
-                this.phase++;
-            }
-        }.bind(sprite));
-
-        sprite.ai[2].push(waitf.bind(sprite, 120+60*difficulty.enemy));
-        sprite.ai[3].push(fadein.bind(sprite, -0.01, 1, true));
-        sprite.ai[4].push(function () {
-            this.delete = true;
-        }.bind(sprite));
-        sprite.floatcounter=-1;
-        sprite.ai[2].push(ai.float.bind(sprite, 0.05, 100));
-
-        counter=[[60, 60, 60, 55, 0, 0]];
-        sprite.ai[0].push(hitf.bind(sprite));
-        sprite.ai[0].push(countf.bind(sprite));
-        sprite.ai[0].push(dief.bind(sprite, explosion));
-
-        sprite.ai[2].push(patternfn.bind(sprite, {
-            counter: 0,
-            speed: 5, 
-            beatlayer: beatlayer, 
-            type: 'whitecluster', 
-            steps: 10, 
-            speedgain: 0.2+difficulty.bullets*0.2, 
-            speedmulti: 0, 
-            offsetchange: 1, 
-            acc: false}));
-
-        sprite.score=5;
-        health=12;
-        collision='enemy';
-
-        sprite.scale.x=5;
-        sprite.scale.y=5;
-    }
-
-    else if (type=='e_dragonfly') {
-
-        var sprite = new PIXI.spine.Spine(options.texture || tex.dragonfly);
-        sprite.state.addAnimation(0, 'animation', true, 0);
-
-        sprite.filters=[
-            get.outline(),
-            get.shadow(),
-        ];
-sprite.filters[1].blur=5;
-
-        squarex=200;
-        squarey=30;
-        health=40;
-        col=false;
-        phase =1;
-        light=0.5;
-        z=1;
-
-        accY=0.02;
-        sprite.score=20;
-
-        sprite.ai = [[], [], [], [], []];
-
-
-        //sprite.ai[0].push(ai.glowbeat.bind(sprite, sprite.filters[2], 1, 0.5, 2));
-        sprite.ai[0].push(ai.shadow.bind(sprite, sprite.filters[1]));
-        
-        sprite.ai[0].push(movef.bind(sprite));
-        sprite.ai[0].push(offborderf.bind(sprite));
-        sprite.ai[0].push(zset.bind(sprite));
-        
-
-        sprite.floatcounter=0;
-        sprite.ai[3].push(ai.float.bind(sprite, 0.02, 30));
-        sprite.ai[4].push(ai.float.bind(sprite, 0.02, 30));
-
-        sprite.ai[1].push(waitf.bind(sprite, 300));
-
-        sprite.ai[2].push(lightf.bind(sprite, 0.004));
-        sprite.ai[0].push(lightset.bind(sprite));
-        sprite.ai[2].push(zoomf.bind(sprite, -0.008));
-
-        sprite.ai[3].push(accchangef.bind(sprite, 0, 0.013));
-        sprite.ai[3].push(accf.bind(sprite));
-        sprite.ai[3].push(phasechangef.bind(sprite, 0, 'speedy', true, 'enemy'));
-        sprite.ai[3].push(hitf.bind(sprite));
-        counter[0]=[50, 10000, 8, 0, 0, 0];
-
-        sprite.ai[4].push(speedchangef.bind(sprite, misc1, misc2));
-        sprite.ai[4].push(countf.bind(sprite));
-
-            sprite.ai[4].push(patternfn.bind(sprite, {
-                positionx: [-0], 
-                positiony: [100], 
-                offset: 1.57, 
-                speed: 8+2*difficulty.bullets, 
-                beatlayer: options.beatlayer || 1, 
-                type: 'stick', 
-                aim: 2
-            })); //[50, 100, 100, 200, 3, false]
-        
-
-
-
-        counter[1]=[50, 100, 10, 0, 0, 0];
-
-
-        sprite.ai[4].push(offborderf.bind(sprite));
-        if (options.texture){
-            sprite.ai[4].push(dief.bind(sprite, 'zeppelin'));
-        }
-        else{
-            sprite.ai[0].push(ai.outlinebeat.bind(sprite, sprite.filters[0], [{beat: 1, color: {x: 0, y: 255, z:255}}]));
-            sprite.ai[4].push(dief.bind(sprite, 1));
-        }
-        sprite.ai[4].push(hitf.bind(sprite));
-
-        
-
-        //collision='none';
-    }
-
-
-
-    else if (type=='e_fly'){
-
-        var sprite = new PIXI.spine.Spine(tex.hornet);
-
-        squarex=40;
-        squarey=40;
-
-        accY=0.002;
-
-
-        sprite.ai = [[]];
-        if (nobullets){
-            sprite.passed=0;
-            sprite.ai[0].push(ai.ziskadestroy.bind(sprite, 300));
-        }
-        
-        sprite.animation = sprite.state.addAnimation(0, 'animation', true, 0);
-        sprite.animation.timeScale=0; //stop animation, sets speed to animation 0=0%, 1=100%, use to make animation synchron
-                
-        sprite.filters=[
-            get.outline(),
-            get.shadow(),
-        ];
-        sprite.ai[0].push(ai.shadow.bind(sprite, sprite.filters[1]));
-        if (options.beatlayer==1){
-            sprite.ai[0].push(ai.outlinebeat.bind(sprite, sprite.filters[0], [{beat: 1, color: {x: 255, y: 255, z:0}}]));
-        }
-        else{
-            sprite.ai[0].push(ai.outlinebeat.bind(sprite, sprite.filters[0], [{beat: 2, color: {x: 255, y: 0, z:0}}]));
-        }
-        
-        
-
-        
-        //sprite.ai[0].push(movef.bind(sprite));
-        //sprite.ai[0].push(accf.bind(sprite));
-        sprite.ai[0].push(moveanglef.bind(sprite, 3+difficulty.enemy));
-        rotation=1.57;
-        
-        
-        //sprite.ai[0].push(aim2hero.bind(sprite, 0.008));
-
-        /*sprite2.animation = sprite2.state.addAnimation(0, 'turn', true, 0);
-                sprite2.animation.timeScale=0; //stop animation, sets speed to animation 0=0%, 1=100%, use to make animation synchron
-             */   
-
-                sprite.angle=[directionh(x, y)];
-                sprite.anglespeed=0.0;
-                sprite.ai[0].push(function(){
-                    var direction=directionh(this.x, this.y);
-                    if (this.rotation>pi)
-                    {
-                        this.rotation-=2*pi;
-                    }
-                    else if (this.rotation<-pi)
-                    {
-                        this.rotation+=2*pi;
-                    }
-                
-                    if (this.rotation>direction) {
-                        if (this.rotation-direction>pi)
-                        {
-                            this.anglespeed+=0.0001+0.0002*difficulty.enemy;
-                        }
-                        else
-                        {
-                            this.anglespeed-=0.0001+0.0002*difficulty.enemy;
-                        }
-                    }
-                    else
-                    {
-                        if (direction-this.rotation>pi)
-                        {
-                            this.anglespeed-=0.0001+0.0002*difficulty.enemy;
-                        }
-                        else
-                        {
-                            this.anglespeed+=0.0001+0.0002*difficulty.enemy;
-                        }
-                    }
-                    if (this.anglespeed<-0.01){
-                        this.anglespeed=-0.01;
-                    }
-                    else if (this.anglespeed>0.01){
-                        this.anglespeed=+0.01;
-                    }
-                    this.rotation+=this.anglespeed;
-                    this.state.tracks[0].trackTime=0.333-(this.anglespeed*33);
-                }.bind(sprite));
-                
-
-    
-
-                sprite.ai[0].push(function () {
-                    
-                    
-                    create(0, 'picture', this.x-Math.sin(this.rotation+pi/2+Math.random()*0.4-0.2)*80, this.y+Math.cos(this.rotation+pi/2+Math.random()*0.4-0.2)*80, {
-                    tint: rgbToHex(
-                        Math.random()*100+100,
-                        100,
-                        100
-                    ),
-                    accY: 0.2, 
-                    layer: 'backlayer', 
-                    speedX: -Math.sin(this.rotation+pi/2+Math.random()*0.4-0.2)*7, 
-                    speedY: Math.cos(this.rotation+pi/2+Math.random()*0.4-0.2)*7, 
-                    subtype: tParticle02, 
-                    alpha: 0.4,
-                    misc1:2, misc2:2, misc3:8, misc4: 1, misc5: 1});
-                     }.bind(sprite));
-
-        sprite.ai[0].push(countf.bind(sprite));
-        counter[0]=[10, 10, 10, 0, 0, 0];
-        sprite.ai[0].push(patternfn.bind(sprite, {
-            speed: 1, 
-            offset: 0,
-            beatlayer: options.beatlayer || 4,
-            type: options.bullet || 'bullet', 
-            aim: 1, 
-        })); //[50, 100, 100, 200, 3, false]
-
-        sprite.score=5;
-        //sprite.ai[0].push(offborderf.bind(sprite));
-        sprite.ai[0].push(dief.bind(sprite, 'fa18'));
-        sprite.ai[0].push(hitf.bind(sprite));
-
-        health=40+20*difficulty.enemy;
-
-        collision='enemy';
-        //layer='front';
-    }
-
-    else if (type=='e_fly2'){
-
-        //var sprite = new PIXI.Sprite(tFly2);
-        var sprite = new PIXI.spine.Spine(tex.fly);
-        sprite.state.addAnimation(0, 'animation', true, 0);
-
-        sprite.filters=[
-            get.outline(),
-            get.shadow(),
-        ];
-        sprite.filters[1].offset={x: -100, y:-100};
-        sprite.filters[1].blur=5;
-
-        phase=1;
-        squarex=80;
-        squarey=80;
-
-        rotation=misc4;
-        sprite.angle=[directionh(x, y)];
-
-        sprite.ai = [[], [], [], []];
-        sprite.score=5;
-
-        //filter ai
-        sprite.ai[0].push(ai.outlinebeat.bind(sprite, sprite.filters[0], [{beat: 2, color: {x: 255, y: 0, z:255}}]));
-        sprite.ai[0].push(ai.shadow.bind(sprite, sprite.filters[1]));
-
-        
-        //sprite.ai[0].push(ai.glowbeat.bind(sprite, sprite.filters[1], 3, 0.5, 2));
-
-        //misc1: duration of 1st phase
-        //misc2: duration of rotation
-        //misc3: speed of rotation
-        sprite.ai[1].push(waitf.bind(sprite, misc1/(Math.sqrt(difficulty.enemy))));
-
-        sprite.ai[2].push(rotationchangef.bind(sprite, misc3));
-        sprite.ai[2].push(waitf.bind(sprite, misc2));
-
-        sprite.ai[0].push(moveanglef.bind(sprite, 4+2*difficulty.enemy));
-        sprite.floatcounter=0;
-        //sprite.ai[0].push(ai.float2.bind(sprite, 0.01, 10));
-
-        counter[0]=[300, 60, 6, 200, 0, 0];
-        if (!options.nobullets){
-            sprite.ai[0].push(countf.bind(sprite));
-            sprite.ai[0].push(patternfn.bind(sprite, {
-                speed: 1.5+1.5*difficulty.bullets, 
-                beatlayer: 3, 
-                type: 'bullet'
-            })); //[50, 100, 100, 200, 3, false]
-        }
-
-        sprite.ai[0].push(offborderf.bind(sprite, 100));
-        sprite.ai[0].push(dief.bind(sprite, 8));
-        sprite.ai[0].push(hitf.bind(sprite));
-
-        
-
-        health=12;
-
-        collision='enemy';
-        layer='front';
-    }
-
-    else if (type=='balloon') {
-
-        
-
-        if (beatlayer==3)
-        {
-            var sprite = new PIXI.Sprite(tBalloon2);
-        }
-        else if (beatlayer==4)
-        {
-            var sprite = new PIXI.Sprite(tBalloon2);
-        }
-        else{
-            var sprite = new PIXI.Sprite(tBalloon1);
-        }
-
-        sprite.filters=[
-            get.outline(),
-            get.shadow(),
-        ];
-
-
-
-        sprite.score=5;
-        
-        squarex=80;
-        squarey=80;
-
-        col=true;
-
-        phase=1;
-        sprite.ai = [[], [], [], [], []];
-
-        if (beatlayer==3 || beatlayer == 4)
-        {
-            sprite.ai[0].push(ai.outlinebeat.bind(sprite, sprite.filters[0], [{beat: 4, color: {x: 255, y: 255, z:0}}, {beat: 3, color: {x: 255, y: 0, z:255}}]));
-        }
-        else
-        {
-            sprite.ai[0].push(ai.outlinebeat.bind(sprite, sprite.filters[0], [{beat: 2, color: {x: 0, y: 255, z:255}}]));
-        }
-        sprite.ai[0].push(ai.shadow.bind(sprite, sprite.filters[1]));
-        sprite.ai[0].push(movef.bind(sprite));
-
-        sprite.ai[0].push(countf.bind(sprite));
-        sprite.floatcounter=0;
-        sprite.ai[0].push(ai.float2.bind(sprite, 0.001, 50));
-
-        sprite.ai[0].push(offborderf.bind(sprite));
-        sprite.ai[0].push(dief.bind(sprite, 'balloon'));
-        sprite.ai[0].push(hitf.bind(sprite));
-
-        counter[0]=[0, 50, 10, 0, 0, 0];
-
-        if (beatlayer==2){
-            sprite.ai[0].push(shootf.bind(sprite, 0, {type: 'bullet', subtype: 'bbullet', beatlayer: beatlayer}, [
-                [1, [
-                    {fx: 'xyset', key: ['speed'], x:6+2*difficulty.bullets, y:0},
-                    {fx: 'xyset', key: ['position'], x:-8, y:100},
-                    ]
-                ],
-            ]));
-    
-            sprite.ai[0].push(shootf.bind(sprite, 0, {type: 'bullet', subtype: 'bbullet', beatlayer: beatlayer}, [
-                [1, [
-                    {fx: 'xyset', key: ['speed'], x:-6-2*difficulty.bullets, y:0},
-                    {fx: 'xyset', key: ['position'], x:8, y:100},
-                    ]
-                ],
-            ]));
-        }
-        else{
-            sprite.ai[0].push(shootf.bind(sprite, 0, {type: 'bullet', subtype: 'bbullet', beatlayer: 3}, [
-                [1, [
-                    {fx: 'xyset', key: ['speed'], x:6+2*difficulty.bullets, y:0},
-                    {fx: 'xyset', key: ['position'], x:-8, y:100},
-                    ]
-                ],
-            ]));
-    
-            sprite.ai[0].push(shootf.bind(sprite, 0, {type: 'bullet', subtype: 'bbullet', beatlayer: 4}, [
-                [1, [
-                    {fx: 'xyset', key: ['speed'], x:-6-2*difficulty.bullets, y:0},
-                    {fx: 'xyset', key: ['position'], x:8, y:100},
-                    ]
-                ],
-            ]));
-        }
-        
-
-        health=20;
-
-        collision='enemy';
-    }
-
-    else if (type=='spacefighter') {
-
-        var sprite = new PIXI.Sprite(tSpacefighter);
-
-        sprite.score=20;
-        squarex=80;
-        squarey=80;
-
-        col=true;
-
-        phase=1;
-        sprite.ai = [[], [], [], [], []];
-
-
-        sprite.ai[0].push(movef.bind(sprite));
-
-        sprite.ai[0].push(countf.bind(sprite));
-
-        sprite.ai[0].push(offborderf.bind(sprite));
-        sprite.ai[0].push(dief.bind(sprite, -3));
-        sprite.ai[0].push(hitf.bind(sprite));
-        sprite.ai[0].push(rotatef.bind(sprite, 0.005));
-
-        counter[0]=[0, 50, 8, 0, 0, 0];
-        sprite.ai[0].push(shootf.bind(sprite, 0, {type: 'bullet', subtype: 'bbullet', beatlayer: beatlayer}, [
-            [1, [
-                {fx: 'rotationset', key: ['angle']},
-                {fx: 'xyrelative', key: ['position'], speed: 150},
-                {fx: 'xyrelative', key: ['speed'], speed: 5}
-                ]
-            ],
-        ]));
-        sprite.ai[0].push(shootf.bind(sprite, 0, {type: 'bullet', subtype: 'bbullet', beatlayer: beatlayer}, [
-            [1, [
-                {fx: 'rotationset', key: ['angle']},
-                {fx: 'xyrelative', key: ['position'], speed: -150},
-                {fx: 'xyrelative', key: ['speed'], speed: -5}
-                ]
-            ],
-        ]));
-
-        health=100;
-
-        collision='enemy';
-    }
-
-    else if (type=='rocket'){
-        var sprite = new PIXI.Sprite(tex.meteor);
-
-        sprite.heightmap =setsprite(
-            new PIXI.Sprite(tex.meteor_h),
-            {anchor: {x:0.5, y:0.5}, active: active, x: x, y: y});
-        sprite.heightmap.speedX =options.speedX || 0;
-        sprite.heightmap.speedY =options.speedY || 0;
-
-        sprite.filters=[
-            get.outline({color: 0xFFFFAA}),
-            new PIXI.DisplacementFilter(sprite.heightmap),
-            
-        ];
-
-        
-        squarex=80;
-        squarey=80;
-
-        rotation=options.rotation || pi;
-        sprite.heightmap.rotation=options.rotation || pi;
-        col=true;
-        health=150;
-
-        sprite.ai = [[], [], [], [], []];
-        sprite.ai[0].push(function () {
-            this.filters[1].scale.x=Math.sin(this.rotation)*20;
-            this.filters[1].scale.y=Math.cos(this.rotation)*20;
-        }.bind(sprite));
-        sprite.ai[0].push(movef.bind(sprite));
-        sprite.ai[0].push(rotatef.bind(sprite, 0.01));
-        sprite.heightmap.ai[0].push(movef.bind(sprite.heightmap));
-        sprite.heightmap.ai[0].push(rotatef.bind(sprite.heightmap, 0.01));
-
-        counter[0]=[0, 50, 2, 0, 0, 0];
-        sprite.ai[0].push(countf.bind(sprite));
-        sprite.ai[0].push(offborderf.bind(sprite));
-        sprite.heightmap.ai[0].push(offborderf.bind(sprite.heightmap));
-        if (beatlayer>0){
-            sprite.ai[0].push(shootf.bind(sprite, 0, {type: 'bullet', subtype: 'bbullet', beatlayer: beatlayer}, [
-                [1, [
-                    {fx: 'xy2hero', key: ['speed'], speedx: 3, speedy:0}
-                    ]
-                ],
-            ]));
-        }
-        collision='enemy';
-    }
-
-    else if (type=='plane'){
-        var sprite = new PIXI.spine.Spine(tex.plane);
-        //var shotspeedX = options.shotspeedX || 1;
-        sprite.animation=sprite.state.addAnimation(0, 'animation', true, 0);
-        //this.state.tracks[0].trackTime=0.333-(this.anglespeed*33);
-        sprite.animation.timeScale=0; //stop animation, sets speed to animation 0=0%, 1=100%, use to make animation synchron
-                
-        squarex=80;
-        squarey=80;
-
-        rotation=pi;
-        col=true;
-
-        sprite.filters=[
-            get.outline(),
-            get.shadow(),
-        ];
-
-        sprite.ai = [[], [], [], [], []];
-        sprite.ai[0].push(ai.shadow.bind(sprite, sprite.filters[1]));
-        sprite.ai[0].push(movef.bind(sprite));
-        sprite.ai[0].push(function(){
-            if (herox<this.x && this.speedX>-1-difficulty.enemy){
-                this.speedX-=0.1
-            }
-            if (herox>this.x && this.speedX<1+difficulty.enemy){
-                this.speedX+=0.1
-            }
-            this.state.tracks[0].trackTime=0.333-(this.speedX/((1+difficulty.enemy)*3.3));
-        }.bind(sprite));
-        health=150;
-    
-        collision='enemy';
-
-    }
-
-    else if (type=='satelite') {
-
-        //var sprite = new PIXI.Sprite(tSatelite);
-        var sprite = new PIXI.spine.Spine(tex.satelite);
-        sprite.state.addAnimation(0, 'animation', true, 0);
-        sprite.scale.x=1.2;
-        sprite.scale.y=1.2;
-        if (!options.noheart){
-            sprite.score=20;
-        }
-        else{
-            sprite.score=5;
-        }
-
-        squarex=220;
-        squarey=50;
-
-        col=true;
-
-        phase=1;
-        sprite.ai = [[], [], [], [], []];
-
-        sprite.filters=[
-            get.outline(),
-            get.shadow(),
-        ];
-        if (beatlayer>2){
-            sprite.ai[0].push(ai.outlinebeat.bind(sprite, sprite.filters[0], [{beat: 4, color: {x: 255, y: 255, z:0}}, {beat: 3, color: {x: 255, y: 0, z:255}}]));
-        }
-        else{
-            sprite.ai[0].push(ai.outlinebeat.bind(sprite, sprite.filters[0], [{beat: 2, color: {x: 0, y: 255, z:255}}]));
-        }
-
-        sprite.ai[0].push(ai.shadow.bind(sprite, sprite.filters[1]));
-        sprite.ai[0].push(movef.bind(sprite));
-        sprite.floatcounter=0.5;
-        sprite.ai[0].push(ai.float2.bind(sprite, 0.003, 60));
-
-        sprite.ai[0].push(countf.bind(sprite));
-
-        sprite.ai[0].push(offborderf.bind(sprite));
-        sprite.ai[0].push(dief.bind(sprite, 'heavybass'));
-        sprite.ai[0].push(hitf.bind(sprite));
-
-        counter[0]=[0, 50, 10, 0, 0, 0];
-
-        if (beatlayer>2){
-
-            sprite.ai[0].push(shootf.bind(sprite, 0, {type: 'bullet', subtype: 'stick', beatlayer: 3}, [
-                [1, [
-                    {fx: 'xyset', key: ['speed'], x:0, y:6+2*difficulty.bullets}
-                    ,{fx: 'xyset', key: ['position'], x: -180, y:0}
-                    ]
-                ],
-            ]));
-    
-            sprite.ai[0].push(shootf.bind(sprite, 0, {type: 'bullet', subtype: 'stick', beatlayer: 4}, [
-                [1, [
-                    {fx: 'xyset', key: ['speed'], x:0, y:6+2*difficulty.bullets}
-                    ,{fx: 'xyset', key: ['position'], x: 180, y:0}
-                    ]
-                ],
-            ]));
-
-        }
-        
-        else{
-            sprite.ai[0].push(shootf.bind(sprite, 0, {type: 'bullet', subtype: 'stick', beatlayer: beatlayer}, [
-            [1, [
-                {fx: 'xyset', key: ['speed'], x:0, y:6+2*difficulty.bullets}
-                ,{fx: 'xyset', key: ['position'], x: -180, y:0}
-                ]
-            ],
-        ]));
-
-        sprite.ai[0].push(shootf.bind(sprite, 0, {type: 'bullet', subtype: 'stick', beatlayer: beatlayer}, [
-            [1, [
-                {fx: 'xyset', key: ['speed'], x:0, y:6+2*difficulty.bullets}
-                ,{fx: 'xyset', key: ['position'], x: 180, y:0}
-                ]
-            ],
-        ]));
-
-    }
-
-        /*sprite.ai[0].push(shootf.bind(sprite, 0, {type: 'bullet', subtype: 'bbullet', beatlayer: beatlayer}, [
-            [1, [
-                {fx: 'xyrelative', key: ['speed'], speed: -5}
-                ]
-            ],
-        ]));*/
-
-        health=50;
-
-        collision='enemy';
-    }
-
-    
     else if (type=='bullet')
     {
         if (subtype=='grain'){
@@ -2080,15 +1040,21 @@ sprite.filters[1].blur=5;
                 this.scale.y=1;
             }
         }.bind(sprite));
-        sprite.ai[0].push(ai.pulse.bind(sprite, 0));
+        sprite.ai[0].push(pulseBulletf.bind(sprite, 0));
         sprite.ai[0].push(lightset.bind(sprite));
         sprite.ai[0].push(movef.bind(sprite));
         sprite.ai[0].push(accf.bind(sprite));
-        if (misc1>0){sprite.ai[0].push(maxspeedf.bind(sprite, misc1)); }
+        if (misc1>0){
+            sprite.ai[0].push(limitProjectileSpeedf.bind(sprite, misc1));
+        }
         if (subtype!=='stick' && subtype!=='rain' && subtype!=='stripes'){sprite.ai[0].push(rotatef.bind(sprite, 0.1));}
         sprite.ai[0].push(offborderf.bind(sprite));
         sprite.ai[0].push(hitf.bind(sprite));
-        sprite.ai[0].push(flash.bind(sprite, beatlayer, subtype));
+        sprite.ai[0].push(emitBulletFlashf.bind(
+            sprite,
+            beatlayer,
+            subtype
+        ));
         sprite.ai[0].push(dief.bind(sprite, 3));
         if (nobullets){del=true;}
         circle=20;
@@ -2136,8 +1102,8 @@ sprite.filters[1].blur=5;
                 var sprite = new PIXI.Sprite(tBulletWhite);
             }
         
-            sprite.scale.x=1.8*beat[beatlayer]+0.5;
-            sprite.scale.y=1.8*beat[beatlayer]+0.5;
+            sprite.scale.x=settings.flashsize*beat[beatlayer]+0.5;
+            sprite.scale.y=settings.flashsize*beat[beatlayer]+0.5;
         }
         
         sprite.alpha=beat[beatlayer];
@@ -2145,7 +1111,7 @@ sprite.filters[1].blur=5;
         rotation=speedX;
 
         sprite.ai = [[]];
-        del=true;
+        EntityManager.markStepVisual(sprite);
         layer='particle'
     }
 
@@ -2239,34 +1205,41 @@ sprite.filters[1].blur=5;
 
         }
         else{
-
+            tint=rgbToHex(127+0.5*(options.color.x*buffer+buffer2) || 0, 127+0.5*(options.color.y*buffer+buffer2) || 0, 127+0.5*(options.color.z*buffer+buffer2) || 0);  
             if (subtype=='stick')
             {
-                var sprite = new PIXI.Sprite(tex.stickline);
+                //var sprite = new PIXI.Sprite(tex.stickline);
+                var sprite = new PIXI.Sprite(tex.stickglow);
             }
             else if (subtype=='grain')
             {
-                var sprite = new PIXI.Sprite(tex.grainline);
+                //var sprite = new PIXI.Sprite(tex.grainline);
+                var sprite = new PIXI.Sprite(tex.grainglow);
             }
             else if (subtype=='whitecluster' || subtype=='cluster')
             {
-                var sprite = new PIXI.Sprite(tex.clusterline);
+                //var sprite = new PIXI.Sprite(tex.clusterline);
+                var sprite = new PIXI.Sprite(tex.clusterglow);
             }
             else if (subtype=='bbullet')
             {
-                var sprite = new PIXI.Sprite(tex.bbulletline);
+                //var sprite = new PIXI.Sprite(tex.bbulletline);
+                var sprite = new PIXI.Sprite(tex.bulletglow);
+                
             }
             else if (subtype=='cbullet')
             {
-                var sprite = new PIXI.Sprite(tex.cbulletline);
+               // var sprite = new PIXI.Sprite(tex.cbulletline);
+               var sprite = new PIXI.Sprite(tex.cbulletglow);
             }
             else
             {
-                var sprite = new PIXI.Sprite(tex.bulletline);
+               // var sprite = new PIXI.Sprite(tex.bulletline);
+               var sprite = new PIXI.Sprite(tex.bbulletglow);
             }
             sprite.alpha=beat[beatlayer];
-            sprite.scale.x=2.2*beat[beatlayer];
-            sprite.scale.y=2.2*beat[beatlayer];
+            sprite.scale.x=(settings.flashsize)*beat[beatlayer];
+            sprite.scale.y=(settings.flashsize)*beat[beatlayer];
         }
 
         
@@ -2275,7 +1248,7 @@ sprite.filters[1].blur=5;
         rotation=speedX;
 
         sprite.ai = [[]];
-        del=true;
+        EntityManager.markStepVisual(sprite);
         layer='particle'
     }
 
@@ -2355,6 +1328,10 @@ sprite.filters[1].blur=5;
         {
             backlayer.addChild(sprite);
         }
+        else if (layer=='behindbacklayer')
+        {
+            backlayer.addChildAt(sprite, 0);
+        }
         else if (layer=='particle')
         {
             particlelayer.addChild(sprite);
@@ -2378,3 +1355,15 @@ sprite.filters[1].blur=5;
     }
 }
 
+function create(active, type, x, y, options)
+{
+    if (typeof EnemyFactory !== 'undefined' && EnemyFactory.has(type)){
+        return spawnEnemy(type, Object.assign({}, options || {}, {
+            active: active,
+            x: x,
+            y: y,
+        }));
+    }
+
+    return createLegacySprite(active, type, x, y, options);
+}

@@ -5,19 +5,10 @@ ai.shadow = function(shader, size=2){
     shader.drawPosition={x: this.x, y: this.y};
     shader.offset={x: -this.scale.x*(this.x-960)/4, y:-this.scale.y*(this.y*0.5-1080)/4};
     shader.size=1 + this.scale.x;
-    
-    //fadeout if position + abs(height/width) <0 or >1920
-    //console.log(this.width);
-};
-
-ai.shadow2 = function(shader, offset=100){
-    shader.offset={x: -this.scale.x*offset*(this.x-540)/540, y:-this.scale.y*offset*(this.y*0.5-1080)/1080};
-    shader.size=1 + this.scale.x;
 };
 
 ai.stagelight = function (shader, multiply=1.0, beatindex=2, alpha=true){
     if (alpha){shader.alpha = stage.alpha*background.alpha;}
-    //console.log(this.displacementfilter.shader.alpha);
     if (beatindex>=0){
         shader.beat = beat[beatindex]*multiply;
     }
@@ -78,4 +69,3 @@ ai.shaderfade = function (shader, speed=0.01, limit=1.0)
         shader.light=limit;
     }
 }
-

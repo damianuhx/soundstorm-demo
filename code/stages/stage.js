@@ -1,38 +1,179 @@
 
 
 function count(){
-    //ticks++;
     pace1++;
 }
 
-function timer()
+var automationMusicTime = 0;
+var automationMusicTrack = null;
+var automationMusicPlaying = false;
+var automationMusicPlaybackStates = new WeakMap();
+
+function trackAutomationMusicPlayback(track)
 {
-    count();
-    
-    //generate beats of playing music
-    musictime=0;
-    if (typeof(music[playing])=='object'){
-        musictime = music[playing].seek();
-        beatgenerator(musictime, playing)
+    var state = automationMusicPlaybackStates.get(track);
+    if (state){return state;}
+
+    state = {
+        intendedPlaying: track.playing(),
+        paused: false,
+        pendingStart: false,
+        resuming: false,
+        startSeek: 0,
+        managed: false,
+    };
+    automationMusicPlaybackStates.set(track, state);
+    ['play', 'stop', 'pause'].forEach(function (method) {
+        var original = track[method];
+        if (typeof original !== 'function'){return;}
+        state.managed = true;
+        track[method] = function () {
+            // Howler uses the second argument for silent internal operations:
+            // HTML5 natural endings stop(id, true), and seek/loop can pause
+            // and restart internally. These are not game playback commands.
+            if (arguments[1] !== true){
+                if (method === 'play'){
+                    if (!state.intendedPlaying){
+                        state.resuming = state.paused;
+                        state.pendingStart = !state.paused;
+                        var seek = Number(track.seek());
+                        state.startSeek = Number.isFinite(seek) ? seek : 0;
+                    }
+                    state.intendedPlaying = true;
+                    state.paused = false;
+                }
+                else{
+                    state.intendedPlaying = false;
+                    state.paused = method === 'pause';
+                    state.pendingStart = false;
+                    state.resuming = false;
+                }
+            }
+            return original.apply(this, arguments);
+        };
+    });
+    return state;
+}
+
+// Install before the first game play/stop call, so even an audio ending
+// between simulation steps cannot erase the intended playback state.
+function installAutomationMusicPlaybackTracking()
+{
+    if (window.SOUNDSTORM_AUTOMATION !== true || typeof music !== 'object'){
+        return;
+    }
+    Object.keys(music).forEach(function (name) {
+        if (music[name] && typeof music[name].playing === 'function'){
+            trackAutomationMusicPlayback(music[name]);
+        }
+    });
+}
+installAutomationMusicPlaybackTracking();
+
+function syncAutomationMusicTime()
+{
+    if (window.SOUNDSTORM_AUTOMATION !== true || typeof(music[playing])!=='object'){
+        return;
     }
 
-    //calc timediff
-    var date = new Date();
-    newtime = date.getTime();
-    //time = date.getTime();
-    aicounter=0;
-    while ((newtime-time)/16.66666666666666>=16.66666666666666){
-        aicounter++;
-        ticks++;
-        time+=16.66666666666666;
-        globalfilters.shockwave.time = (globalfilters.shockwave.time >= 1 ) ? 0 : globalfilters.shockwave.time + 0.015;
-        if (globalfilters.shockwave.enabled && globalfilters.shockwave.time>=0.06){
-            globalfilters.shockwave.amplitude-=3;
-            globalfilters.shockwave.brightness-=0.03;
-            if (globalfilters.shockwave.brightness<=1.0){
-                globalfilters.shockwave.enabled=false;
-            }
+    var observedSeek = Number(music[playing].seek());
+    automationMusicTime = Number.isFinite(observedSeek) ? observedSeek : 0;
+    automationMusicTrack = playing;
+    var state = trackAutomationMusicPlayback(music[playing]);
+    automationMusicPlaying = state.managed ? state.intendedPlaying : music[playing].playing();
+    state.pendingStart = false;
+    state.resuming = false;
+}
+
+function getCurrentMusicTime(dtSeconds)
+{
+    if (typeof(music[playing])!=='object'){
+        return 0;
+    }
+
+    var replayMusicTime = typeof ReplaySystem !== "undefined"
+        ? ReplaySystem.playbackMusicTime()
+        : null;
+    if (replayMusicTime !== null){
+        return replayMusicTime;
+    }
+
+    var observedSeek = Number(music[playing].seek());
+    if (window.SOUNDSTORM_AUTOMATION !== true){
+        return Number.isFinite(observedSeek) ? observedSeek : 0;
+    }
+
+    var state = trackAutomationMusicPlayback(music[playing]);
+    var isMusicPlaying = state.managed ? state.intendedPlaying : music[playing].playing();
+    if (automationMusicTrack !== playing || state.pendingStart || (!automationMusicPlaying && isMusicPlaying && !state.resuming)){
+        var startSeek = state.pendingStart ? state.startSeek : observedSeek;
+        automationMusicTime = Number.isFinite(startSeek) ? startSeek : 0;
+    }
+    state.pendingStart = false;
+    state.resuming = false;
+
+    automationMusicTrack = playing;
+    automationMusicPlaying = isMusicPlaying;
+
+    if (!isMusicPlaying){
+        if (!state.paused){
+            automationMusicTime = Number.isFinite(observedSeek) ? observedSeek : 0;
         }
+        return automationMusicTime;
+    }
+
+    automationMusicTime += dtSeconds;
+
+    var duration = typeof music[playing].duration === "function"
+        ? Number(music[playing].duration())
+        : 0;
+    if (Number.isFinite(duration) && duration > 0 && automationMusicTime >= duration){
+        if (typeof music[playing].loop === "function" && music[playing].loop() === true){
+            automationMusicTime %= duration;
+        }
+        else{
+            music[playing].stop();
+            automationMusicTime = 0;
+            automationMusicPlaying = false;
+        }
+    }
+
+    return automationMusicTime;
+}
+
+function updateShockwave()
+{
+    globalfilters.shockwave.time = (globalfilters.shockwave.time >= 1 )
+        ? 0
+        : globalfilters.shockwave.time + 0.015;
+
+    if (globalfilters.shockwave.enabled && globalfilters.shockwave.time>=0.06){
+        globalfilters.shockwave.amplitude-=3;
+        globalfilters.shockwave.brightness-=0.03;
+        if (globalfilters.shockwave.brightness<=1.0){
+            globalfilters.shockwave.enabled=false;
+        }
+    }
+}
+
+function isWebDemoFinished()
+{
+    return settings.version === 'demo' && settings.plattform === 'web'
+        && stagecount === -1 && play === false;
+}
+
+function timer(dtSeconds)
+{
+    if (isWebDemoFinished()){return;}
+    count();
+    ticks++;
+    updateShockwave();
+    
+    //generate beats of playing music
+    musictime = 0;
+    if (typeof(music[playing])=='object'){
+        musictime = getCurrentMusicTime(dtSeconds);
+        beatgenerator(musictime, playing)
     }
 
     if (laserstock<=difficulty.lasermax)
@@ -83,6 +224,47 @@ function timer()
             }
         }
     }
+
+    /*special hacks for individual stages*/
+    //bg pulse first boss
+    if (stagecount == 1 && scene>19 /*&& scene<22*/){
+        ai.bgpulse.call(background, 5, 3, 4);
+    }
+    //blur zoom on second boss
+    else if (stagecount == 2 && scene >= 14){
+        globalfilters.adjust.contrast = 1;
+        globalfilters.adjust.red = 1 ;
+        globalfilters.adjust.blue =1 + 2 * beat[1];
+        globalfilters.adjust.green = 1 ;
+        if (beat[1]<=0){
+            globalfilters.adjust.enabled=false;
+        }
+        else {
+            globalfilters.adjust.enabled=true;
+        }  
+        ai.bgpulse.call(background, 5, 1, 1.25);
+        //flash bue
+    }
+    //zoomblur on stage 3
+    else if (stagecount == 3 && scene>=11 && musictime>7.78){
+        globalfilters.zoomblur.enabled = (beat[2]+beat[1]>0);
+        globalfilters.zoomblur.strength = 0.1 * (-beat[2]+beat[1])*music[playing]._volume;;
+        globalfilters.zoomblur.center.x=herox;
+        globalfilters.zoomblur.center.y=heroy;
+
+        globalfilters.adjust.contrast = 1;
+        globalfilters.adjust.red = 1 + (beat[2]/4 + beat[1]/4)*music[playing]._volume;
+        globalfilters.adjust.green = 1  + (beat[1]/4)*music[playing]._volume;
+        globalfilters.adjust.blue =1 ;
+        if (beat[1]<=0){
+            globalfilters.adjust.enabled=true;
+        }
+        else {
+            globalfilters.adjust.enabled=true;
+        }  
+        
+    }
+    /** */
 
     if (scene < 99 && dead<=0){
         if (stage.alpha<1.0){
@@ -137,7 +319,6 @@ function timer()
         
     }
     else if (scene==0){
-        //console.log(nmusicloaded+' '+ntextures+' '+nmusicloadmax+' '+ntexmax+' '+(nmusicloadmax+ntexmax));
         if (done==0){updateloading(nmusicloaded+ (ntextures || 0));}
         if ((play==true) && nmusicloaded+ntextures>=ntexmax+nmusicloadmax){
             done=0;
@@ -146,35 +327,8 @@ function timer()
             scene++;
         }
     }
-    else if (stagecount<0)
-    {
-        debugstage();
-    }
-    else if (stagecount==0)
-    {
-        stage0();
-    }
-    else if (stagecount==1)
-    {
-        stage1(); 
-    }
-    else if (settings.version!=='demo'){
-        if (stagecount==2)
-        {
-            stage2();
-        }
-        else if (stagecount==3)
-        {
-            stage4();
-        }
-        else if (stagecount==4)
-        {
-            stage3();
-        }
-        else if (stagecount==5)
-        {
-            stage5();
-        }
+    else {
+        StageRegistry.run(stagecount);
     }
     if((stagecount==6 || (stagecount>=2 && settings.version=='demo')) && play)
     {
@@ -189,11 +343,15 @@ function timer()
             globalfilters.twist.enabled=false;
         }
 
-        if (trystock>0 && settings.version!=='demo'){
+        if (trystock>0 && settings.version!=='demo' && settings.version!=='test'){
             ending();
         }
         else if (settings.version=='demo' && settings.plattform=='web')
         {
+            play=false;
+            if (music[playing] && typeof music[playing].stop === 'function'){
+                music[playing].stop();
+            }
             closeFullscreen();
             stagecount=-1;
             document.getElementById('demoend').style.display='block';
@@ -213,4 +371,3 @@ function timer()
     }
     
 }
-

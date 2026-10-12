@@ -1,3 +1,4 @@
+PIXI.Assets.resolver.setDefaultSearchParams({v: settings.assetVersion});
 var tex={}; //all textures
 var set={}; //all sprites that are added to the scene
 
@@ -6,7 +7,7 @@ var preload;
 function texload(name){
     var texture = PIXI.Texture.from(name);
     preload = new PIXI.Sprite(texture);
-    console.log(ntextures);
+    
     return texture;
     
 }
@@ -16,35 +17,90 @@ function texload(name){
 
 
     if (settings.version=='demo'){
-        var ntexmax=27;
+        var ntexmax=29;
+    }
+    else if (settings.version=='test'){
+        var ntexmax=19; //basis
+        if (settings.playtest.includes(1)){
+            ntexmax+=10;
+        }
+        if (settings.playtest.includes(2)){
+            ntexmax+=24;
+        }
+        if (settings.playtest.includes(3)){
+            ntexmax+=16;
+
+        }
+        if (settings.playtest.includes(4)){
+            ntexmax+=12;
+
+        }
+        if (settings.playtest.includes(5)){
+            ntexmax+=14;
+
+        }
+
+
     }
     else{
-        var ntexmax=93;
+        var ntexmax=95;
     }
 
+    /*PIXI.Assets.load('pics/sp_snow.png').then(() => {
+        tex.sp_snow=texload('pics/sp_snow.png');
+    });
+    PIXI.Assets.load('pics/sp_snow2.png').then(() => {
+        tex.sp_snow2=texload('pics/sp_snow2.png');
+    });
+    PIXI.Assets.load('pics/sp_snow3.png').then(() => {
+        tex.sp_snow3=texload('pics/sp_snow3.png');
+    });
+    PIXI.Assets.load('pics/sp_flower.png').then(() => {
+        tex.sp_flower=texload('pics/sp_flower.png');
+    });
+    PIXI.Assets.load('pics/sp_leaf.png').then(() => {
+        tex.sp_leaf=texload('pics/sp_leaf.png');
+    });
+    PIXI.Assets.load('pics/sp_leaf2.png').then(() => {
+        tex.sp_leaf2=texload('pics/sp_leaf2.png');
+    });
+    PIXI.Assets.load('pics/sp_raindrop.png').then(() => {
+        tex.sp_raindrop=texload('pics/sp_raindrop.png');
+    });
+    PIXI.Assets.load('pics/sp_skull.png').then(() => {
+        tex.sp_skull=texload('pics/sp_skull.png');
+    });
+    PIXI.Assets.load('pics/sp_bullet.png').then(() => {
+        tex.sp_bullet=texload('pics/sp_bullet.png');
+    });
+    PIXI.Assets.load('pics/sp_cloud.png').then(() => {
+        tex.sp_cloud=texload('pics/sp_cloud.png');
+    });
+    PIXI.Assets.load('pics/sp_ghost.png').then(() => {
+        tex.sp_ghost=texload('pics/sp_ghost.png');
+    });
+    PIXI.Assets.load('pics/sp_note.png').then(() => {
+        tex.sp_note=texload('pics/sp_note.png');
+    });
+    PIXI.Assets.load('pics/sp_note1.png').then(() => {
+        tex.sp_note1=texload('pics/sp_note1.png');
+    });
+    PIXI.Assets.load('pics/sp_note2.png').then(() => {
+        tex.sp_note2=texload('pics/sp_note2.png');
+    });
+    PIXI.Assets.load('pics/sp_rain.png').then(() => {
+        tex.sp_rain=texload('pics/sp_rain.png');
+    });*/
+    /*PIXI.Assets.load('pics/bulletglow.png').then(() => {
+        tex.bulletglow=texload('pics/bulletglow.png');
+    });*/
+    
+
+    //Base Textures: 16
     PIXI.Assets.load('./pics/fonts/solid.fnt').then(() => {ntextures++;});
     PIXI.Assets.load('./pics/fonts/inline.fnt').then(() => {ntextures++;});
     PIXI.Assets.load('./pics/fonts/monospace.fnt').then(() => {ntextures++;});
     PIXI.Assets.load('./pics/fonts/small.fnt').then(() => {ntextures++;});
-
-    PIXI.Assets.load('pics/img01/fly/Spine.json').then((resource) => {
-        tex.fly=resource.spineData;
-    });
-
-    PIXI.Assets.load('pics/animations/Spine.json').then((resource) => {
-        tex.butterfly=resource.spineData;
-        ntextures++;
-    });
-
-    PIXI.Assets.load('pics/img01/loewenzahn/Spine.json').then((resource) => {
-        tex.hawkbit=resource.spineData;
-        ntextures++;
-    });
-
-    PIXI.Assets.load('pics/img01/dragonfly/Spine.json').then((resource) => {
-        tex.dragonfly=resource.spineData;
-        ntextures++; 
-    });
 
     PIXI.Assets.load('pics/img00/tut1/tut1.json').then((resource) => {
         tex.tut1=resource.spineData;      
@@ -89,7 +145,24 @@ function texload(name){
         ntextures++;
     });
 
+
     PIXI.Assets.load('pics/img00/base.json').then(() => {
+        tex.sp_snow = texload('sp_snow');
+        tex.sp_snow2 = texload('sp_snow2');
+        tex.sp_snow3 = texload('sp_snow3');
+        tex.sp_flower = texload('sp_flower');
+        tex.sp_leaf = texload('sp_leaf');
+        tex.sp_leaf2 = texload('sp_leaf2');
+        tex.sp_raindrop = texload('sp_raindrop');
+        tex.sp_skull = texload('sp_skull');
+        tex.sp_bullet = texload('sp_bullet');
+        tex.sp_cloud = texload('sp_cloud');
+        tex.sp_ghost = texload('sp_ghost');
+        tex.sp_note = texload('sp_note');
+        tex.sp_note1 = texload('sp_note1');
+        tex.sp_note2 = texload('sp_note2');
+        tex.sp_rain = texload('sp_rain');
+
         tSoundstorm = texload('soundstorm'); 
         tex.trip04 = texload('trip04');
         tex.trip03 = texload('trip03');
@@ -121,13 +194,21 @@ function texload(name){
         tBullet02 = texload('bullet02');
         tBullet03 = texload('bullet03');
         tBullet04 = texload('bullet04');
+        tBbullet01 = texload('bbullet01');
         tBbullet02 = texload('bbullet02');
         tBbullet03 = texload('bbullet03');
         tBbullet04 = texload('bbullet04');
         tBulletWhite = texload('bullet white');
+        tBbulletWhite = tBulletWhite;
         tex.bulletline = texload('bullet line');
         tex.bbulletline = texload('bbullet line');
         tex.cbulletline = texload('cbullet line');
+        tex.bulletglow = texload('bulletglow');
+        tex.bbulletglow = texload('bbulletglow');
+        tex.cbulletglow = texload('cbulletglow');
+        tex.grainglow = texload('grainglow');
+        tex.stickglow = texload('stickglow');
+        tex.clusterglow = texload('clusterglow');
         tCbullet01 = texload('cbullet01');
         tCbullet02 = texload('cbullet02');
         tCbullet03 = texload('cbullet03');
@@ -183,36 +264,6 @@ function texload(name){
         ntextures++;
     });
 
-
-
-    //stage 1
-
-    
-    PIXI.Assets.load('pics/img01/trip1.json').then(() => {
-        tex.mushanime = [
-            texload('mushanime_01'),
-            texload('mushanime_02'),
-            texload('mushanime_03'),
-            texload('mushanime_04'),
-            texload('mushanime_05'),
-        ];
-        tex.mushdefeated = texload('mushdefeated');
-        tFear01 = texload('fear01');
-        tGrass1 = texload('grass1');
-        tGrass2 = texload('grass2');
-        tGrass3 = texload('grass3');
-        tHero=texload('hero');
-        tMushroom = texload('mushroom');
-        tGrassborder = texload('grassborder');
-        tSunflower = texload('sunflower');
-        ntextures++;
-    });
-
-    PIXI.Assets.load('pics/img01/fog1.png').then(() => {
-        tex.fog1=texload('pics/img01/fog1.png');
-        ntextures++;
-    });
-
     PIXI.Assets.load('pics/img00/foresttitle.jpg').then(() => {
         tex.foresttitle=texload('pics/img00/foresttitle.jpg');
         ntextures++;
@@ -228,471 +279,518 @@ function texload(name){
         ntextures++;
     });
 
-    PIXI.Assets.load('pics/img01/greengrass.jpg').then(() => {
-        tGrass=texload('pics/img01/greengrass.jpg');
-        ntextures++;
-    });
 
-    PIXI.Assets.load('pics/img01/forestground.jpg').then(() => {
-        tex.forestground=texload('pics/img01/forestground.jpg');
-        ntextures++;
-    });
+    //stage 1: 13
+    if (settings.version!=='test' || settings.playtest.includes(1))
+    {
+        PIXI.Assets.load('pics/img01/fly/Spine.json').then((resource) => {
+            tex.fly=resource.spineData;
+            ntextures++;
+        });
 
-    PIXI.Assets.load('pics/img01/forestground_n.png').then(() => {
-        tex.forestground_n=texload('pics/img01/forestground_n.png');
-        ntextures++;
-    });
+        PIXI.Assets.load('pics/img01/butterfly/Spine.json').then((resource) => {
+            tex.butterfly=resource.spineData;
+            ntextures++;
+        });
 
-    PIXI.Assets.load('pics/img01/forestground_h.jpg').then(() => {
-        tex.forestground_h=texload('pics/img01/forestground_h.jpg');
-        ntextures++;
-    });
+        PIXI.Assets.load('pics/img01/loewenzahn/Spine.json').then((resource) => {
+            tex.hawkbit=resource.spineData;
+            ntextures++;
+        });
+
+        PIXI.Assets.load('pics/img01/dragonfly/Spine.json').then((resource) => {
+            tex.dragonfly=resource.spineData;
+            ntextures++; 
+        });
+
+        PIXI.Assets.load('pics/img01/trip1.json').then(() => {
+            tex.mushanime = [
+                texload('mushanime_01'),
+                texload('mushanime_02'),
+                texload('mushanime_03'),
+                texload('mushanime_04'),
+                texload('mushanime_05'),
+            ];
+            tex.mushdefeated = texload('mushdefeated');
+            tFear01 = texload('fear01');
+            tGrass1 = texload('grass1');
+            tGrass2 = texload('grass2');
+            tGrass3 = texload('grass3');
+            tHero=texload('hero');
+            tMushroom = texload('mushroom');
+            tGrassborder = texload('grassborder');
+            tSunflower = texload('sunflower');
+            ntextures++;
+        });
+
+        PIXI.Assets.load('pics/img01/fog1.png').then(() => {
+            tex.fog1=texload('pics/img01/fog1.png');
+            ntextures++;
+        });
+
+        PIXI.Assets.load('pics/img01/greengrass.jpg').then(() => {
+            tGrass=texload('pics/img01/greengrass.jpg');
+            ntextures++;
+        });
+
+        PIXI.Assets.load('pics/img01/forestground.jpg').then(() => {
+            tex.forestground=texload('pics/img01/forestground.jpg');
+            ntextures++;
+        });
+
+        PIXI.Assets.load('pics/img01/forestground_n.png').then(() => {
+            tex.forestground_n=texload('pics/img01/forestground_n.png');
+            ntextures++;
+        });
+
+        PIXI.Assets.load('pics/img01/forestground_h.jpg').then(() => {
+            tex.forestground_h=texload('pics/img01/forestground_h.jpg');
+            ntextures++;
+        });
+    }
+
 
     if (settings.version!=='demo'){
-        //stage2
+        //stage2: 24
+        if (settings.version!=='test' || settings.playtest.includes(2)){
+            PIXI.Assets.load('pics/img02/alien/Spine.json').then((resource) => {
+                tex.alien=resource.spineData;
+                ntextures++;
+            });
 
-        PIXI.Assets.load('pics/img02/alien/Spine.json').then((resource) => {
-            tex.alien=resource.spineData;
+            PIXI.Assets.load('pics/img02/satelite/Spine.json').then((resource) => {
+                tex.satelite=resource.spineData;
+                ntextures++;
+            });
+
+            PIXI.Assets.load('pics/img02/ufo/Spine.json').then((resource) => {
+                tex.ufo=resource.spineData;
+                ntextures++;
+            });
+
+            PIXI.Assets.load('pics/img02/hero/Spine.json').then((resource) => {
+                tex.hero2=resource.spineData;
+                ntextures++;
+            });
+
+            PIXI.Assets.load('pics/img02/space.jpg').then(() => {
+                tSpace=texload('pics/img02/space.jpg');
+                ntextures++;
+            });
+
+            PIXI.Assets.load('pics/img02/space_n.png').then(() => {
+                tex.space_n=texload('pics/img02/space_n.png');
+                ntextures++;
+            });
+
+            PIXI.Assets.load('pics/img02/space_h.jpg').then(() => {
+                tex.space_h=texload('pics/img02/space_h.jpg');
+                ntextures++;
+            });
+
+            PIXI.Assets.load('pics/img02/hills/hill4.jpg').then(() => {
+                tHill4=texload('pics/img02/hills/hill4.jpg');
+                ntextures++;
+            });
+            PIXI.Assets.load('pics/img02/fog2.png').then(() => {
+                tex.fog2=texload('pics/img02/fog2.png');
+                ntextures++;
+            });
+
+            PIXI.Assets.load('pics/img02/meteor_h.png').then(() => {
+                tex.meteor_h=texload('pics/img02/meteor_h.png');
+                ntextures++;
+            });
+
+            PIXI.Assets.load('pics/img02/trip2.json').then(() => {
+                
+                tUfo= texload('ufo');
+                tSaturn = texload('saturn');
+                tBalloon1 = texload('balloon1');
+                tBalloon2 = texload('balloon2');
+                tex.meteor = texload('meteor');
+                tHero2 = texload('hero2');
+                tFear02 = texload('fear02');
+                ntextures++;
+            });
+
+
+        PIXI.Assets.load('pics/img02/hills/hill1.png').then(() => {
+            tex.hill1=texload('pics/img02/hills/hill1.png');
             ntextures++;
         });
 
-        PIXI.Assets.load('pics/img02/satelite/Spine.json').then((resource) => {
-            tex.satelite=resource.spineData;
+        PIXI.Assets.load('pics/img02/hills/hill1_n.png').then(() => {
+            tex.hill1_n=texload('pics/img02/hills/hill1_n.png');
             ntextures++;
         });
 
-        PIXI.Assets.load('pics/img02/ufo/Spine.json').then((resource) => {
-            tex.ufo=resource.spineData;
+        PIXI.Assets.load('pics/img02/hills/hill1_h.png').then(() => {
+            tex.hill1_h=texload('pics/img02/hills/hill1_h.png');
             ntextures++;
         });
 
-        PIXI.Assets.load('pics/img02/hero/Spine.json').then((resource) => {
-            tex.hero2=resource.spineData;
+        PIXI.Assets.load('pics/img02/hills/hill2.png').then(() => {
+            tex.hill2=texload('pics/img02/hills/hill2.png');
             ntextures++;
         });
 
-        PIXI.Assets.load('pics/img02/space.jpg').then(() => {
-            tSpace=texload('pics/img02/space.jpg');
+        PIXI.Assets.load('pics/img02/hills/hill2_n.png').then(() => {
+            tex.hill2_n=texload('pics/img02/hills/hill2_n.png');
             ntextures++;
         });
 
-        PIXI.Assets.load('pics/img02/space_n.png').then(() => {
-            tex.space_n=texload('pics/img02/space_n.png');
+        PIXI.Assets.load('pics/img02/hills/hill2_h.png').then(() => {
+            tex.hill2_h=texload('pics/img02/hills/hill2_h.png');
             ntextures++;
         });
 
-        PIXI.Assets.load('pics/img02/space_h.jpg').then(() => {
-            tex.space_h=texload('pics/img02/space_h.jpg');
+        PIXI.Assets.load('pics/img02/hills/hill3.png').then(() => {
+            tex.hill3=texload('pics/img02/hills/hill3.png');
+            ntextures++;
+        });
+
+        PIXI.Assets.load('pics/img02/hills/hill3_n.png').then(() => {
+            tex.hill3_n=texload('pics/img02/hills/hill3_n.png');
+            ntextures++;
+        });
+
+        PIXI.Assets.load('pics/img02/hills/hill3_h.png').then(() => {
+            tex.hill3_h=texload('pics/img02/hills/hill3_h.png');
             ntextures++;
         });
 
         PIXI.Assets.load('pics/img02/hills/hill4.jpg').then(() => {
-            tHill4=texload('pics/img02/hills/hill4.jpg');
-            ntextures++;
-        });
-        PIXI.Assets.load('pics/img02/fog2.png').then(() => {
-            tex.fog2=texload('pics/img02/fog2.png');
+            tex.hill4=texload('pics/img02/hills/hill4.jpg');
             ntextures++;
         });
 
-        PIXI.Assets.load('pics/img02/meteor_h.png').then(() => {
-            tex.meteor_h=texload('pics/img02/meteor_h.png');
+        PIXI.Assets.load('pics/img02/hills/hill4_n.png').then(() => {
+            tex.hill4_n=texload('pics/img02/hills/hill4_n.png');
             ntextures++;
         });
 
-        PIXI.Assets.load('pics/img02/trip2.json').then(() => {
-            
-            tUfo= texload('ufo');
-            tSaturn = texload('saturn');
-            tBalloon1 = texload('balloon1');
-            tBalloon2 = texload('balloon2');
-            tex.meteor = texload('meteor');
-            //tex.meteor_h = texload('meteor_h');
-            tHero2 = texload('hero2');
-            tFear02 = texload('fear02');
+        PIXI.Assets.load('pics/img02/hills/hill4_h.jpg').then(() => {
+            tex.hill4_h=texload('pics/img02/hills/hill4_h.jpg');
             ntextures++;
         });
 
+            PIXI.Assets.load('pics/img02/T2hills.json').then(() => {
+                tHill1 = texload('hill1');
+                tHill2 = texload('hill2');
+                tHill3 = texload('hill3');
+                ntextures++;
+            });
+        }
 
-    PIXI.Assets.load('pics/img02/hills/hill1.png').then(() => {
-        tex.hill1=texload('pics/img02/hills/hill1.png');
-        ntextures++;
-    });
 
-    PIXI.Assets.load('pics/img02/hills/hill1_n.png').then(() => {
-        tex.hill1_n=texload('pics/img02/hills/hill1_n.png');
-        ntextures++;
-    });
+        //stage 3: 16
+        if (settings.version!=='test' || settings.playtest.includes(3)){
+            PIXI.Assets.load('pics/img03/city.jpg').then(() => {
+                tex.city=texload('pics/img03/city.jpg');
+                ntextures++;
+            });
+            PIXI.Assets.load('pics/img03/city_n.png').then(() => {
+                tex.city_n=texload('pics/img03/city_n.png');
+                ntextures++;
+            });
+            PIXI.Assets.load('pics/img03/city_h.png').then(() => {
+                tex.city_h=texload('pics/img03/city_h.png');
+                ntextures++;
+            });
+            PIXI.Assets.load('pics/img03/cemetry.jpg').then(() => {
+                tex.cemetry=texload('pics/img03/cemetry.jpg');
+                ntextures++;
+            });
+            PIXI.Assets.load('pics/img03/cemetry_h.jpg').then(() => {
+                tex.cemetry_h=texload('pics/img03/cemetry_h.jpg');
+                ntextures++;
+            });
+            PIXI.Assets.load('pics/img03/cemetry_n.png').then(() => {
+                tex.cemetry_n=texload('pics/img03/cemetry_n.png');
+                ntextures++;
+            });
+            PIXI.Assets.load('pics/img03/fog3.png').then(() => {
+                tex.fog3=texload('pics/img03/fog3.png');
+                ntextures++;
+            });
 
-    PIXI.Assets.load('pics/img02/hills/hill1_h.png').then(() => {
-        tex.hill1_h=texload('pics/img02/hills/hill1_h.png');
-        ntextures++;
-    });
+            PIXI.Assets.load('pics/img03/trip3.json').then(() => {
+                tex.fear04 = texload('fear04');
+                tex.stripes = texload('stripes');
+                tex.stars = texload('stars'); 
+                tHero4 = texload('engel');
+                ntextures++;
+            });
 
-    PIXI.Assets.load('pics/img02/hills/hill2.png').then(() => {
-        tex.hill2=texload('pics/img02/hills/hill2.png');
-        ntextures++;
-    });
+            PIXI.Assets.load('pics/img03/hero/Spine.json').then((resource) => {
+                tex.hero4=resource.spineData;
+                ntextures++;
+            });
 
-    PIXI.Assets.load('pics/img02/hills/hill2_n.png').then(() => {
-        tex.hill2_n=texload('pics/img02/hills/hill2_n.png');
-        ntextures++;
-    });
+            PIXI.Assets.load('pics/img03/bomber/Spine.json').then((resource) => {
+                tex.bomber=resource.spineData;
+                ntextures++;
+            });
 
-    PIXI.Assets.load('pics/img02/hills/hill2_h.png').then(() => {
-        tex.hill2_h=texload('pics/img02/hills/hill2_h.png');
-        ntextures++;
-    });
+            PIXI.Assets.load('pics/img03/ecloud/Spine.json').then((resource) => {
+                tex.ecloud=resource.spineData;
+                ntextures++;
+            });
 
-    PIXI.Assets.load('pics/img02/hills/hill3.png').then(() => {
-        tex.hill3=texload('pics/img02/hills/hill3.png');
-        ntextures++;
-    });
+            PIXI.Assets.load('pics/img03/heli1/skeleton.json').then((resource) => {
+                tex.heli1=resource.spineData;
+                ntextures++;
+            });
 
-    PIXI.Assets.load('pics/img02/hills/hill3_n.png').then(() => {
-        tex.hill3_n=texload('pics/img02/hills/hill3_n.png');
-        ntextures++;
-    });
 
-    PIXI.Assets.load('pics/img02/hills/hill3_h.png').then(() => {
-        tex.hill3_h=texload('pics/img02/hills/hill3_h.png');
-        ntextures++;
-    });
+            PIXI.Assets.load('pics/img03/heli2/skeleton.json').then((resource) => {
+                tex.heli2=resource.spineData;
+                ntextures++;
+            });
 
-    PIXI.Assets.load('pics/img02/hills/hill4.jpg').then(() => {
-        tex.hill4=texload('pics/img02/hills/hill4.jpg');
-        ntextures++;
-    });
 
-    PIXI.Assets.load('pics/img02/hills/hill4_n.png').then(() => {
-        tex.hill4_n=texload('pics/img02/hills/hill4_n.png');
-        ntextures++;
-    });
+            PIXI.Assets.load('pics/img03/hornet/Spine.json').then((resource) => {
+                tex.hornet=resource.spineData;
+                ntextures++;
+            });
 
-    PIXI.Assets.load('pics/img02/hills/hill4_h.jpg').then(() => {
-        tex.hill4_h=texload('pics/img02/hills/hill4_h.jpg');
-        ntextures++;
-    });
 
-        PIXI.Assets.load('pics/img02/T2hills.json').then(() => {
-            tHill1 = texload('hill1');
-            tHill2 = texload('hill2');
-            tHill3 = texload('hill3');
-            ntextures++;
-        });
+            PIXI.Assets.load('pics/img03/plane/Spine.json').then((resource) => {
+                tex.plane=resource.spineData;
+                ntextures++;
+            });
+
+            PIXI.Assets.load('pics/img03/zeppelin/Spine.json').then((resource) => {
+                tex.zeppelin=resource.spineData;
+                ntextures++;
+            });
+        }
        
 
 
-        //stage 3
-        PIXI.Assets.load('pics/img03/city.jpg').then(() => {
-            tex.city=texload('pics/img03/city.jpg');
-            ntextures++;
-        });
-        PIXI.Assets.load('pics/img03/city_n.png').then(() => {
-            tex.city_n=texload('pics/img03/city_n.png');
-            ntextures++;
-        });
-        PIXI.Assets.load('pics/img03/city_h.png').then(() => {
-            tex.city_h=texload('pics/img03/city_h.png');
-            ntextures++;
-        });
-        PIXI.Assets.load('pics/img03/cemetry.jpg').then(() => {
-            tex.cemetry=texload('pics/img03/cemetry.jpg');
-            ntextures++;
-        });
-        PIXI.Assets.load('pics/img03/cemetry_h.jpg').then(() => {
-            tex.cemetry_h=texload('pics/img03/cemetry_h.jpg');
-            ntextures++;
-        });
-        PIXI.Assets.load('pics/img03/cemetry_n.png').then(() => {
-            tex.cemetry_n=texload('pics/img03/cemetry_n.png');
-            ntextures++;
-        });
-        PIXI.Assets.load('pics/img03/fog3.png').then(() => {
-            tex.fog3=texload('pics/img03/fog3.png');
-            ntextures++;
-        });
 
-        PIXI.Assets.load('pics/img03/trip3.json').then(() => {
-            //tex.heli = texload('heli');
-            //tex.heli2 = texload('heli2');
-            //tex.rotor = texload('rotor');
-            //tex.plane = texload('plane');
-            tex.fear04 = texload('fear04');
-            //tex.bomber = texload('bomber');
-            
-            tex.stripes = texload('stripes');
-            tex.stars = texload('stars');
-            //tex.hornet = texload('hornet');
-            //tex.zeppelin = texload('zeppelin');    
-            
-            tHero4 = texload('engel');
-            ntextures++;
-        });
+        //stage 4: 12
+        if (settings.version!=='test' || settings.playtest.includes(4)){
+            PIXI.Assets.load('pics/img04/riverground.jpg').then(() => {
+                tex.riverground=texload('pics/img04/riverground.jpg');
+                ntextures++;
+            });
 
-        PIXI.Assets.load('pics/img03/hero/Spine.json').then((resource) => {
-            tex.hero4=resource.spineData;
-            ntextures++;
-        });
+            PIXI.Assets.load('pics/img04/riverground.jpg').then(() => {
+                tex.riverground_n=texload('pics/img04/riverground_n.png');
+                ntextures++;
+            });
 
-        PIXI.Assets.load('pics/img03/bomber/Spine.json').then((resource) => {
-            tex.bomber=resource.spineData;
-            ntextures++;
-        });
+            PIXI.Assets.load('pics/img04/riverground_h.jpg').then(() => {
+                tex.riverground_h=texload('pics/img04/riverground_h.jpg');
+                ntextures++;
+            });
 
-        PIXI.Assets.load('pics/img03/ecloud/Spine.json').then((resource) => {
-            tex.ecloud=resource.spineData;
-            ntextures++;
-        });
+            PIXI.Assets.load('pics/img04/mammut.jpg').then(() => {
+                tex.mammut=texload('pics/img04/mammut.jpg');
+                ntextures++;
+            });
+            PIXI.Assets.load('pics/img04/eagle.png').then(() => {
+                tex.eagleb=texload('pics/img04/eagle.png');
+                ntextures++;
+            });
 
-        PIXI.Assets.load('pics/img03/heli1/skeleton.json').then((resource) => {
-            tex.heli1=resource.spineData;
-            ntextures++;
-        });
+            PIXI.Assets.load('pics/img04/trip4.json').then(() => {
 
+                tex.cloud1 = texload('cloud1');
+                tex.cloud2 = texload('cloud2');
+                tex.cloud3 = texload('cloud3');
+                tex.cloud4 = texload('cloud4');
+                tex.cloudstripe = texload('cloudstripe');
+                //tex.cloudboss = texload('cloudboss');
+                //tex.dragonblue = texload('dragonblue');
+                //tex.dragonred = texload('dragonred');
+                //tex.eagle = texload('eagle');
+                //tex.parrot = texload('parrot');
+                //tex.squirrel = texload('squirrel');
+                tex.rain = texload('raindrop');
+                tex.electro = texload('electro');
+                tex.lightning = texload('lightning');
+                tex.fear03 = texload('fear03');
+                tex.feather = texload('feather');
+                tex.dragonwing = texload('dragonwing');
+                tex.featherparrot = texload('featherparrot');
+                tHero3 = texload('hero3');
+                ntextures++;
+            });
 
-        PIXI.Assets.load('pics/img03/heli2/skeleton.json').then((resource) => {
-            tex.heli2=resource.spineData;
-            ntextures++;
-        });
+            PIXI.Assets.load('pics/img04/dragon/Spine.json').then((resource) => {
+                tex.dragon=resource.spineData;
+                ntextures++;
+            });
 
+            PIXI.Assets.load('pics/img04/cloud/Spine.json').then((resource) => {
+                tex.cloud=resource.spineData;
+                ntextures++;
+            });
 
-        PIXI.Assets.load('pics/img03/hornet/Spine.json').then((resource) => {
-            tex.hornet=resource.spineData;
-            ntextures++;
-        });
+            PIXI.Assets.load('pics/img04/eagle/Spine.json').then((resource) => {
+                tex.eagle=resource.spineData;
+                ntextures++;
+            });
 
+            PIXI.Assets.load('pics/img04/parrot/Spine.json').then((resource) => {
+                tex.parrot=resource.spineData;
+                ntextures++;
+            });
 
-        PIXI.Assets.load('pics/img03/plane/Spine.json').then((resource) => {
-            tex.plane=resource.spineData;
-            ntextures++;
-        });
+            PIXI.Assets.load('pics/img04/squirrel/Spine.json').then((resource) => {
+                tex.squirrel=resource.spineData;
+                ntextures++;
+            });
 
-        PIXI.Assets.load('pics/img03/zeppelin/Spine.json').then((resource) => {
-            tex.zeppelin=resource.spineData;
-            ntextures++;
-        });
-       
-        //stage 4
-        PIXI.Assets.load('pics/img04/riverground.jpg').then(() => {
-            tex.riverground=texload('pics/img04/riverground.jpg');
-            ntextures++;
-        });
+            PIXI.Assets.load('pics/img04/hero3/Spine.json').then((resource) => {
+                tex.hero3=resource.spineData;
+                ntextures++;
+            });
+        }
 
-        PIXI.Assets.load('pics/img04/riverground.jpg').then(() => {
-            tex.riverground_n=texload('pics/img04/riverground_n.png');
-            ntextures++;
-        });
+        //stage 5: 14
+        if (settings.version!=='test' || settings.playtest.includes(5)){
+            PIXI.Assets.load('pics/img05/trip5.json').then(() => {
+                //tex.ghostw1 = texload('ghostw1');
+                //tex.ghostw2 = texload('ghostw2');
+                //tex.ghostw3 = texload('ghostw3');
+                tex.ghostw4 = texload('ghostw4');
+                //tex.ghostb1 = texload('ghostb1');
+                //tex.ghostb2 = texload('ghostb2');
+                //tex.ghostb3 = texload('ghostb3');
+                tex.ghostb4 = texload('ghostb4');
+                tex.cluster1 = texload('cluster1');
+                tex.cluster2 = texload('cluster2');
+                tex.cluster3 = texload('cluster3');
+                tex.cluster4 = texload('cluster4');
+                tex.cluster5 = texload('cluster5');
+                tex.cluster6 = texload('cluster6');
+                tex.cluster7 = texload('cluster7');
+                tex.cluster8 = texload('cluster8');
+                tex.farbmandala1 = texload('farbmandala1');
+                tex.farbmandala2 = texload('farbmandala2');
+                //tex.face1 = texload('face1');
+                //tex.face2 = texload('face2');
+                tex.fear05 = texload('fear05');
+                ntextures++;
+            });
 
-        PIXI.Assets.load('pics/img04/riverground_h.jpg').then(() => {
-            tex.riverground_h=texload('pics/img04/riverground_h.jpg');
-            ntextures++;
-        });
+            PIXI.Assets.load('pics/img05/ghostw1/Spine.json').then((resource) => {
+                tex.ghostw1=resource.spineData;
+                ntextures++;
+            });
 
-        PIXI.Assets.load('pics/img04/mammut.jpg').then(() => {
-            tex.mammut=texload('pics/img04/mammut.jpg');
-            ntextures++;
-        });
-        PIXI.Assets.load('pics/img04/eagle.png').then(() => {
-            tex.eagleb=texload('pics/img04/eagle.png');
-            ntextures++;
-        });
+            PIXI.Assets.load('pics/img05/ghostw2/Spine.json').then((resource) => {
+                tex.ghostw2=resource.spineData;
+                ntextures++;
+            });
 
-        PIXI.Assets.load('pics/img04/trip4.json').then(() => {
+            PIXI.Assets.load('pics/img05/ghostw3/Spine.json').then((resource) => {
+                tex.ghostw3=resource.spineData;
+                ntextures++;
+            });
 
-            tex.cloud1 = texload('cloud1');
-            tex.cloud2 = texload('cloud2');
-            tex.cloud3 = texload('cloud3');
-            tex.cloud4 = texload('cloud4');
-            tex.cloudstripe = texload('cloudstripe');
-            //tex.cloudboss = texload('cloudboss');
-            //tex.dragonblue = texload('dragonblue');
-            //tex.dragonred = texload('dragonred');
-            //tex.eagle = texload('eagle');
-            //tex.parrot = texload('parrot');
-            //tex.squirrel = texload('squirrel');
-            tex.rain = texload('raindrop');
-            tex.electro = texload('electro');
-            tex.lightning = texload('lightning');
-            tex.fear03 = texload('fear03');
-            tex.feather = texload('feather');
-            tex.dragonwing = texload('dragonwing');
-            tex.featherparrot = texload('featherparrot');
-            tHero3 = texload('hero3');
-            ntextures++;
-        });
+            PIXI.Assets.load('pics/img05/ghostb1/Spine.json').then((resource) => {
+                tex.ghostb1=resource.spineData;
+                ntextures++;
+            });
 
-        PIXI.Assets.load('pics/img04/dragon/Spine.json').then((resource) => {
-            tex.dragon=resource.spineData;
-            ntextures++;
-        });
+            PIXI.Assets.load('pics/img05/ghostb2/Spine.json').then((resource) => {
+                tex.ghostb2=resource.spineData;
+                ntextures++;
+            });
 
-        PIXI.Assets.load('pics/img04/cloud/Spine.json').then((resource) => {
-            tex.cloud=resource.spineData;
-            ntextures++;
-        });
+            PIXI.Assets.load('pics/img05/ghostb3/Spine.json').then((resource) => {
+                tex.ghostb3=resource.spineData;
+                ntextures++;
+            });
 
-        PIXI.Assets.load('pics/img04/eagle/Spine.json').then((resource) => {
-            tex.eagle=resource.spineData;
-            ntextures++;
-        });
+            PIXI.Assets.load('pics/img05/face1/Spine.json').then((resource) => {
+                tex.face1=resource.spineData;
+                ntextures++;
+            });
 
-        PIXI.Assets.load('pics/img04/parrot/Spine.json').then((resource) => {
-            tex.parrot=resource.spineData;
-            ntextures++;
-        });
+            PIXI.Assets.load('pics/img05/face2/Spine.json').then((resource) => {
+                tex.face2=resource.spineData;
+                ntextures++;
+            });
 
-        PIXI.Assets.load('pics/img04/squirrel/Spine.json').then((resource) => {
-            tex.squirrel=resource.spineData;
-            ntextures++;
-        });
+            PIXI.Assets.load('pics/img05/T5faces.json').then(() => {
+        
+                tex.bface1 = texload('bface1');
+                tex.bface2 = texload('bface2');
+                tex.bface3 = texload('bface3');
+                tex.bface4 = texload('bface4');
+                tex.bface5 = texload('bface5');
+                tex.bface6 = texload('bface6');
+                tex.bface7 = texload('bface7');
+                tex.bface8 = texload('bface8');
+                tex.bface9 = texload('bface9');
+                tex.bface10 = texload('bface10');
+                tex.bface11 = texload('bface10');
+                tex.bface12 = texload('bface12');
+                tex.bface13 = texload('bface13');
+                tex.bface14 = texload('bface14');
+                tex.bface15 = texload('bface15');
+                tex.bface16 = texload('bface16');
+                tex.bface19 = texload('bface19');
+                tex.bface20 = texload('bface20');
+                ntextures++;
+            });
 
-        PIXI.Assets.load('pics/img04/hero3/Spine.json').then((resource) => {
-            tex.hero3=resource.spineData;
-            ntextures++;
-        });
+            PIXI.Assets.load('pics/img05/T5pictrip.json').then(() => {
+                tex.pictrip=[];
+                tex.pictrip[0] = texload('pic00');
+                tex.pictrip[1] = texload('pic01');
+                tex.pictrip[2] = texload('pic02');
+                tex.pictrip[3] = texload('pic03');
+                tex.pictrip[4] = texload('pic04');
+                tex.pictrip[5] = texload('pic05');
+                tex.pictrip[6] = texload('pic06');
+                tex.pictrip[7] = texload('pic07');
+                tex.pictrip[8] = texload('pic08');
+                tex.pictrip[9] = texload('pic09');
+                tex.pictrip[10] = texload('pic10');
+                tex.pictrip[11] = texload('pic11');
+                tex.pictrip[12] = texload('pic12');
+                tex.pictrip[13] = texload('pic13');
+                tex.pictrip[14] = texload('pic14');
+                tex.pictrip[15] = texload('pic15');
+                tex.pictrip[16] = texload('pic16');
+                tex.pictrip[17] = texload('pic17');
+                tex.pictrip[18] = texload('pic18');
+                tex.pictrip[19] = texload('pic19');
+                ntextures++;
+            });
 
+            PIXI.Assets.load('pics/img05/T5mandalas.json').then(() => {
+                tex.mandala=[];
+                tex.mandala[0] = texload('mandala0');
+                tex.mandala[1] = texload('mandala1');
+                tex.mandala[2] = texload('mandala2');
+                tex.mandala[3] = texload('mandala3');
+                tex.mandala[4] = texload('mandala4');
+                tex.mandala[5] = texload('mandala5');
+                tex.mandala[6] = texload('mandala6');
+                tex.mandala[7] = texload('mandala7');
+                tex.mandala[8] = texload('mandala8');
+                tex.mandala[9] = texload('mandala9');
+                ntextures++;
+            });
 
-        //stage 5
-        PIXI.Assets.load('pics/img05/trip5.json').then(() => {
-            //tex.ghostw1 = texload('ghostw1');
-            //tex.ghostw2 = texload('ghostw2');
-            //tex.ghostw3 = texload('ghostw3');
-            tex.ghostw4 = texload('ghostw4');
-            //tex.ghostb1 = texload('ghostb1');
-            //tex.ghostb2 = texload('ghostb2');
-            //tex.ghostb3 = texload('ghostb3');
-            tex.ghostb4 = texload('ghostb4');
-            tex.cluster1 = texload('cluster1');
-            tex.cluster2 = texload('cluster2');
-            tex.cluster3 = texload('cluster3');
-            tex.cluster4 = texload('cluster4');
-            tex.cluster5 = texload('cluster5');
-            tex.cluster6 = texload('cluster6');
-            tex.cluster7 = texload('cluster7');
-            tex.cluster8 = texload('cluster8');
-            tex.farbmandala1 = texload('farbmandala1');
-            tex.farbmandala2 = texload('farbmandala2');
-            //tex.face1 = texload('face1');
-            //tex.face2 = texload('face2');
-            tex.fear05 = texload('fear05');
-            ntextures++;
-        });
+            PIXI.Assets.load('pics/img05/fullmandala.jpg').then(() => {
+                tex.fullmandala=texload('pics/img05/fullmandala.jpg');
+                ntextures++;
+            });
 
-        PIXI.Assets.load('pics/img05/ghostw1/Spine.json').then((resource) => {
-            tex.ghostw1=resource.spineData;
-            ntextures++;
-        });
-
-        PIXI.Assets.load('pics/img05/ghostw2/Spine.json').then((resource) => {
-            tex.ghostw2=resource.spineData;
-            ntextures++;
-        });
-
-        PIXI.Assets.load('pics/img05/ghostw3/Spine.json').then((resource) => {
-            tex.ghostw3=resource.spineData;
-            ntextures++;
-        });
-
-        PIXI.Assets.load('pics/img05/ghostb1/Spine.json').then((resource) => {
-            tex.ghostb1=resource.spineData;
-            ntextures++;
-        });
-
-        PIXI.Assets.load('pics/img05/ghostb2/Spine.json').then((resource) => {
-            tex.ghostb2=resource.spineData;
-            ntextures++;
-        });
-
-        PIXI.Assets.load('pics/img05/ghostb3/Spine.json').then((resource) => {
-            tex.ghostb3=resource.spineData;
-            ntextures++;
-        });
-
-        PIXI.Assets.load('pics/img05/face1/Spine.json').then((resource) => {
-            tex.face1=resource.spineData;
-            ntextures++;
-        });
-
-        PIXI.Assets.load('pics/img05/face2/Spine.json').then((resource) => {
-            tex.face2=resource.spineData;
-            ntextures++;
-        });
-
-        PIXI.Assets.load('pics/img05/T5faces.json').then(() => {
-       
-            tex.bface1 = texload('bface1');
-            tex.bface2 = texload('bface2');
-            tex.bface3 = texload('bface3');
-            tex.bface4 = texload('bface4');
-            tex.bface5 = texload('bface5');
-            tex.bface6 = texload('bface6');
-            tex.bface7 = texload('bface7');
-            tex.bface8 = texload('bface8');
-            tex.bface9 = texload('bface9');
-            tex.bface10 = texload('bface10');
-            tex.bface11 = texload('bface10');
-            tex.bface12 = texload('bface12');
-            tex.bface13 = texload('bface13');
-            tex.bface14 = texload('bface14');
-            tex.bface15 = texload('bface15');
-            tex.bface16 = texload('bface16');
-            tex.bface19 = texload('bface19');
-            tex.bface20 = texload('bface20');
-            ntextures++;
-        });
-
-        PIXI.Assets.load('pics/img05/T5pictrip.json').then(() => {
-            tex.pictrip=[];
-            tex.pictrip[0] = texload('pic00');
-            tex.pictrip[1] = texload('pic01');
-            tex.pictrip[2] = texload('pic02');
-            tex.pictrip[3] = texload('pic03');
-            tex.pictrip[4] = texload('pic04');
-            tex.pictrip[5] = texload('pic05');
-            tex.pictrip[6] = texload('pic06');
-            tex.pictrip[7] = texload('pic07');
-            tex.pictrip[8] = texload('pic08');
-            tex.pictrip[9] = texload('pic09');
-            tex.pictrip[10] = texload('pic10');
-            tex.pictrip[11] = texload('pic11');
-            tex.pictrip[12] = texload('pic12');
-            tex.pictrip[13] = texload('pic13');
-            tex.pictrip[14] = texload('pic14');
-            tex.pictrip[15] = texload('pic15');
-            tex.pictrip[16] = texload('pic16');
-            tex.pictrip[17] = texload('pic17');
-            tex.pictrip[18] = texload('pic18');
-            tex.pictrip[19] = texload('pic19');
-            ntextures++;
-        });
-
-        PIXI.Assets.load('pics/img05/T5mandalas.json').then(() => {
-            tex.mandala=[];
-            tex.mandala[0] = texload('mandala0');
-            tex.mandala[1] = texload('mandala1');
-            tex.mandala[2] = texload('mandala2');
-            tex.mandala[3] = texload('mandala3');
-            tex.mandala[4] = texload('mandala4');
-            tex.mandala[5] = texload('mandala5');
-            tex.mandala[6] = texload('mandala6');
-            tex.mandala[7] = texload('mandala7');
-            tex.mandala[8] = texload('mandala8');
-            tex.mandala[9] = texload('mandala9');
-            ntextures++;
-        });
-
-        PIXI.Assets.load('pics/img05/fullmandala.jpg').then(() => {
-            tex.fullmandala=texload('pics/img05/fullmandala.jpg');
-            ntextures++;
-        });
-
-        PIXI.Assets.load('pics/img05/dunkelberg.jpg').then(() => {
-            tex.dunkelberg=texload('pics/img05/dunkelberg.jpg');
-            ntextures++;
-        });
-
+            PIXI.Assets.load('pics/img05/dunkelberg.jpg').then(() => {
+                tex.dunkelberg=texload('pics/img05/dunkelberg.jpg');
+                ntextures++;
+            });
+        }
     }
     
-
 

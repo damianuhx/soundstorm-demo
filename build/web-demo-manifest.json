@@ -1,0 +1,1330 @@
+{
+  "format": "soundstorm-web-demo-v1",
+  "builtAt": "2026-10-11T07:40:02.165Z",
+  "sourceRoot": "/Users/office/Library/CloudStorage/OneDrive-SekIIZürich/Code/soundstorm/soundstorm-full",
+  "outputRoot": "/Users/office/Library/CloudStorage/OneDrive-SekIIZürich/Code/soundstorm/soundstorm-full/output/web-demo-20261011/public",
+  "builder": {
+    "source": "scripts/build-web-demo.mjs",
+    "sha256": "4d983818d1a69066e19e120e7890926b7bb1f19dfe798ba9201563a4fcc948de"
+  },
+  "environment": {
+    "version": "demo",
+    "plattform": "web",
+    "playtest": [
+      1
+    ],
+    "assetVersion": "e5036ac66b6c039d"
+  },
+  "assetSha256": "e5036ac66b6c039d54dee2c2d634daf68065bacc66f1d5d001ef41eeb4e30760",
+  "assetDirectories": [
+    "pics/fonts",
+    "pics/html",
+    "pics/img00",
+    "pics/img01",
+    "sounds/music00",
+    "sounds/music01"
+  ],
+  "assetFiles": [
+    "pics/favicon.png",
+    "sounds/sfx.mp3",
+    "sounds/sfx.json"
+  ],
+  "validation": {
+    "scripts": 66,
+    "textureRequests": 29,
+    "audioRequests": 8,
+    "assetDependencies": 26,
+    "assetVersion": "e5036ac66b6c039d"
+  },
+  "files": [
+    {
+      "path": "code/ai/explosion.js",
+      "bytes": 1459,
+      "sha256": "ec9e3e05ea7e493a9ef243fff0688d5b4b05cd791d0dec58b95315242be5157c",
+      "source": "code/ai/explosion.js",
+      "sourceSha256": "ec9e3e05ea7e493a9ef243fff0688d5b4b05cd791d0dec58b95315242be5157c",
+      "generated": false
+    },
+    {
+      "path": "code/ai/general.js",
+      "bytes": 10,
+      "sha256": "31d4bbf7e4f30b942789f6aa1805c36243e91db639329598dfb106e313584d01",
+      "source": "code/ai/general.js",
+      "sourceSha256": "31d4bbf7e4f30b942789f6aa1805c36243e91db639329598dfb106e313584d01",
+      "generated": false
+    },
+    {
+      "path": "code/ai/light.js",
+      "bytes": 1109,
+      "sha256": "672375358c3f0afdef61bedeb61f9abde7c48a31ead7d1c0ee50c5b91926e7d2",
+      "source": "code/ai/light.js",
+      "sourceSha256": "672375358c3f0afdef61bedeb61f9abde7c48a31ead7d1c0ee50c5b91926e7d2",
+      "generated": false
+    },
+    {
+      "path": "code/ai/limit.js",
+      "bytes": 3458,
+      "sha256": "15f955d6eb0045215bccdac1182ed4624ee4e9192c522d9a48b1515b2a97d45e",
+      "source": "code/ai/limit.js",
+      "sourceSha256": "15f955d6eb0045215bccdac1182ed4624ee4e9192c522d9a48b1515b2a97d45e",
+      "generated": false
+    },
+    {
+      "path": "code/ai/movement.js",
+      "bytes": 2527,
+      "sha256": "2f73f2707fb1a9c9ce1a2bb07439083a5d5d32051d79a426247125179ca1ab53",
+      "source": "code/ai/movement.js",
+      "sourceSha256": "2f73f2707fb1a9c9ce1a2bb07439083a5d5d32051d79a426247125179ca1ab53",
+      "generated": false
+    },
+    {
+      "path": "code/ai/plains.js",
+      "bytes": 1511,
+      "sha256": "e0dff5816756828b0b98e6b2c9b0ea1d227763c6c4dd78f323d09c5fefa76043",
+      "source": "code/ai/plains.js",
+      "sourceSha256": "e0dff5816756828b0b98e6b2c9b0ea1d227763c6c4dd78f323d09c5fefa76043",
+      "generated": false
+    },
+    {
+      "path": "code/ai/shader.js",
+      "bytes": 2033,
+      "sha256": "7c89879fe47caf125f0e473c4e161c29c74e97fe9a380c643cf45bda67a5f12b",
+      "source": "code/ai/shader.js",
+      "sourceSha256": "7c89879fe47caf125f0e473c4e161c29c74e97fe9a380c643cf45bda67a5f12b",
+      "generated": false
+    },
+    {
+      "path": "code/ai/shooting.js",
+      "bytes": 435,
+      "sha256": "f93d559ddcf1e905b5a956a5eb427af261aecf7d5afa493c76b3ec8452346fd9",
+      "source": "code/ai/shooting.js",
+      "sourceSha256": "f93d559ddcf1e905b5a956a5eb427af261aecf7d5afa493c76b3ec8452346fd9",
+      "generated": false
+    },
+    {
+      "path": "code/ai/shot-patterns.js",
+      "bytes": 19708,
+      "sha256": "1ea2c2f144ba1ae64870cb8f5436b11016648751cadee41e31d5b7dd475a4603",
+      "source": "code/ai/shot-patterns.js",
+      "sourceSha256": "1ea2c2f144ba1ae64870cb8f5436b11016648751cadee41e31d5b7dd475a4603",
+      "generated": false
+    },
+    {
+      "path": "code/ai/timing.js",
+      "bytes": 2971,
+      "sha256": "3c6645794905d09ca6acad48047aa801816f7ad4c3f7c4a3ccfdd1c03ce240a6",
+      "source": "code/ai/timing.js",
+      "sourceSha256": "3c6645794905d09ca6acad48047aa801816f7ad4c3f7c4a3ccfdd1c03ce240a6",
+      "generated": false
+    },
+    {
+      "path": "code/ai/zoom.js",
+      "bytes": 995,
+      "sha256": "1cdb5315a6aea799f33f1b30fb0db7f242fbfcb9b5b9b3068bd22d3a18b65aee",
+      "source": "code/ai/zoom.js",
+      "sourceSha256": "1cdb5315a6aea799f33f1b30fb0db7f242fbfcb9b5b9b3068bd22d3a18b65aee",
+      "generated": false
+    },
+    {
+      "path": "code/sprites/enemies.js",
+      "bytes": 40214,
+      "sha256": "7f8ad480904995b8fc47e596f8201013b83fc35ae9998b05f4d4e3f6c638b37a",
+      "source": "code/sprites/enemies.js",
+      "sourceSha256": "7f8ad480904995b8fc47e596f8201013b83fc35ae9998b05f4d4e3f6c638b37a",
+      "generated": false
+    },
+    {
+      "path": "code/sprites/extras.js",
+      "bytes": 5436,
+      "sha256": "551e401f14b91e9ce041a5c769b37199a38140c080acee925148aa5b369cf272",
+      "source": "code/sprites/extras.js",
+      "sourceSha256": "551e401f14b91e9ce041a5c769b37199a38140c080acee925148aa5b369cf272",
+      "generated": false
+    },
+    {
+      "path": "code/sprites/general.js",
+      "bytes": 42031,
+      "sha256": "41ba4da7075b35c432674a5cae43e6b22fb4280cce35f1be6b988d0cbf597dd3",
+      "source": "code/sprites/general.js",
+      "sourceSha256": "41ba4da7075b35c432674a5cae43e6b22fb4280cce35f1be6b988d0cbf597dd3",
+      "generated": false
+    },
+    {
+      "path": "code/sprites/hero-behaviors.js",
+      "bytes": 7731,
+      "sha256": "a76c2f7f84db701e11297f8efcd768b6b7ffea8bad63db3600d07dc361fe7065",
+      "source": "code/sprites/hero-behaviors.js",
+      "sourceSha256": "a76c2f7f84db701e11297f8efcd768b6b7ffea8bad63db3600d07dc361fe7065",
+      "generated": false
+    },
+    {
+      "path": "code/sprites/hero.js",
+      "bytes": 4260,
+      "sha256": "823f42566dbbb8808192c7e77c5d08a8dbb590d8891172a68dfbe46c1e038db4",
+      "source": "code/sprites/hero.js",
+      "sourceSha256": "823f42566dbbb8808192c7e77c5d08a8dbb590d8891172a68dfbe46c1e038db4",
+      "generated": false
+    },
+    {
+      "path": "code/sprites/hud-behaviors.js",
+      "bytes": 2330,
+      "sha256": "a524c8f20cbe5dd49834401faacecb9e9357f08d621f080ccce5df7513573400",
+      "source": "code/sprites/hud-behaviors.js",
+      "sourceSha256": "a524c8f20cbe5dd49834401faacecb9e9357f08d621f080ccce5df7513573400",
+      "generated": false
+    },
+    {
+      "path": "code/sprites/particles.js",
+      "bytes": 65634,
+      "sha256": "fbfdcac2d3d8c0afc800ea1958304da6535849c7b59eb9e14bdec80a8bca3e9c",
+      "source": "code/sprites/particles.js",
+      "sourceSha256": "fbfdcac2d3d8c0afc800ea1958304da6535849c7b59eb9e14bdec80a8bca3e9c",
+      "generated": false
+    },
+    {
+      "path": "code/sprites/picture.js",
+      "bytes": 7309,
+      "sha256": "6c221a6ec4d07eba77b8fe92145790426562c869cc9e00c1b25a9b4a245109a3",
+      "source": "code/sprites/picture.js",
+      "sourceSha256": "6c221a6ec4d07eba77b8fe92145790426562c869cc9e00c1b25a9b4a245109a3",
+      "generated": false
+    },
+    {
+      "path": "code/sprites/projectile-behaviors.js",
+      "bytes": 1590,
+      "sha256": "1c1c6921aaea8f1c0c8a7801a0a3ac72e6e75dcddd54fbc37625e9bb996b346c",
+      "source": "code/sprites/projectile-behaviors.js",
+      "sourceSha256": "1c1c6921aaea8f1c0c8a7801a0a3ac72e6e75dcddd54fbc37625e9bb996b346c",
+      "generated": false
+    },
+    {
+      "path": "code/sprites/sprites.js",
+      "bytes": 91,
+      "sha256": "929287ad5d2190ecad51d8b24c27f80e4edbe803ef01a404b0ba225c7c391031",
+      "source": "code/sprites/sprites.js",
+      "sourceSha256": "929287ad5d2190ecad51d8b24c27f80e4edbe803ef01a404b0ba225c7c391031",
+      "generated": false
+    },
+    {
+      "path": "code/sprites/stage-1.js",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "code/sprites/stage-1.js",
+      "sourceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "generated": false
+    },
+    {
+      "path": "code/sprites/stage1.js",
+      "bytes": 11467,
+      "sha256": "2623d56ea1755af832955f2307ef3fc33c23df14ec70bdf774af0b096b7a0d64",
+      "source": "code/sprites/stage1.js",
+      "sourceSha256": "2623d56ea1755af832955f2307ef3fc33c23df14ec70bdf774af0b096b7a0d64",
+      "generated": false
+    },
+    {
+      "path": "code/sprites/text.js",
+      "bytes": 22994,
+      "sha256": "e9d4c4f14fd77acc7b1ce3102f5faa704bc9bfe8559422486a22a1763665d803",
+      "source": "code/sprites/text.js",
+      "sourceSha256": "e9d4c4f14fd77acc7b1ce3102f5faa704bc9bfe8559422486a22a1763665d803",
+      "generated": false
+    },
+    {
+      "path": "code/stages/demo-stubs.js",
+      "bytes": 151,
+      "sha256": "4f1dd5b1b12cd39742fc9d2aff13617e507705a6e8c623fe64a2e7961e72168f",
+      "source": "scripts/build-web-demo.mjs:missing-stage-stubs",
+      "generated": true
+    },
+    {
+      "path": "code/stages/functions.js",
+      "bytes": 10844,
+      "sha256": "80a46dd36d1db890f0053930b1c3861eabe7808873bfb7ded816ad0f6e55cb85",
+      "source": "code/stages/functions.js",
+      "sourceSha256": "80a46dd36d1db890f0053930b1c3861eabe7808873bfb7ded816ad0f6e55cb85",
+      "generated": false
+    },
+    {
+      "path": "code/stages/gameover.js",
+      "bytes": 6756,
+      "sha256": "d7135262341704318d338971b7a25b9f2d90c703dcdd764872af3a40ddfbac67",
+      "source": "code/stages/gameover.js",
+      "sourceSha256": "d7135262341704318d338971b7a25b9f2d90c703dcdd764872af3a40ddfbac67",
+      "generated": false
+    },
+    {
+      "path": "code/stages/registry.js",
+      "bytes": 1484,
+      "sha256": "df19d0f94594e5cad3725950beb3d68fe76312f232968a2da139c39ed5fec050",
+      "source": "code/stages/registry.js",
+      "sourceSha256": "df19d0f94594e5cad3725950beb3d68fe76312f232968a2da139c39ed5fec050",
+      "generated": false
+    },
+    {
+      "path": "code/stages/stage-1.js",
+      "bytes": 946,
+      "sha256": "f77380fdac4d5b7f18a3e480a0d5fa5ac672bb8f0f147240a33a055690a3c502",
+      "source": "code/stages/stage-1.js",
+      "sourceSha256": "f77380fdac4d5b7f18a3e480a0d5fa5ac672bb8f0f147240a33a055690a3c502",
+      "generated": false
+    },
+    {
+      "path": "code/stages/stage.js",
+      "bytes": 10837,
+      "sha256": "f9b804682d559fae61a084b88bcef3cfb5dda541d7517c3733ad25dbaacea0cd",
+      "source": "code/stages/stage.js",
+      "sourceSha256": "f9b804682d559fae61a084b88bcef3cfb5dda541d7517c3733ad25dbaacea0cd",
+      "generated": false
+    },
+    {
+      "path": "code/stages/stage0-menu.js",
+      "bytes": 20248,
+      "sha256": "914f1afff8c2c2d4efa7cab7e8c76c454b2ade14b69ab91293f0842c2f9f9df5",
+      "source": "code/stages/stage0-menu.js",
+      "sourceSha256": "914f1afff8c2c2d4efa7cab7e8c76c454b2ade14b69ab91293f0842c2f9f9df5",
+      "generated": false
+    },
+    {
+      "path": "code/stages/stage0.js",
+      "bytes": 3434,
+      "sha256": "2942e8195a3a7103e17773d498f529a7f7e5179be6428ff913185add801baf0e",
+      "source": "code/stages/stage0.js",
+      "sourceSha256": "2942e8195a3a7103e17773d498f529a7f7e5179be6428ff913185add801baf0e",
+      "generated": false
+    },
+    {
+      "path": "code/stages/stage1.js",
+      "bytes": 9033,
+      "sha256": "b38bc16d142bb23b375bd61c82691ffc4bce7f3fafde47de469fe3cda185e78d",
+      "source": "code/stages/stage1.js",
+      "sourceSha256": "b38bc16d142bb23b375bd61c82691ffc4bce7f3fafde47de469fe3cda185e78d",
+      "generated": false
+    },
+    {
+      "path": "code/system/beat-colors.js",
+      "bytes": 4528,
+      "sha256": "6707b25f2f7cd49d08ca61b3bcc16dfb234a00d3f8999b69b1c9dd90b3763fca",
+      "source": "code/system/beat-colors.js",
+      "sourceSha256": "6707b25f2f7cd49d08ca61b3bcc16dfb234a00d3f8999b69b1c9dd90b3763fca",
+      "generated": false
+    },
+    {
+      "path": "code/system/beat.js",
+      "bytes": 562,
+      "sha256": "a4a9af97d5a1332af0be7a59fc403476ab8d0a05855eb3aeb660a37037ffc5cf",
+      "source": "code/system/beat.js",
+      "sourceSha256": "a4a9af97d5a1332af0be7a59fc403476ab8d0a05855eb3aeb660a37037ffc5cf",
+      "generated": false
+    },
+    {
+      "path": "code/system/clock.js",
+      "bytes": 6217,
+      "sha256": "d47a87d0e2ebcff5813493b7634f014b5d22d318dde9f286d3b52c62bea7890c",
+      "source": "code/system/clock.js",
+      "sourceSha256": "d47a87d0e2ebcff5813493b7634f014b5d22d318dde9f286d3b52c62bea7890c",
+      "generated": false
+    },
+    {
+      "path": "code/system/collision.js",
+      "bytes": 14661,
+      "sha256": "ce771292c274b73be3141181ba8f2b8d376e9e3e72d1706427f0d9fdb620354e",
+      "source": "code/system/collision.js",
+      "sourceSha256": "ce771292c274b73be3141181ba8f2b8d376e9e3e72d1706427f0d9fdb620354e",
+      "generated": false
+    },
+    {
+      "path": "code/system/contact-form.js",
+      "bytes": 4990,
+      "sha256": "c1816e23d786e9429847b1d90417158045e37a99e574868e8d3d520d5b9dbd5b",
+      "source": "code/system/contact-form.js",
+      "sourceSha256": "c1816e23d786e9429847b1d90417158045e37a99e574868e8d3d520d5b9dbd5b",
+      "generated": false
+    },
+    {
+      "path": "code/system/diagnostics.js",
+      "bytes": 21969,
+      "sha256": "d0480269cb37bfb4bd54c4c68f003f906cbc4d01bd14f402c6a75b063a61ed15",
+      "source": "code/system/diagnostics.js",
+      "sourceSha256": "d0480269cb37bfb4bd54c4c68f003f906cbc4d01bd14f402c6a75b063a61ed15",
+      "generated": false
+    },
+    {
+      "path": "code/system/entities.js",
+      "bytes": 11610,
+      "sha256": "2d147de14cac7ae79a513f7677da89ae351fd18b46c51c9c1803fc81ae74d76b",
+      "source": "code/system/entities.js",
+      "sourceSha256": "2d147de14cac7ae79a513f7677da89ae351fd18b46c51c9c1803fc81ae74d76b",
+      "generated": false
+    },
+    {
+      "path": "code/system/fast-filters.js",
+      "bytes": 22326,
+      "sha256": "82b48910c58e7d90c2586108f587318fa8200db4a61073b55303486f5fecca50",
+      "source": "code/system/fast-filters.js",
+      "sourceSha256": "82b48910c58e7d90c2586108f587318fa8200db4a61073b55303486f5fecca50",
+      "generated": false
+    },
+    {
+      "path": "code/system/filters.js",
+      "bytes": 16067,
+      "sha256": "5ea68da2963028cd687d5791bdbb52915123572650cbf3a0b6179302e615490e",
+      "source": "code/system/filters.js",
+      "sourceSha256": "5ea68da2963028cd687d5791bdbb52915123572650cbf3a0b6179302e615490e",
+      "generated": false
+    },
+    {
+      "path": "code/system/gamepad-input-test.js",
+      "bytes": 16526,
+      "sha256": "7208015fb63247d652a59f0ca8cb13352c060659b40e5a3d625cb094f221e3bf",
+      "source": "code/system/gamepad-input-test.js",
+      "sourceSha256": "7208015fb63247d652a59f0ca8cb13352c060659b40e5a3d625cb094f221e3bf",
+      "generated": false
+    },
+    {
+      "path": "code/system/globals.js",
+      "bytes": 12293,
+      "sha256": "f9cdcecb8213e463a5d75a5b2f04fb47c1067821479f6ea74b5b488538924f41",
+      "source": "code/system/globals.js",
+      "sourceSha256": "f9cdcecb8213e463a5d75a5b2f04fb47c1067821479f6ea74b5b488538924f41",
+      "generated": false
+    },
+    {
+      "path": "code/system/heightmap-filter.js",
+      "bytes": 6331,
+      "sha256": "b44a6622460f91dd33ebfcfd1ff67e95731b2a5a3dde1ff5b48e2ec0375bb412",
+      "source": "code/system/heightmap-filter.js",
+      "sourceSha256": "b44a6622460f91dd33ebfcfd1ff67e95731b2a5a3dde1ff5b48e2ec0375bb412",
+      "generated": false
+    },
+    {
+      "path": "code/system/initialize.js",
+      "bytes": 4937,
+      "sha256": "62a57434c99daaf05d50df6c9291f08dbea0aa481fcb21e82bfe0c34f314796e",
+      "source": "code/system/initialize.js",
+      "sourceSha256": "62a57434c99daaf05d50df6c9291f08dbea0aa481fcb21e82bfe0c34f314796e",
+      "generated": false
+    },
+    {
+      "path": "code/system/mainloop.js",
+      "bytes": 7031,
+      "sha256": "a1297443d75b729c10ebb1cfcc3cda301a6252cedb0be96725157746769f2a3d",
+      "source": "code/system/mainloop.js",
+      "sourceSha256": "a1297443d75b729c10ebb1cfcc3cda301a6252cedb0be96725157746769f2a3d",
+      "generated": false
+    },
+    {
+      "path": "code/system/menu.js",
+      "bytes": 2696,
+      "sha256": "c86f07e3c78825986c51a168e0434f8c93e5e2987e137c0c9a158a93d22651a3",
+      "source": "code/system/menu.js",
+      "sourceSha256": "c86f07e3c78825986c51a168e0434f8c93e5e2987e137c0c9a158a93d22651a3",
+      "generated": false
+    },
+    {
+      "path": "code/system/replay.js",
+      "bytes": 57703,
+      "sha256": "3c17b0291449b0a1d01a1aeb1f8b0e8b6d2abad4c4a5e6c8bd748f99c0863dd9",
+      "source": "code/system/replay.js",
+      "sourceSha256": "3c17b0291449b0a1d01a1aeb1f8b0e8b6d2abad4c4a5e6c8bd748f99c0863dd9",
+      "generated": false
+    },
+    {
+      "path": "code/system/rhythm-data.js",
+      "bytes": 15983,
+      "sha256": "feda973f50706a9262e5a7e111196503a6858ebd9f3f7647a19c2ad5b66fbaf3",
+      "source": "code/system/rhythm-data.js",
+      "sourceSha256": "feda973f50706a9262e5a7e111196503a6858ebd9f3f7647a19c2ad5b66fbaf3",
+      "generated": false
+    },
+    {
+      "path": "code/system/rhythm-engine.js",
+      "bytes": 6613,
+      "sha256": "47662279b97b2400d5f9369278ce7192a4603a1e697adca178d3f4b3a5f0588d",
+      "source": "code/system/rhythm-engine.js",
+      "sourceSha256": "47662279b97b2400d5f9369278ce7192a4603a1e697adca178d3f4b3a5f0588d",
+      "generated": false
+    },
+    {
+      "path": "code/system/sound.js",
+      "bytes": 4726,
+      "sha256": "ef79abaf9400f2fa3b3209b8788443f0333e229bb7671150d947c4c30c0fed7a",
+      "source": "code/system/sound.js",
+      "sourceSha256": "d9a13ed415fbb2420bfb1a80f52793ec47092fdfdfe4e93803a73d5843e7c6b0",
+      "generated": true,
+      "transforms": [
+        "Audio source and SFX metadata asset query"
+      ]
+    },
+    {
+      "path": "code/system/state.js",
+      "bytes": 10813,
+      "sha256": "d773fba03ac256150b425a7dc402aeab5d98ec573754f8e923048260c10b4b67",
+      "source": "code/system/state.js",
+      "sourceSha256": "d773fba03ac256150b425a7dc402aeab5d98ec573754f8e923048260c10b4b67",
+      "generated": false
+    },
+    {
+      "path": "code/system/texture.js",
+      "bytes": 28719,
+      "sha256": "c896b3a2f9a25afd2a201e42ffd40acc90daec47807517ef8e692469309c93a0",
+      "source": "code/system/texture.js",
+      "sourceSha256": "9f4bd95003a8094a62bdd3ece6b2649f600f0c1cfbc26f61a3187014832c4729",
+      "generated": true,
+      "transforms": [
+        "Pixi resolver asset query"
+      ]
+    },
+    {
+      "path": "code/vendor/electron-cookies.js",
+      "bytes": 547249,
+      "sha256": "0dbc17228a05f130f0d5fefd4dfe1ed873d8542853602ebeb2a756eac1d5c6f0",
+      "source": "code/vendor/electron-cookies.js",
+      "sourceSha256": "0dbc17228a05f130f0d5fefd4dfe1ed873d8542853602ebeb2a756eac1d5c6f0",
+      "generated": false
+    },
+    {
+      "path": "code/vendor/graphics-extras.min.js",
+      "bytes": 3708,
+      "sha256": "f049b3982a944017962e99dbe3cffead424cd47b8634d18dd36fdae17f019f84",
+      "source": "code/vendor/graphics-extras.min.js",
+      "sourceSha256": "f049b3982a944017962e99dbe3cffead424cd47b8634d18dd36fdae17f019f84",
+      "generated": false
+    },
+    {
+      "path": "code/vendor/howler.min.js",
+      "bytes": 36137,
+      "sha256": "0febfd99e2733b690ecac2dc36c82885f581a6b5c73b65895898ff8548415f5b",
+      "source": "code/vendor/howler.min.js",
+      "sourceSha256": "0febfd99e2733b690ecac2dc36c82885f581a6b5c73b65895898ff8548415f5b",
+      "generated": false
+    },
+    {
+      "path": "code/vendor/jquery.js",
+      "bytes": 93637,
+      "sha256": "ba6eda7945ab8d7e57b34cc5a3dd292fa2e4c60a5ced79236ecf1a9e0f0c2d32",
+      "source": "code/vendor/jquery.js",
+      "sourceSha256": "ba6eda7945ab8d7e57b34cc5a3dd292fa2e4c60a5ced79236ecf1a9e0f0c2d32",
+      "generated": false
+    },
+    {
+      "path": "code/vendor/main.css",
+      "bytes": 6115,
+      "sha256": "b54a1f8fe036b1706424f6a11bede56405f05883e6e0e409e0ec17f818ce7499",
+      "source": "code/vendor/main.css",
+      "sourceSha256": "b54a1f8fe036b1706424f6a11bede56405f05883e6e0e409e0ec17f818ce7499",
+      "generated": false
+    },
+    {
+      "path": "code/vendor/Math2.js",
+      "bytes": 953,
+      "sha256": "552dec0d535e55fe713a20dd3d96a3315ded6ee6ed64b8fc046e26b692cf3932",
+      "source": "code/vendor/Math2.js",
+      "sourceSha256": "552dec0d535e55fe713a20dd3d96a3315ded6ee6ed64b8fc046e26b692cf3932",
+      "generated": false
+    },
+    {
+      "path": "code/vendor/misc.js",
+      "bytes": 2302,
+      "sha256": "44dd02af9f1e9f4a039b0520f6685affc1ecd95f5bcab1d52e8bfdf64f5a07c6",
+      "source": "code/vendor/misc.js",
+      "sourceSha256": "44dd02af9f1e9f4a039b0520f6685affc1ecd95f5bcab1d52e8bfdf64f5a07c6",
+      "generated": false
+    },
+    {
+      "path": "code/vendor/pixi-filters.js",
+      "bytes": 106177,
+      "sha256": "05ba36173ada7c9769726721c1f21fcd0c69494ad9e67b23f72fe43b6a31b195",
+      "source": "code/vendor/pixi-filters.js",
+      "sourceSha256": "05ba36173ada7c9769726721c1f21fcd0c69494ad9e67b23f72fe43b6a31b195",
+      "generated": false
+    },
+    {
+      "path": "code/vendor/pixi-projection.js",
+      "bytes": 70923,
+      "sha256": "6015662343c933fd9676b12f42dfbe5c50dc7970a6aa599e38205f982da618c8",
+      "source": "code/vendor/pixi-projection.js",
+      "sourceSha256": "6015662343c933fd9676b12f42dfbe5c50dc7970a6aa599e38205f982da618c8",
+      "generated": false
+    },
+    {
+      "path": "code/vendor/pixi-spine.js",
+      "bytes": 161016,
+      "sha256": "4fcc6e1e5bc46acc4d7e6ce796fc1d9799168ef5fb89c86a9d20a727158d5818",
+      "source": "code/vendor/pixi-spine.js",
+      "sourceSha256": "4d34922c13ee0b037dd4a2daadc7d9a66f3d84b7ea0a91858473eef00c2d8bba",
+      "generated": true,
+      "transforms": [
+        "Spine atlas and image asset query (two guarded substitutions)"
+      ]
+    },
+    {
+      "path": "code/vendor/pixi.js",
+      "bytes": 1094406,
+      "sha256": "28a00c450fd00068cccd9409d747ba79d575dbd92be02bdcfd5ec3b6a6a8fc53",
+      "source": "code/vendor/pixi.js",
+      "sourceSha256": "28a00c450fd00068cccd9409d747ba79d575dbd92be02bdcfd5ec3b6a6a8fc53",
+      "generated": false
+    },
+    {
+      "path": "code/vendor/stats.js",
+      "bytes": 2261,
+      "sha256": "6d176e8b64385883d20b7cfb6c2ebd1d79944ceebd485630ac66cdd7d274100e",
+      "source": "code/vendor/stats.js",
+      "sourceSha256": "6d176e8b64385883d20b7cfb6c2ebd1d79944ceebd485630ac66cdd7d274100e",
+      "generated": false
+    },
+    {
+      "path": "env.js",
+      "bytes": 828,
+      "sha256": "a87df15ba5456fa98730ca94b2f6135c1b2138acc8bc31c9eb113883529e04a9",
+      "source": "scripts/build-web-demo.mjs:demo-environment-and-asset-cache",
+      "generated": true
+    },
+    {
+      "path": "index.html",
+      "bytes": 48416,
+      "sha256": "57352309865a692354b48f1241e50a3f2f73feff93f139f29fa527659b1b3452",
+      "source": "index.html",
+      "sourceSha256": "c82f17d6e78baab96f9fcff730c5b70178a67e901b96903e777c9e115dfcdc09",
+      "generated": true
+    },
+    {
+      "path": "pics/favicon.png",
+      "bytes": 4827,
+      "sha256": "5230ea941a9e1e5cad52ee5697c6eaf66e228a3b7473803eb74e8600ffcd5f12",
+      "source": "pics/favicon.png",
+      "sourceSha256": "5230ea941a9e1e5cad52ee5697c6eaf66e228a3b7473803eb74e8600ffcd5f12",
+      "generated": false
+    },
+    {
+      "path": "pics/fonts/inline.fnt",
+      "bytes": 30734,
+      "sha256": "7b62fe5c81ba393b20c351ab589a980e0e2e4723bc9e05bd61683fd9f61c7ebb",
+      "source": "pics/fonts/inline.fnt",
+      "sourceSha256": "7b62fe5c81ba393b20c351ab589a980e0e2e4723bc9e05bd61683fd9f61c7ebb",
+      "generated": false
+    },
+    {
+      "path": "pics/fonts/inline.png",
+      "bytes": 204871,
+      "sha256": "008780d9a578eb6e84d92d9c2bdb19ad4fa38636e4755184f3f0922f0d151757",
+      "source": "pics/fonts/inline.png",
+      "sourceSha256": "008780d9a578eb6e84d92d9c2bdb19ad4fa38636e4755184f3f0922f0d151757",
+      "generated": false
+    },
+    {
+      "path": "pics/fonts/monospace_og.png",
+      "bytes": 41690,
+      "sha256": "563cc180900239f462138c2f9c9f09770434c8823eba22c6bb6ea1354a3a1d86",
+      "source": "pics/fonts/monospace_og.png",
+      "sourceSha256": "563cc180900239f462138c2f9c9f09770434c8823eba22c6bb6ea1354a3a1d86",
+      "generated": false
+    },
+    {
+      "path": "pics/fonts/monospace.fnt",
+      "bytes": 22588,
+      "sha256": "8f2572820cae0b20cb691720e67132c03c321e3c7ff455ed8726bb3f28b7094d",
+      "source": "pics/fonts/monospace.fnt",
+      "sourceSha256": "8f2572820cae0b20cb691720e67132c03c321e3c7ff455ed8726bb3f28b7094d",
+      "generated": false
+    },
+    {
+      "path": "pics/fonts/monospace.png",
+      "bytes": 171095,
+      "sha256": "9c65e903edd1ac62af0691984a10f2868b9e4327c1d48857ca818dad292a40bd",
+      "source": "pics/fonts/monospace.png",
+      "sourceSha256": "9c65e903edd1ac62af0691984a10f2868b9e4327c1d48857ca818dad292a40bd",
+      "generated": false
+    },
+    {
+      "path": "pics/fonts/small.fnt",
+      "bytes": 11957,
+      "sha256": "34ae56d995554f6e60f0ee8a9e55d9d2e26fdc3a8bb4aec89a132bb2e6f5c803",
+      "source": "pics/fonts/small.fnt",
+      "sourceSha256": "34ae56d995554f6e60f0ee8a9e55d9d2e26fdc3a8bb4aec89a132bb2e6f5c803",
+      "generated": false
+    },
+    {
+      "path": "pics/fonts/small.png",
+      "bytes": 22979,
+      "sha256": "f70e59b84b9a2d87b3d107346bd3796c14e35ebbbe875851902e7052a4777b63",
+      "source": "pics/fonts/small.png",
+      "sourceSha256": "f70e59b84b9a2d87b3d107346bd3796c14e35ebbbe875851902e7052a4777b63",
+      "generated": false
+    },
+    {
+      "path": "pics/fonts/solid.fnt",
+      "bytes": 24356,
+      "sha256": "a439a14899125304c75945067452d8585809e07ca078e43ec9359d4c8080ad60",
+      "source": "pics/fonts/solid.fnt",
+      "sourceSha256": "a439a14899125304c75945067452d8585809e07ca078e43ec9359d4c8080ad60",
+      "generated": false
+    },
+    {
+      "path": "pics/fonts/solid.png",
+      "bytes": 117677,
+      "sha256": "c75460d3850373c11150da7a49688dcba64416b2671fad156f6078ed524a1fb4",
+      "source": "pics/fonts/solid.png",
+      "sourceSha256": "c75460d3850373c11150da7a49688dcba64416b2671fad156f6078ed524a1fb4",
+      "generated": false
+    },
+    {
+      "path": "pics/html/controller-input-v2.png",
+      "bytes": 337142,
+      "sha256": "9858771225706cd7239e4297b0a9565992ec4dcfbc1a2fb10d89b3e9c01e4580",
+      "source": "pics/html/controller-input-v2.png",
+      "sourceSha256": "9858771225706cd7239e4297b0a9565992ec4dcfbc1a2fb10d89b3e9c01e4580",
+      "generated": false
+    },
+    {
+      "path": "pics/html/gamejolt.png",
+      "bytes": 13052,
+      "sha256": "c6001c8dea7c4fa440d3beaf3e5d6177eeb020bb950570714160cdbba53c10ca",
+      "source": "pics/html/gamejolt.png",
+      "sourceSha256": "c6001c8dea7c4fa440d3beaf3e5d6177eeb020bb950570714160cdbba53c10ca",
+      "generated": false
+    },
+    {
+      "path": "pics/html/howtoplay.jpg",
+      "bytes": 70915,
+      "sha256": "87b3419cd29e4e2b06406d2f279d464682d149fefe214de660018828dda6a3da",
+      "source": "pics/html/howtoplay.jpg",
+      "sourceSha256": "87b3419cd29e4e2b06406d2f279d464682d149fefe214de660018828dda6a3da",
+      "generated": false
+    },
+    {
+      "path": "pics/html/itch.png",
+      "bytes": 8833,
+      "sha256": "6f5c8bd955765cb7a5410becd97c3a4b7e5a1ef82b7150d4ddec3fe1b92764b8",
+      "source": "pics/html/itch.png",
+      "sourceSha256": "6f5c8bd955765cb7a5410becd97c3a4b7e5a1ef82b7150d4ddec3fe1b92764b8",
+      "generated": false
+    },
+    {
+      "path": "pics/html/keycap-input-v2.png",
+      "bytes": 42531,
+      "sha256": "457a7e9123c54e2802df6ca232a2fb2bf2c17168fbc8a870662eb99db2f6b2e6",
+      "source": "pics/html/keycap-input-v2.png",
+      "sourceSha256": "457a7e9123c54e2802df6ca232a2fb2bf2c17168fbc8a870662eb99db2f6b2e6",
+      "generated": false
+    },
+    {
+      "path": "pics/html/keycontrols.jpg",
+      "bytes": 41620,
+      "sha256": "ce249d4ab65dc9194fb0deb8ab54c3ef36c2ce55e8dfe305cbe7d499c7232bb5",
+      "source": "pics/html/keycontrols.jpg",
+      "sourceSha256": "ce249d4ab65dc9194fb0deb8ab54c3ef36c2ce55e8dfe305cbe7d499c7232bb5",
+      "generated": false
+    },
+    {
+      "path": "pics/html/manual1.jpg",
+      "bytes": 26983,
+      "sha256": "7004a7d70f81fcbb19fc85d7125ff964e60dc28151ff9aa80c5a1577bbea1339",
+      "source": "pics/html/manual1.jpg",
+      "sourceSha256": "7004a7d70f81fcbb19fc85d7125ff964e60dc28151ff9aa80c5a1577bbea1339",
+      "generated": false
+    },
+    {
+      "path": "pics/html/manual2.jpg",
+      "bytes": 29970,
+      "sha256": "67e4852f24e5bcf1c1a9419579bd31fa99b81206497ffec750fb915bf3493bd9",
+      "source": "pics/html/manual2.jpg",
+      "sourceSha256": "67e4852f24e5bcf1c1a9419579bd31fa99b81206497ffec750fb915bf3493bd9",
+      "generated": false
+    },
+    {
+      "path": "pics/html/manual3.jpg",
+      "bytes": 89853,
+      "sha256": "7333fe874d27de8741d3bac36c0b53c2ba497b0f9a22c8ee39676c378a63d567",
+      "source": "pics/html/manual3.jpg",
+      "sourceSha256": "7333fe874d27de8741d3bac36c0b53c2ba497b0f9a22c8ee39676c378a63d567",
+      "generated": false
+    },
+    {
+      "path": "pics/html/manual4.jpg",
+      "bytes": 131089,
+      "sha256": "9e099a3f89be2a1d3f2cf8caf27f4e4cd867eb8a6987a81a096591eac8308a49",
+      "source": "pics/html/manual4.jpg",
+      "sourceSha256": "9e099a3f89be2a1d3f2cf8caf27f4e4cd867eb8a6987a81a096591eac8308a49",
+      "generated": false
+    },
+    {
+      "path": "pics/html/manual5.jpg",
+      "bytes": 39887,
+      "sha256": "bd1219e7bdb31b6b726071c7a7cfe1d5556d76d900c0cf41d60d30f4996a59c1",
+      "source": "pics/html/manual5.jpg",
+      "sourceSha256": "bd1219e7bdb31b6b726071c7a7cfe1d5556d76d900c0cf41d60d30f4996a59c1",
+      "generated": false
+    },
+    {
+      "path": "pics/html/manual6.jpg",
+      "bytes": 47007,
+      "sha256": "901526da42b8f5ddc41744a0aab40f3768a1fef1ce90a6a56d608ef33b329257",
+      "source": "pics/html/manual6.jpg",
+      "sourceSha256": "901526da42b8f5ddc41744a0aab40f3768a1fef1ce90a6a56d608ef33b329257",
+      "generated": false
+    },
+    {
+      "path": "pics/html/mousecontrols.jpg",
+      "bytes": 59050,
+      "sha256": "e2afd6d760f8aaf9d01203699034c8ca9a7df8691464012cc80cd4962ab7ba47",
+      "source": "pics/html/mousecontrols.jpg",
+      "sourceSha256": "e2afd6d760f8aaf9d01203699034c8ca9a7df8691464012cc80cd4962ab7ba47",
+      "generated": false
+    },
+    {
+      "path": "pics/html/nofirefox.png",
+      "bytes": 31956,
+      "sha256": "6ab6746b95473d4e70bbd70c4607a288917cf01e246903451f730ff639796c88",
+      "source": "pics/html/nofirefox.png",
+      "sourceSha256": "6ab6746b95473d4e70bbd70c4607a288917cf01e246903451f730ff639796c88",
+      "generated": false
+    },
+    {
+      "path": "pics/html/PhosphateInline.ttf",
+      "bytes": 52268,
+      "sha256": "8aea6f21916b8f45e43796fecb9c2dc1c5fe43d6bfe162d9f5fe1b44ae67ac01",
+      "source": "pics/html/PhosphateInline.ttf",
+      "sourceSha256": "8aea6f21916b8f45e43796fecb9c2dc1c5fe43d6bfe162d9f5fe1b44ae67ac01",
+      "generated": false
+    },
+    {
+      "path": "pics/html/PhosphateSolid.ttf",
+      "bytes": 43104,
+      "sha256": "9a50aa9e223efc51f89898a2af2b2a0de20fe623d5a2edb84dad89ce8933609e",
+      "source": "pics/html/PhosphateSolid.ttf",
+      "sourceSha256": "9a50aa9e223efc51f89898a2af2b2a0de20fe623d5a2edb84dad89ce8933609e",
+      "generated": false
+    },
+    {
+      "path": "pics/html/play.png",
+      "bytes": 14226,
+      "sha256": "3b4737ae8b520524ada0f9ad36f024d86fdfed8c09cb3dc4f696ed886f3754d9",
+      "source": "pics/html/play.png",
+      "sourceSha256": "3b4737ae8b520524ada0f9ad36f024d86fdfed8c09cb3dc4f696ed886f3754d9",
+      "generated": false
+    },
+    {
+      "path": "pics/html/send.png",
+      "bytes": 8023,
+      "sha256": "b98dcf831987f0246d607d6000baa1385f9942243beb7e00d0de848e996d6420",
+      "source": "pics/html/send.png",
+      "sourceSha256": "b98dcf831987f0246d607d6000baa1385f9942243beb7e00d0de848e996d6420",
+      "generated": false
+    },
+    {
+      "path": "pics/html/sound.png",
+      "bytes": 52118,
+      "sha256": "943f22c91c116d5603cbc97039d449c136ef0dd64bf2893a4ce53dd749ceb2dc",
+      "source": "pics/html/sound.png",
+      "sourceSha256": "943f22c91c116d5603cbc97039d449c136ef0dd64bf2893a4ce53dd749ceb2dc",
+      "generated": false
+    },
+    {
+      "path": "pics/html/soundstorm.png",
+      "bytes": 207867,
+      "sha256": "14de4cdb4d22c0894a9f532812e941b38fc8a4858c2f77af18df14aec62d9050",
+      "source": "pics/html/soundstorm.png",
+      "sourceSha256": "14de4cdb4d22c0894a9f532812e941b38fc8a4858c2f77af18df14aec62d9050",
+      "generated": false
+    },
+    {
+      "path": "pics/html/steam.png",
+      "bytes": 8687,
+      "sha256": "82dca61be13fcd6cc27f7b69eeba2f8a2c1301a4a268aeabcfd0a017e5212058",
+      "source": "pics/html/steam.png",
+      "sourceSha256": "82dca61be13fcd6cc27f7b69eeba2f8a2c1301a4a268aeabcfd0a017e5212058",
+      "generated": false
+    },
+    {
+      "path": "pics/html/touchcontrols.jpg",
+      "bytes": 60374,
+      "sha256": "c67a594005f1c1c265b8d504dcd29aad6df2fd880a06f87d8477612b16f1a0f4",
+      "source": "pics/html/touchcontrols.jpg",
+      "sourceSha256": "c67a594005f1c1c265b8d504dcd29aad6df2fd880a06f87d8477612b16f1a0f4",
+      "generated": false
+    },
+    {
+      "path": "pics/html/wait.png",
+      "bytes": 13541,
+      "sha256": "04869b9bddf1024b339acb7b73a903b6fccc370feffab6613a75ef66784830ef",
+      "source": "pics/html/wait.png",
+      "sourceSha256": "04869b9bddf1024b339acb7b73a903b6fccc370feffab6613a75ef66784830ef",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/base.json",
+      "bytes": 20082,
+      "sha256": "54d572d49778453352d1bd750024c76948942e609efd9f4a09fb4e75b7935f47",
+      "source": "pics/img00/base.json",
+      "sourceSha256": "54d572d49778453352d1bd750024c76948942e609efd9f4a09fb4e75b7935f47",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/base.png",
+      "bytes": 1744920,
+      "sha256": "583a7854cdd13a748def27cab7bf0ea78f8407cef4db3962e09954550ac13e7f",
+      "source": "pics/img00/base.png",
+      "sourceSha256": "583a7854cdd13a748def27cab7bf0ea78f8407cef4db3962e09954550ac13e7f",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/dunkelwald.png",
+      "bytes": 8463992,
+      "sha256": "b9425c04cef71704b50fa679543d3db86c1af96c852a53a1a51fdb7af42cc1e8",
+      "source": "pics/img00/dunkelwald.png",
+      "sourceSha256": "b9425c04cef71704b50fa679543d3db86c1af96c852a53a1a51fdb7af42cc1e8",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/ending.jpg",
+      "bytes": 1131686,
+      "sha256": "03abf6f0c33d313c357d7a1971e0db89142c587da3b7b34d959971b2f50d0cc2",
+      "source": "pics/img00/ending.jpg",
+      "sourceSha256": "03abf6f0c33d313c357d7a1971e0db89142c587da3b7b34d959971b2f50d0cc2",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/ending.json",
+      "bytes": 1692,
+      "sha256": "48b7b86967f5328894e2ba15e941709a67c1a9ce00df691eee2731ba688ac864",
+      "source": "pics/img00/ending.json",
+      "sourceSha256": "48b7b86967f5328894e2ba15e941709a67c1a9ce00df691eee2731ba688ac864",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/foresttitle_h.jpg",
+      "bytes": 447035,
+      "sha256": "d26b3d2ef44d1cd1a8be9bce9284ab9e0de65fdff8597a1ff2b356702fa03dbb",
+      "source": "pics/img00/foresttitle_h.jpg",
+      "sourceSha256": "d26b3d2ef44d1cd1a8be9bce9284ab9e0de65fdff8597a1ff2b356702fa03dbb",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/foresttitle_n old.png",
+      "bytes": 1744810,
+      "sha256": "29c778ea23c18c82d3226f79e9e9577dffdd462e4c9705fd2db170470d040f90",
+      "source": "pics/img00/foresttitle_n old.png",
+      "sourceSha256": "29c778ea23c18c82d3226f79e9e9577dffdd462e4c9705fd2db170470d040f90",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/foresttitle_n.png",
+      "bytes": 4190115,
+      "sha256": "d3643d8d8153d51c59c0e147a71ea50024b53d657cbc62f9b963a104045dc0c6",
+      "source": "pics/img00/foresttitle_n.png",
+      "sourceSha256": "d3643d8d8153d51c59c0e147a71ea50024b53d657cbc62f9b963a104045dc0c6",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/foresttitle.jpg",
+      "bytes": 1329479,
+      "sha256": "ebda8b17c889dc563cc5386e8481c1f3db7be5b814435f2d6453709d3588f6b6",
+      "source": "pics/img00/foresttitle.jpg",
+      "sourceSha256": "ebda8b17c889dc563cc5386e8481c1f3db7be5b814435f2d6453709d3588f6b6",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/gameover.jpg",
+      "bytes": 182654,
+      "sha256": "ffc4f06b99d4d3a1e672897480fe1768da955a0982718001be210aa579bd1c1c",
+      "source": "pics/img00/gameover.jpg",
+      "sourceSha256": "ffc4f06b99d4d3a1e672897480fe1768da955a0982718001be210aa579bd1c1c",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/logo.jpg",
+      "bytes": 231922,
+      "sha256": "3af4e042d89a785dd8cc61ebc08f567721ab257939418fd427122240c334a52a",
+      "source": "pics/img00/logo.jpg",
+      "sourceSha256": "3af4e042d89a785dd8cc61ebc08f567721ab257939418fd427122240c334a52a",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/scroll.jpg",
+      "bytes": 724481,
+      "sha256": "5e4ccdf95e4aa27a79b3d6e73b969fffcef4143bdd39c503d658db193f90355b",
+      "source": "pics/img00/scroll.jpg",
+      "sourceSha256": "5e4ccdf95e4aa27a79b3d6e73b969fffcef4143bdd39c503d658db193f90355b",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/shields.jpg",
+      "bytes": 546263,
+      "sha256": "8804bb43d05fd6bda2bc9c924eccb44ae9dffddc924374739da4188ee3772dbd",
+      "source": "pics/img00/shields.jpg",
+      "sourceSha256": "8804bb43d05fd6bda2bc9c924eccb44ae9dffddc924374739da4188ee3772dbd",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/shields.json",
+      "bytes": 1250,
+      "sha256": "069dbe8a9de43302d2be5d2e76188103b8628964ce16d68b1de37f0207286430",
+      "source": "pics/img00/shields.json",
+      "sourceSha256": "069dbe8a9de43302d2be5d2e76188103b8628964ce16d68b1de37f0207286430",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/tut1/tut1.atlas",
+      "bytes": 292,
+      "sha256": "cc7469994cd37ca2b463ac673d9454c7447ccefc7ea8c2c36fe31879e70d5914",
+      "source": "pics/img00/tut1/tut1.atlas",
+      "sourceSha256": "cc7469994cd37ca2b463ac673d9454c7447ccefc7ea8c2c36fe31879e70d5914",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/tut1/tut1.json",
+      "bytes": 2565,
+      "sha256": "df0de5f2bb46e44637f4ca92de547565fa5c4a1cc770defd6741d6f64461ae92",
+      "source": "pics/img00/tut1/tut1.json",
+      "sourceSha256": "df0de5f2bb46e44637f4ca92de547565fa5c4a1cc770defd6741d6f64461ae92",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/tut1/tut1.png",
+      "bytes": 32536,
+      "sha256": "18ae6b5e4a5aa925421ffae5bf0245ff174022a562681af5730886f8f979eed2",
+      "source": "pics/img00/tut1/tut1.png",
+      "sourceSha256": "18ae6b5e4a5aa925421ffae5bf0245ff174022a562681af5730886f8f979eed2",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/tut2/Spine.atlas",
+      "bytes": 311,
+      "sha256": "1dbb0bef690a3b2f00339de4ada588eaaa80868a82e8f80787bbb9f9088f1dee",
+      "source": "pics/img00/tut2/Spine.atlas",
+      "sourceSha256": "1dbb0bef690a3b2f00339de4ada588eaaa80868a82e8f80787bbb9f9088f1dee",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/tut2/Spine.json",
+      "bytes": 2529,
+      "sha256": "80e52a39864ddc18018013c2b1ec985b31a0f8f6e010958f4c393e1da3a70211",
+      "source": "pics/img00/tut2/Spine.json",
+      "sourceSha256": "80e52a39864ddc18018013c2b1ec985b31a0f8f6e010958f4c393e1da3a70211",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/tut2/Spine.png",
+      "bytes": 25295,
+      "sha256": "fdb4b9e6690039f937cda8671cf211e3edc7579bcb9abadb46c737e49c4eb14a",
+      "source": "pics/img00/tut2/Spine.png",
+      "sourceSha256": "fdb4b9e6690039f937cda8671cf211e3edc7579bcb9abadb46c737e49c4eb14a",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/tut3/Spine.atlas",
+      "bytes": 297,
+      "sha256": "1bf08571d536587b3874fd614e73b9b1a2f2d330f2b7d43111d4515aa5e5c629",
+      "source": "pics/img00/tut3/Spine.atlas",
+      "sourceSha256": "1bf08571d536587b3874fd614e73b9b1a2f2d330f2b7d43111d4515aa5e5c629",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/tut3/Spine.json",
+      "bytes": 2582,
+      "sha256": "bc701f5de54bf72142f18c8dc735add2915cc907710cde64b1911511817b4872",
+      "source": "pics/img00/tut3/Spine.json",
+      "sourceSha256": "bc701f5de54bf72142f18c8dc735add2915cc907710cde64b1911511817b4872",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/tut3/Spine.png",
+      "bytes": 73917,
+      "sha256": "98434cdd5af12360aaa1a45d7e532213157962f19accf7552d142146d3de3d7a",
+      "source": "pics/img00/tut3/Spine.png",
+      "sourceSha256": "98434cdd5af12360aaa1a45d7e532213157962f19accf7552d142146d3de3d7a",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/tut4/Spine.atlas",
+      "bytes": 283,
+      "sha256": "c665495685619ec255920977966dba637161a91452fa384655568bc9784a3a49",
+      "source": "pics/img00/tut4/Spine.atlas",
+      "sourceSha256": "c665495685619ec255920977966dba637161a91452fa384655568bc9784a3a49",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/tut4/Spine.json",
+      "bytes": 2508,
+      "sha256": "6b0bac08cbfe298dffb171f87afe603d660e8b6a20e5f4124057f3f702e0ee33",
+      "source": "pics/img00/tut4/Spine.json",
+      "sourceSha256": "6b0bac08cbfe298dffb171f87afe603d660e8b6a20e5f4124057f3f702e0ee33",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/tut4/Spine.png",
+      "bytes": 34387,
+      "sha256": "199975c0784eacb6d5efefcf5dc1def9c32b28c45e65fb9aae09411034df9565",
+      "source": "pics/img00/tut4/Spine.png",
+      "sourceSha256": "199975c0784eacb6d5efefcf5dc1def9c32b28c45e65fb9aae09411034df9565",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/tuthero/Spine.atlas",
+      "bytes": 569,
+      "sha256": "62c9f5dd73dc2620fb052609ec4dde61216f8dbcf32bcc2cf80c96f0a29d41b1",
+      "source": "pics/img00/tuthero/Spine.atlas",
+      "sourceSha256": "62c9f5dd73dc2620fb052609ec4dde61216f8dbcf32bcc2cf80c96f0a29d41b1",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/tuthero/Spine.json",
+      "bytes": 4956,
+      "sha256": "12b37fa4b3458ee5dfc7cbc5aacb177fb313f61256ee4ca66163ee25a8b40177",
+      "source": "pics/img00/tuthero/Spine.json",
+      "sourceSha256": "12b37fa4b3458ee5dfc7cbc5aacb177fb313f61256ee4ca66163ee25a8b40177",
+      "generated": false
+    },
+    {
+      "path": "pics/img00/tuthero/Spine.png",
+      "bytes": 36690,
+      "sha256": "c0ab5db74eef757bafd1166dcb976a8018a73b6d34f32d27efb708e861127ebf",
+      "source": "pics/img00/tuthero/Spine.png",
+      "sourceSha256": "c0ab5db74eef757bafd1166dcb976a8018a73b6d34f32d27efb708e861127ebf",
+      "generated": false
+    },
+    {
+      "path": "pics/img01/butterfly/Spine.atlas",
+      "bytes": 489,
+      "sha256": "f0620efd2d3e5fcbb04b6d0406480ead5ae700da5d2df9cdb8fd084edef47106",
+      "source": "pics/img01/butterfly/Spine.atlas",
+      "sourceSha256": "f0620efd2d3e5fcbb04b6d0406480ead5ae700da5d2df9cdb8fd084edef47106",
+      "generated": false
+    },
+    {
+      "path": "pics/img01/butterfly/Spine.json",
+      "bytes": 7003,
+      "sha256": "115811474b9b0f55d5b52a695a667e49f740bb18db7d35b87b68865275a674a8",
+      "source": "pics/img01/butterfly/Spine.json",
+      "sourceSha256": "115811474b9b0f55d5b52a695a667e49f740bb18db7d35b87b68865275a674a8",
+      "generated": false
+    },
+    {
+      "path": "pics/img01/butterfly/Spine.png",
+      "bytes": 118129,
+      "sha256": "c1cdcd7da292f9cad38f7948e9a05799bd2a9369605c124e7fc7acd5476889f6",
+      "source": "pics/img01/butterfly/Spine.png",
+      "sourceSha256": "c1cdcd7da292f9cad38f7948e9a05799bd2a9369605c124e7fc7acd5476889f6",
+      "generated": false
+    },
+    {
+      "path": "pics/img01/dragonfly/Spine.atlas",
+      "bytes": 903,
+      "sha256": "d3957921334d7a6a12b0ad54256615f961d5c0608c42508c952d418c7dd840cd",
+      "source": "pics/img01/dragonfly/Spine.atlas",
+      "sourceSha256": "d3957921334d7a6a12b0ad54256615f961d5c0608c42508c952d418c7dd840cd",
+      "generated": false
+    },
+    {
+      "path": "pics/img01/dragonfly/Spine.json",
+      "bytes": 14214,
+      "sha256": "b86b934f7f4d0058f91974e85eb33c4653d4a083afaa553140564db6acdc1272",
+      "source": "pics/img01/dragonfly/Spine.json",
+      "sourceSha256": "b86b934f7f4d0058f91974e85eb33c4653d4a083afaa553140564db6acdc1272",
+      "generated": false
+    },
+    {
+      "path": "pics/img01/dragonfly/Spine.png",
+      "bytes": 240414,
+      "sha256": "2c865e6eab0fe722d65fd45aa7ac6428b5821cbfea859e96806f960011b33ea3",
+      "source": "pics/img01/dragonfly/Spine.png",
+      "sourceSha256": "2c865e6eab0fe722d65fd45aa7ac6428b5821cbfea859e96806f960011b33ea3",
+      "generated": false
+    },
+    {
+      "path": "pics/img01/fly/Spine.atlas",
+      "bytes": 355,
+      "sha256": "fb4057b9c725c80caeeec37bf9c2024a969f1f24031ed9570c3e5d0dbba4b199",
+      "source": "pics/img01/fly/Spine.atlas",
+      "sourceSha256": "fb4057b9c725c80caeeec37bf9c2024a969f1f24031ed9570c3e5d0dbba4b199",
+      "generated": false
+    },
+    {
+      "path": "pics/img01/fly/Spine.json",
+      "bytes": 3735,
+      "sha256": "35051dde58d8d5580e80ceeb5b3e735d98efd216dd82bac7f482b91748f00dc9",
+      "source": "pics/img01/fly/Spine.json",
+      "sourceSha256": "35051dde58d8d5580e80ceeb5b3e735d98efd216dd82bac7f482b91748f00dc9",
+      "generated": false
+    },
+    {
+      "path": "pics/img01/fly/Spine.png",
+      "bytes": 33884,
+      "sha256": "e4d20508f86e9ad0fe6fe70dff91ff133380681bf2924d3fda95cc1e956fcf76",
+      "source": "pics/img01/fly/Spine.png",
+      "sourceSha256": "e4d20508f86e9ad0fe6fe70dff91ff133380681bf2924d3fda95cc1e956fcf76",
+      "generated": false
+    },
+    {
+      "path": "pics/img01/fog1.png",
+      "bytes": 3851954,
+      "sha256": "8a971c7786df9edbf7fb07f6fa9fe7b5ee5df17a81b363f27309819c7d483ab3",
+      "source": "pics/img01/fog1.png",
+      "sourceSha256": "8a971c7786df9edbf7fb07f6fa9fe7b5ee5df17a81b363f27309819c7d483ab3",
+      "generated": false
+    },
+    {
+      "path": "pics/img01/forestground_h.jpg",
+      "bytes": 688936,
+      "sha256": "9c69d67674cfba6df95176110186164e4352304375778d22d3ec9e2ddd8b399a",
+      "source": "pics/img01/forestground_h.jpg",
+      "sourceSha256": "9c69d67674cfba6df95176110186164e4352304375778d22d3ec9e2ddd8b399a",
+      "generated": false
+    },
+    {
+      "path": "pics/img01/forestground_n.png",
+      "bytes": 5232574,
+      "sha256": "37a834668209cbdb017540414902a5c0e64e91e7ea7c3ee136100f8067a16fa3",
+      "source": "pics/img01/forestground_n.png",
+      "sourceSha256": "37a834668209cbdb017540414902a5c0e64e91e7ea7c3ee136100f8067a16fa3",
+      "generated": false
+    },
+    {
+      "path": "pics/img01/forestground.jpg",
+      "bytes": 2060689,
+      "sha256": "d901f6d563080c7a9cce3138ececee70450f05f1622704444876fb185b0a7bb4",
+      "source": "pics/img01/forestground.jpg",
+      "sourceSha256": "d901f6d563080c7a9cce3138ececee70450f05f1622704444876fb185b0a7bb4",
+      "generated": false
+    },
+    {
+      "path": "pics/img01/foresttitle.jpg",
+      "bytes": 1305700,
+      "sha256": "1c8186951adc82d2521ffc500980df4ff9bdda1e0f4d2f2df53121e27a1b2f7e",
+      "source": "pics/img01/foresttitle.jpg",
+      "sourceSha256": "1c8186951adc82d2521ffc500980df4ff9bdda1e0f4d2f2df53121e27a1b2f7e",
+      "generated": false
+    },
+    {
+      "path": "pics/img01/greengrass.jpg",
+      "bytes": 213277,
+      "sha256": "d68af284a59e97cf7a2fed9b0ab747e6cf89a555accbd00d565437cef584a938",
+      "source": "pics/img01/greengrass.jpg",
+      "sourceSha256": "d68af284a59e97cf7a2fed9b0ab747e6cf89a555accbd00d565437cef584a938",
+      "generated": false
+    },
+    {
+      "path": "pics/img01/loewenzahn/Spine.atlas",
+      "bytes": 419,
+      "sha256": "5d7a95d0abcee45883a699320e8d7062d95b7cb963fbc6c6526bef371e9a5191",
+      "source": "pics/img01/loewenzahn/Spine.atlas",
+      "sourceSha256": "5d7a95d0abcee45883a699320e8d7062d95b7cb963fbc6c6526bef371e9a5191",
+      "generated": false
+    },
+    {
+      "path": "pics/img01/loewenzahn/Spine.json",
+      "bytes": 5673,
+      "sha256": "39cd378ae2bd123083f435e8ccad5fcda7cff5151e6b2ebde3ef9e428056520a",
+      "source": "pics/img01/loewenzahn/Spine.json",
+      "sourceSha256": "39cd378ae2bd123083f435e8ccad5fcda7cff5151e6b2ebde3ef9e428056520a",
+      "generated": false
+    },
+    {
+      "path": "pics/img01/loewenzahn/Spine.png",
+      "bytes": 79376,
+      "sha256": "250d3a37cd65885c81a2292dafa44a53607fb075e12ddd39caa7eab3cd916547",
+      "source": "pics/img01/loewenzahn/Spine.png",
+      "sourceSha256": "250d3a37cd65885c81a2292dafa44a53607fb075e12ddd39caa7eab3cd916547",
+      "generated": false
+    },
+    {
+      "path": "pics/img01/trip1.json",
+      "bytes": 3667,
+      "sha256": "9db45470fe7226a8cc2042d1c2a5cd876532be47289b719bfd881998cdd1152c",
+      "source": "pics/img01/trip1.json",
+      "sourceSha256": "9db45470fe7226a8cc2042d1c2a5cd876532be47289b719bfd881998cdd1152c",
+      "generated": false
+    },
+    {
+      "path": "pics/img01/trip1.png",
+      "bytes": 3116848,
+      "sha256": "9da401da41a84ea3872d6a7a198fc9471ae179828d6d9f280db055ddfd084e9c",
+      "source": "pics/img01/trip1.png",
+      "sourceSha256": "9da401da41a84ea3872d6a7a198fc9471ae179828d6d9f280db055ddfd084e9c",
+      "generated": false
+    },
+    {
+      "path": "sounds/music00/ending.mp3",
+      "bytes": 1468085,
+      "sha256": "ae23583ff210d8fcc99bdcbf51a9702a18ff0b43b2479d1df541d11f874886a8",
+      "source": "sounds/music00/ending.mp3",
+      "sourceSha256": "ae23583ff210d8fcc99bdcbf51a9702a18ff0b43b2479d1df541d11f874886a8",
+      "generated": false
+    },
+    {
+      "path": "sounds/music00/gameover.mp3",
+      "bytes": 1148427,
+      "sha256": "f3e89b47a7c2337e080c8bf4737b6342c430eff3e09698c46c867a11f549baf5",
+      "source": "sounds/music00/gameover.mp3",
+      "sourceSha256": "f3e89b47a7c2337e080c8bf4737b6342c430eff3e09698c46c867a11f549baf5",
+      "generated": false
+    },
+    {
+      "path": "sounds/music00/nextlevel.mp3",
+      "bytes": 1364675,
+      "sha256": "2b64ee0c796f38200d65a4a95a9e49d2b8a6b32a4acb31bc2ca42adb076e0922",
+      "source": "sounds/music00/nextlevel.mp3",
+      "sourceSha256": "2b64ee0c796f38200d65a4a95a9e49d2b8a6b32a4acb31bc2ca42adb076e0922",
+      "generated": false
+    },
+    {
+      "path": "sounds/music00/nowloading.mp3",
+      "bytes": 3222527,
+      "sha256": "b48b4164cf79d3be5a2c44f58abbb181d445ffc32c2e717abf77ad49bc2fc539",
+      "source": "sounds/music00/nowloading.mp3",
+      "sourceSha256": "b48b4164cf79d3be5a2c44f58abbb181d445ffc32c2e717abf77ad49bc2fc539",
+      "generated": false
+    },
+    {
+      "path": "sounds/music00/scarybeat.mp3",
+      "bytes": 3769484,
+      "sha256": "75d9bdc9ccc21da8647d6bb35dbe81d79ffd5e62fd15626ac08a6b7e7462671a",
+      "source": "sounds/music00/scarybeat.mp3",
+      "sourceSha256": "75d9bdc9ccc21da8647d6bb35dbe81d79ffd5e62fd15626ac08a6b7e7462671a",
+      "generated": false
+    },
+    {
+      "path": "sounds/music00/tutorial.mp3",
+      "bytes": 5265510,
+      "sha256": "4f33aee674b37e97888b35a96b28d31d3fc53e9ec6080cd6a14a4745e6c5b6c5",
+      "source": "sounds/music00/tutorial.mp3",
+      "sourceSha256": "4f33aee674b37e97888b35a96b28d31d3fc53e9ec6080cd6a14a4745e6c5b6c5",
+      "generated": false
+    },
+    {
+      "path": "sounds/music01/greengrass.mp3",
+      "bytes": 3568520,
+      "sha256": "1fb32df0f6e8275d210e080dcb393e93a8c695a8e3cee4c1f03e92b582460e9d",
+      "source": "sounds/music01/greengrass.mp3",
+      "sourceSha256": "1fb32df0f6e8275d210e080dcb393e93a8c695a8e3cee4c1f03e92b582460e9d",
+      "generated": false
+    },
+    {
+      "path": "sounds/music01/level1-beats.wav",
+      "bytes": 1305404,
+      "sha256": "246108df777bfad8bd3bb0ae31d1e411076acf34e86b42db8ef1bc7d0978555b",
+      "source": "sounds/music01/level1-beats.wav",
+      "sourceSha256": "246108df777bfad8bd3bb0ae31d1e411076acf34e86b42db8ef1bc7d0978555b",
+      "generated": false
+    },
+    {
+      "path": "sounds/sfx.json",
+      "bytes": 4808,
+      "sha256": "fc7f49d694a0ca05ea8a11bb95bcec19b6959d814cdad1580f48e01adc0d239e",
+      "source": "sounds/sfx.json",
+      "sourceSha256": "fc7f49d694a0ca05ea8a11bb95bcec19b6959d814cdad1580f48e01adc0d239e",
+      "generated": false
+    },
+    {
+      "path": "sounds/sfx.mp3",
+      "bytes": 5025167,
+      "sha256": "4ed0c8bbda5a14521e9b9ad968e160a7830f6fcd5893b2806074aa8ef83fe911",
+      "source": "sounds/sfx.mp3",
+      "sourceSha256": "4ed0c8bbda5a14521e9b9ad968e160a7830f6fcd5893b2806074aa8ef83fe911",
+      "generated": false
+    }
+  ],
+  "fileCount": 160,
+  "totalBytes": 68946279
+}

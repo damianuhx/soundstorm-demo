@@ -9473,16 +9473,6 @@ var baseSet = require('./_baseSet');
  * @param {*} value The value to set.
  * @returns {Object} Returns `object`.
  * @example
- *
- * var object = { 'a': [{ 'b': { 'c': 3 } }] };
- *
- * _.set(object, 'a[0].b.c', 4);
- * console.log(object.a[0].b.c);
- * // => 4
- *
- * _.set(object, ['x', '0', 'y', 'z'], 5);
- * console.log(object.x[0].y.z);
- * // => 5
  */
 function set(object, path, value) {
   return object == null ? object : baseSet(object, path, value);
@@ -13000,12 +12990,6 @@ function timestamp() {
 }
 
 
-// log is just a thin wrapper to console.log that prepends a timestamp
-exports.log = function() {
-  console.log('%s - %s', timestamp(), exports.format.apply(exports, arguments));
-};
-
-
 /**
  * Inherit the prototype methods from one constructor into another.
  *
@@ -13344,7 +13328,6 @@ Socket.prototype._write = function (data, encoding, cb) {
 	this._ws.send(data);
 
 	process.nextTick(function () {
-		//console.log('[tcp] sent: ', data.toString(), data.length);
 		self.bytesWritten += data.length;
 		cb();
 	});
@@ -13451,7 +13434,6 @@ Socket.prototype._handleWebsocket = function () {
 	var self = this;
 
 	this._ws.addEventListener('open', function () {
-		//console.log('TCP OK');
 
 		self._connecting = false;
 		self.readable = true;
@@ -13469,7 +13451,6 @@ Socket.prototype._handleWebsocket = function () {
 		var contents = e.data;
 
 		var gotBuffer = function (buffer) {
-			//console.log('[tcp] received: ' + buffer.toString(), buffer.length);
 			self.bytesRead += buffer.length;
 			self.push(buffer);
 		};
@@ -13491,7 +13472,6 @@ Socket.prototype._handleWebsocket = function () {
 	});
 	this._ws.addEventListener('close', function () {
 		if (self.readyState == 'open') {
-			//console.log('TCP closed');
 			self.destroy();
 		}
 	});

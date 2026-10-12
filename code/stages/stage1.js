@@ -1,3 +1,16 @@
+function zoomStageOneBackgroundf(speed, max=2)
+{
+    background.scale.x+=2*speed;
+    background.scale.y+=2*speed;
+    background.position.x=-(background.scale.x-1)*960;
+    background.position.y=-(background.scale.y-1)*540;
+
+    if (background.scale.x>=max && speed>0)
+    {
+        scene++;
+    }
+}
+
 function stage1(){
 
 
@@ -9,6 +22,7 @@ function stage1(){
 if (scene==10)
 {
     //herocreate();
+    set.beatparticle(tex.sp_note, 20, 4, {});
 
     create(0, 'b_grass', Math.random() * maxX, -200, {speedY: 9.5});
     create(0, 'b_grass', Math.random() * maxX, -200, {speedY: 9.5});
@@ -39,14 +53,10 @@ if (scene==10)
         set.centertext('Press shield near\nflashing bullets', 1650, 180);
         set.centertext('Feel the rythm to know\nwhen you can destroy the bullets', 2000, 240);
 
-        
-        create(350, 'e_sunflower', 860, -100, {speedY: 10, beatlayer: 2});
-        create(700, 'e_sunflower', 1060, -100, {speedY: 10, beatlayer: 2});
-        //set.sound({nosfx: true, active: 30});
-        /*create(770, 'e_hawkbit', Math.random() * 1700+110, -100, {speedY: 10, beatlayer: 4});
-        create(920, 'e_hawkbit', Math.random() * 1700+110, -100, {speedY: 10, beatlayer: 4});
-        create(620, 'e_hawkbit', Math.random() * 1700+110, -100, {speedY: 10, beatlayer: 4});
-        create(420, 'e_hawkbit', Math.random() * 1700+110, -100, {speedY: 10, beatlayer: 4});*/
+
+        spawnEnemy('sunflower', {speedY: 10, beatlayer: 2, active: 350, x: 860, y: -100});
+        spawnEnemy('sunflower', {speedY: 10, beatlayer: 2, active: 700, x: 1060, y: -100});
+
     }
 }
 
@@ -56,6 +66,9 @@ if (scene==11)
     //scoretimer=100-musictime;
     if (ticks<4000) //3700
     {
+        set.beatparticle(tex.sp_note1, 20, 2, {});
+        set.beatparticle(tex.sp_note, 20, 4, {});
+
         create(0, 'b_grass', Math.random() * maxX, -200, {speedY: 9.5});
         create(0, 'b_grass', Math.random() * maxX, -200, {speedY: 9.5});
         create(0, 'b_grass', Math.random() * maxX, -200, {speedY: 9.5});
@@ -74,11 +87,11 @@ if (scene==11)
             beatlayer++;
             //ticks=0;
             if (beatlayer>2){beatlayer=1;}
-            create(100/difficulty.number+ticks, 'e_hawkbit', Math.random() * 960+0, -100, {speedY: 10, beatlayer: 4});
-            create(50/difficulty.number+ticks, 'e_hawkbit', Math.random() * 960+960, -100, {speedY: 10, beatlayer: 4});
+            spawnEnemy('hawkbit', {speedY: 10, beatlayer: 4, active: 100/difficulty.number+ticks, x: Math.random() * 960+0, y: -100});
+            spawnEnemy('hawkbit', {speedY: 10, beatlayer: 4, active: 50/difficulty.number+ticks, x: Math.random() * 960+960, y: -100});
             if (musictime>=25)
             {
-            create(200/difficulty.number+ticks, 'e_sunflower', Math.random() * 960+(beatlayer-1)*960, -100, {speedY: 10, beatlayer: 2});
+            spawnEnemy('sunflower', {speedY: 10, beatlayer: 2, active: 200/difficulty.number+ticks, x: Math.random() * 960+(beatlayer-1)*960, y: -100});
             }
         pace1 = 0;
         }
@@ -92,7 +105,7 @@ if (scene==11)
         create(0, 'picture', 960, -300, {speedY:5.8, subtype: tGrassborder, misc1:1, misc2:400, misc3:1, misc4: 0.5, misc5: 1.2});
         create(0, 'picture', 960, -350, {speedY: 7.3, subtype: tGrassborder, misc1:1, misc2:300, misc3:1, misc4: 0.6, misc5: 1.3});
         create(0, 'picture', 960, -376, {speedY:9, subtype: tGrassborder, misc1:1, misc2:300, misc3:1, misc4: 0.7, misc5: 1.4});
-        
+
         ticks=0;
         scene++;
     }
@@ -105,7 +118,7 @@ if (scene==12){
 
         scene++;
         set.bonustext(700);
-        
+
         set.forestground();
         create(0, 'fog1', 960, 540, {});
         //create(0, 'b_forestground', 960, 540, {speedY: 2});
@@ -115,44 +128,44 @@ if (scene==12){
 
 if (scene==13){
     scene++;
-    
+
     /*set.centertext('You can use flashing bullets\nto destroy non-flashing bullets.', 1600, 240);
     set.centertext('If a flashing bullet explodes\nit will destroy non-flashing bullets.', 2100, 240);
     set.centertext('This gives you 8 points per bullet.\nYou get an extra try every '+difficulty.extend+' points.', 2600, 240);*/
 
     //act2: forestground, herocreate, play seek
 
-    create(1000, 'e_dragonfly', 400, 1200, {speedY: -2, misc1: 3+difficulty.enemy});
+    spawnEnemy('dragonfly', {speedY: -2, misc1: 3.5+0.5*difficulty.enemy, active: 1000, x: 400, y: 1200});
 
-    create(1800, 'e_dragonfly', 1500, 1200, {speedY: -2, misc1: -3-difficulty.enemy});
+    spawnEnemy('dragonfly', {speedY: -2, misc1: -3.5-0.5*difficulty.enemy, active: 1800, x: 1500, y: 1200});
 
-    create(2600, 'e_dragonfly', 400, 1200, {speedY: -2, misc1: 3+difficulty.enemy});
+    spawnEnemy('dragonfly', {speedY: -2, misc1: 3.5+0.5*difficulty.enemy, active: 2600, x: 400, y: 1200});
 
     if (difficulty.number>1){
-        create(1400, 'e_dragonfly', 1500, 1200, {speedY: -2, misc1: -3-difficulty.enemy});
+        spawnEnemy('dragonfly', {speedY: -2, misc1: -3-0.5*difficulty.enemy, active: 1400, x: 1500, y: 1200});
 
-    create(2200, 'e_dragonfly', 400, 1200, {speedY: -2, misc1: 3+difficulty.enemy});
+    spawnEnemy('dragonfly', {speedY: -2, misc1: 3.5+0.5*difficulty.enemy, active: 2200, x: 400, y: 1200});
 
-    create(3000, 'e_dragonfly', 400, 1200, {speedY: -2, misc1: 3+difficulty.enemy});
+    spawnEnemy('dragonfly', {speedY: -2, misc1: 3.5+0.5*difficulty.enemy, active: 3000, x: 400, y: 1200});
     }
-    //create(3400, 'e_dragonfly', 1500, 1200, {speedY: -2, misc1: -3});
+    //spawnEnemy('dragonfly', {speedY: -2, misc1: -3, active: 3400, x: 1500, y: 1200});
 
 
 
     for (var once=0; once<8; once++)
     {
-            create(1100+once*100, 'e_fly2', 1600,-100, {misc1: 100, misc2: 30, misc3: 0.03, misc4: 2});
+            spawnEnemy('fly', {misc1: 100, misc2: 30, misc3: 0.03, misc4: 2, active: 1100+once*100, x: 1600, y: -100});
     }
-    
+
     for (var once=0; once<8; once++)
     {
-        create(2000+once*90, 'e_fly2', 300,-100, {misc1: 100, misc2: 30, misc3: -0.03, misc4: 1});  
+        spawnEnemy('fly', {misc1: 100, misc2: 30, misc3: -0.03, misc4: 1, active: 2000+once*90, x: 300, y: -100});
     }
 
     for (var once=0; once<9; once++)
     {
 
-            create(2900+once*80, 'e_fly2', 1600,-100, {misc1: 100, misc2: 30, misc3: 0.03, misc4: 2});
+            spawnEnemy('fly', {misc1: 100, misc2: 30, misc3: 0.03, misc4: 2, active: 2900+once*80, x: 1600, y: -100});
     }
 
 
@@ -161,26 +174,30 @@ if (scene==13){
 
         for (var once=0; once<8; once++)
     {
-            create(1150+once*100, 'e_fly2', 300,-100, {misc1: 100, misc2: 30, misc3: -0.03, misc4: 1});  
+            spawnEnemy('fly', {misc1: 100, misc2: 30, misc3: -0.03, misc4: 1, active: 1150+once*100, x: 300, y: -100});
     }
-    
+
     for (var once=0; once<8; once++)
     {
-        create(2045+once*90, 'e_fly2', 1600,-100, {misc1: 100, misc2: 30, misc3: 0.03, misc4: 2});
+        spawnEnemy('fly', {misc1: 100, misc2: 30, misc3: 0.03, misc4: 2, active: 2045+once*90, x: 1600, y: -100});
     }
 
     for (var once=0; once<9; once++)
     {
 
-            create(2940+once*80, 'e_fly2', 300,-100, {misc1: 100, misc2: 30, misc3: -0.03, misc4: 1});  
+            spawnEnemy('fly', {misc1: 100, misc2: 30, misc3: -0.03, misc4: 1, active: 2940+once*80, x: 300, y: -100});
     }
     }
 }
 
     if (scene==14)
-    {       
+    {
         //if (ticks>500) //8300
-        
+        if (random(10)>8){set.beatparticle(tex.sp_leaf, 0, {});}
+        ai.bgpulse.call(background, 5, 1, 1.25);
+        set.beatparticle(tex.sp_leaf, 20, 1, {});
+        set.beatparticle(tex.sp_leaf2, 20, 3, {});
+
         if (musictime>=132)
         {
             set.bonustext();
@@ -197,7 +214,7 @@ if (scene==13){
     }
 
 if (scene==15)
-{        
+{
     //act3: forestground
     music[playing].stop();
     playing = 'scarybeat';
@@ -206,21 +223,17 @@ if (scene==15)
     musictime=0;
     scene++;
     ticks=0;
-
-
-        
-
 }
 
 if (scene==16)
 {
-    create(0, 'f_mushroom', 800, -200);
+    spawnEnemy('mushroomBoss', {active: 0, x: 800, y: -200});
     for (var i=0; i<15*difficulty.number; i++){
-    create(i*40/difficulty.number+400, 'e_fly2', Math.random()*1920, -100, {misc1: 500, misc2: 0, misc3: -0.03, misc4: pi/2, nobullets: true});  
+    spawnEnemy('fly', {misc1: 500, misc2: 0, misc3: -0.03, misc4: pi/2, nobullets: true, active: i*40/difficulty.number+400, x: Math.random()*1920, y: -100});
     }
-   
 
-    
+
+
     scene++;
 }
 
@@ -235,7 +248,7 @@ if (scene==17)
 }
 if (scene==18)
 {
-    bgzoomf.call(background, 0.0025, 3);
+    zoomStageOneBackgroundf(0.0025, 3);
 }
 
 if (scene==19)
@@ -243,19 +256,18 @@ if (scene==19)
     ctimetext();
     scene++;
 
+
+
     if (difficulty.number>=5){
-        create(2000, 'e_fly2', 1800,-100, {misc1: 50, misc2: 30, misc3: 0.03, misc4: 2});
-        create(2300, 'e_fly2', 100,-100, {misc1: 50, misc2: 30, misc3: -0.03, misc4: 1});  
-        create(2600, 'e_fly2', 1800,-100, {misc1: 50, misc2: 30, misc3: 0.03, misc4: 2});
-        create(800, 'e_fly2', 1800,-100, {misc1: 50, misc2: 30, misc3: 0.03, misc4: 2});
-        create(1100, 'e_fly2', 100,-100, {misc1: 50, misc2: 30, misc3: -0.03, misc4: 1});  
-        create(1400, 'e_fly2', 1800,-100, {misc1: 50, misc2: 30, misc3: 0.03, misc4: 2});
-        create(1700, 'e_fly2', 100,-100, {misc1: 50, misc2: 30, misc3: -0.03, misc4: 1});  
+        spawnEnemy('fly', {misc1: 50, misc2: 30, misc3: 0.03, misc4: 2, active: 2000, x: 1800, y: -100});
+        spawnEnemy('fly', {misc1: 50, misc2: 30, misc3: -0.03, misc4: 1, active: 2300, x: 100, y: -100});
+        spawnEnemy('fly', {misc1: 50, misc2: 30, misc3: 0.03, misc4: 2, active: 2600, x: 1800, y: -100});
+        spawnEnemy('fly', {misc1: 50, misc2: 30, misc3: 0.03, misc4: 2, active: 800, x: 1800, y: -100});
+        spawnEnemy('fly', {misc1: 50, misc2: 30, misc3: -0.03, misc4: 1, active: 1100, x: 100, y: -100});
+        spawnEnemy('fly', {misc1: 50, misc2: 30, misc3: 0.03, misc4: 2, active: 1400, x: 1800, y: -100});
+        spawnEnemy('fly', {misc1: 50, misc2: 30, misc3: -0.03, misc4: 1, active: 1700, x: 100, y: -100});
     }
 
-}
-
-if (scene>19 && scene<22){
 }
 
 }

@@ -1,27 +1,32 @@
 
-//0: max of c3
-//1: steps after max has reached (i.e. number of shots)
-//2: max of c5 == shoot every c2 frame
-//3: main counter
-//4: goes from 0 to 1 after max (c0) has been reached
-//5: second counter: shoot only if it is 0
-function countf()
-{
-    for (i=0; i<this.counter.length; i++){
-        this.counter[i][3]++;
-        if (this.counter[i][3]>=this.counter[i][0])
-        {
-            this.counter[i][4]+=(1/this.counter[i][1]);
-        }
-        if (this.counter[i][4]>1)
-        {
-            this.counter[i][3]=0;
-            this.counter[i][4]=0;
-        }
-        if (this.counter[i][5]++>=this.counter[i][2])
-        {
-            this.counter[i][5]=0;
-        }
+// Shot counter layout:
+// 0 delay before progress starts
+// 1 number of progress steps
+// 2 cadence interval
+// 3 elapsed delay
+// 4 progress from 0 to 1
+// 5 cadence position (shoot only at 0)
+function advanceShotCounter(counter) {
+    counter[3]++;
+
+    if (counter[3] >= counter[0]) {
+        counter[4] += 1 / counter[1];
+    }
+
+    if (counter[4] > 1) {
+        counter[3] = 0;
+        counter[4] = 0;
+    }
+
+    // Post-increment is intentional: the old cadence boundary depends on it.
+    if (counter[5]++ >= counter[2]) {
+        counter[5] = 0;
+    }
+}
+
+function countf() {
+    for (var i = 0; i < this.counter.length; i++) {
+        advanceShotCounter(this.counter[i]);
     }
 }
 
@@ -80,13 +85,6 @@ function scenephasechangef(lscene, phase){
         this.phase=phase;
     }
 }
-function scenechangef(limit){
-    if (limit==scene){
-        scene++;
-        this.phase++;
-        this.collision='enemy';
-    }
-}
 function scenenextf(value=110){
     scene=value;
     this.phase++;
@@ -103,21 +101,8 @@ function zoomf(speed)
     }
 }
 
-ai.zoom = function(x,y){
-    this.scale.x*=x;
-    this.scale.y*=y;
-}
-
-//sets speed and goes to the next phase
-function setspeedf(speedx, speedy)
-{
-    this.speedX=speedx;
-    this.speedY=speedy;
-    this.phase++;
-}
-
 function setcolf(collision='enemy'){
-    this.collision = 'enemy';
+    this.collision = collision;
 }
 
 //increases phase as soon as 

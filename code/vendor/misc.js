@@ -1,5 +1,4 @@
 function fullscreen(canvas){
-    console.log(canvas);
     if (canvas.requestFullscreen) {
         canvas.requestFullscreen();
     }
@@ -16,12 +15,22 @@ function fullscreen(canvas){
 
 /* Close fullscreen */
 function closeFullscreen() {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    } else if (document.webkitExitFullscreen) { /* Safari */
-      document.webkitExitFullscreen();
-    } else if (document.msExitFullscreen) { /* IE11 */
-      document.msExitFullscreen();
+    var exit;
+    if (document.fullscreenElement && document.exitFullscreen) {
+      exit = document.exitFullscreen;
+    } else if (document.webkitFullscreenElement && document.webkitExitFullscreen) { /* Safari */
+      exit = document.webkitExitFullscreen;
+    } else if (document.msFullscreenElement && document.msExitFullscreen) { /* IE11 */
+      exit = document.msExitFullscreen;
+    }
+    if (!exit){return;}
+    try {
+      var result = exit.call(document);
+      if (result && typeof result.catch === 'function'){
+        result.catch(function ignoreFullscreenExit() {});
+      }
+    } catch (error) {
+      // Esc can leave fullscreen between the element check and the exit call.
     }
   }
 
@@ -30,7 +39,7 @@ function directionh(x, y)
     x=herox-x;
     y=heroy-y;
 
-    angle =  Math.atan2(y, x);
+    var angle =  Math.atan2(y, x);
 
     return (angle);
 }
@@ -61,8 +70,23 @@ function readTextFile(file, callback) {
 
 function direction (x1,y1,x2,y2)
 {
-    x=x1-x2;
-    y=y1-y2;
-    angle =  Math.atan2(y, x);
+    var x=x1-x2;
+    var y=y1-y2;
+    var angle =  Math.atan2(y, x);
     return (angle);
 }   
+
+function random(max)
+{
+    let returnvalue =  Math.floor(Math.random()*max+1);
+    if (returnvalue>max || returnvalue<0){
+        return max;
+    }
+    else{
+        return returnvalue
+    }
+}
+
+function xyz2hex(input){
+    return rgbToHex(input.x, input.y, input.z)
+}

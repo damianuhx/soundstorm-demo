@@ -4,35 +4,24 @@ var invincible=0;
 var nobullets=0;  //default: 0
 var startstage=0; //default: 0
 
-var stagecount=0; //defalt: 0
+var stagecount=0; //default: 0
 var actcount=1; //default: 1
 
 var skipscene=0;
 var scene=0; //defalt: 0
 var cantdie=0;
-var gamepad=1;
-var gamepadindex=0;
 var screensize=1;
-var inputcontrol = getCookie('inputcontrol'); // key, mouse or touch
-var hard = 0;
+var inputcontrol = getCookie('inputcontrol') === 'gamepad' ? 'gamepad' : 'key';
 var done = 0;
-var idletime = 0;
-var aicounter=0;
-var aidelete=0;
 
-var hero;
+var menuposition=[1, 1, 1, 1];
+var menuselected=[0, 0, 0, 0];
 
-menuposition=[1, 1, 1, 1];
-menuselected=[0, 0, 0, 0];
+var globalfilters;
 
-var globalfilters = {
-    //pinch: new PIXI.filters.BulgePinchFilter({radius: 1000, strength: -1}),
-    twist: new PIXI.filters.TwistFilter({angle: 10, radius: 0, enabled: false, offset: {x: 960, y: 540}}),
-    shockwave: new PIXI.filters.ShockwaveFilter({x: 0, y: 0},{speed: 1000, enabled: false, amplitude: 50, wavelength: 200, brightness: 1.5, radius: 1000}),
-    adjust: new PIXI.filters.AdjustmentFilter({contrast: 0, enabled: false}),
-    motionblur: new PIXI.filters.MotionBlurFilter({x:0, y:99}),
-};
-globalfilters.motionblur.enabled=false;
+function reset_filters(){
+    ScreenEffects.resetGlobalFilters();
+}
 
 var temp={
     plainspeed: 1.0,
@@ -45,12 +34,12 @@ var temp={
 var settings={
     shadow: true,
     outline: true,
-    number: '0.8.8',
-    screensize: 100,
-    left: 0,
-    top: 0,
-    ntoenemy: 5,
-    }
+    number: '0.8.11',
+    ntoenemy: 20,
+    flashsize: 2.5,
+    preflashrange: 1.5, //time preflash is shown before the actual beat
+    preflashradius: 600    
+}
 
 var remember= //
 {
@@ -91,12 +80,12 @@ var difficulty={
     collectrange: 400, //range stars get attracted by the player
     maxcombocount: 99,
     maxcombovalue: 80,
-    number: 2,
-    enemy: 2,
-    bullets: 2,
-    chain: 2,
-    general: 2,
-    name: 'SERIOUS',
+    number: 1,
+    enemy: 1,
+    bullets: 1,
+    chain: 1,
+    general: 1,
+    name: 'CASUAL',
     set: function setdifficulty(value){
         difficulty.number=value;
         difficulty.enemy=value;
@@ -115,15 +104,12 @@ var difficulty={
         else{
             difficulty.name='HYPER '+(value-3);
         }
+        if (typeof highscore !== 'undefined'){
+            highscore=Number(getCookie('highscore'+difficulty.general)) || 0;
+        }
     }
 };
-
-
-
-var calc={
-    div: function (val) {return 1/Math.sqrt(val);},
-    mult: function (val) {return 0.5+0.5*val;}
-}
+difficulty.set(2);
 
 //score
 var scores={
@@ -149,7 +135,6 @@ var hero;
 var tutorialgoals=0;
 
 //Globals
-var readytext;
 var herox=-500;
 var heroy=-500;
 var sfxonce='';
@@ -162,15 +147,10 @@ var down=false;
 var shoot=false;
 var touch=false;
 var laser=false;
-var debug=false;
-var mouse=false;
 var pause2=0; //control
 var pauseactive=0;
 var pausepressed=0; //how long pressed
-var pausereleased=0; //
 var pausedown=0;
-var pausesprite;
-var playing;
 var heroshift = {x:0, y:0};
 
 //controls for each device seperately
@@ -180,7 +160,7 @@ var keys={
         alt: 0,
         alt2: 0,
         pad: 0,
-        mouse: 0
+        touch: 0
     },
     shield: {
         key: 0,
@@ -214,16 +194,6 @@ var keys={
     pause: 0
 }
 
-var pad={
-    up: 0,
-    down: 0,
-    left: 0,
-    right: 0,
-    shoot: 0,
-    shield: 0,
-    pause: 0
-}
-
 function saveStage(data){
     //on stagestart, on actclear
     // setCookie(name,value,days)
@@ -244,27 +214,48 @@ function saveStage(data){
     }
 }
 
-//on title only
-function loadStage(){
-    stagecount=getCookie(stagecount);
-    actcount=getCookie(actcount);
-    trystock=getCookie(trystock);
-    scoretotal=getCookie(scoretotal);
+//set control-values from events etc.
+function readTouchPointer(pointerRenderer, fallback){
+    var interaction=pointerRenderer && pointerRenderer.plugins && pointerRenderer.plugins.interaction;
+    var events=pointerRenderer && pointerRenderer.events;
+    var pointerData=(events && events.pointer)
+        || (interaction && interaction.pointer)
+        || (interaction && interaction.eventData && interaction.eventData.data);
+    var point=pointerData && pointerData.global;
+    var fallbackPoint=fallback && fallback.global || {x: 960, y: 540};
+
+    if (!point || !Number.isFinite(point.x) || !Number.isFinite(point.y)){
+        return {
+            global: {
+                x: Number.isFinite(fallbackPoint.x) ? fallbackPoint.x : 960,
+                y: Number.isFinite(fallbackPoint.y) ? fallbackPoint.y : 540,
+            },
+            isPrimary: false,
+        };
+    }
+
+    var released=/^(pointerup|pointercancel|touchend|touchcancel|mouseup)/.test(pointerData.type || "");
+    var pressed=!released && (
+        Number.isFinite(pointerData.buttons) ? pointerData.buttons > 0
+        : Number.isFinite(pointerData.pressure) ? pointerData.pressure > 0
+        : pointerData.isPrimary === true
+    );
+    return {global: {x: point.x, y: point.y}, isPrimary: pressed};
 }
 
-//set control-values from events etc.
 function keycalc(){
-    if (inputcontrol == 'mouse'){
-        shoot=keys.shoot.mouse;
-    }
-    else if (inputcontrol == 'touch')
+    if (inputcontrol == 'touch')
     {
         shoot=0;
-        if (renderer.plugins.interaction.eventData.data)
+        var pointerData=typeof ReplaySystem !== "undefined"
+            ? ReplaySystem.currentPointerData()
+            : readTouchPointer(typeof renderer !== "undefined" ? renderer : null);
+        if (pointerData)
         {
-            if (renderer.plugins.interaction.eventData.data.isPrimary){
+            var touchPoint=pointerData.global;
+            if (pointerData.isPrimary){
                 touch = 1;
-                if ( Math.abs(mouse.x-herox) < 100 && Math.abs(mouse.y-heroy) < 100)
+                if (Math.abs(touchPoint.x-herox) < 100 && Math.abs(touchPoint.y-heroy) < 100)
                 {
                     if (remember.idle){
                         shoot=1;
@@ -282,25 +273,28 @@ function keycalc(){
 
             }
         }
+        keys.shoot.touch=0;
     }
-    else if (inputcontrol == 'key') {
-        //foreach gamepad index if button is pressed or axis is pressed, +key +alt
-        shoot=keys.shoot.key+keys.shoot.alt+keys.shoot.alt2+allpads('shield');
-        laser=keys.shield.key+keys.shield.alt+keys.shoot.alt2+allpads('shield');
-        pause2=keys.pause + allpads('pause');
-        up=keys.up.key+keys.up.alt+allpads('up');
-        down=keys.down.key+keys.down.alt+allpads('down');
-        left=keys.left.key+keys.left.alt+allpads('left');
-        right=keys.right.key+keys.right.alt+allpads('right');
-    }
-    else if (inputcontrol == 'gamepad'){
-        shoot=getkey('shield');
-        laser=getkey('shield');
-        up=getkey('up');
-        down=getkey('down');
-        left=getkey('left');
-        right=getkey('right');
-        pause2=getkey('pause');
+    else if (inputcontrol == 'key' || inputcontrol == 'gamepad') {
+        var gamepadInput=inputcontrol == 'gamepad' ? getkey : allpads;
+        var gamepadShield=gamepadInput('shield');
+        var gamepadPause=gamepadInput('pause');
+        var gamepadUp=gamepadInput('up');
+        var gamepadDown=gamepadInput('down');
+        var gamepadLeft=gamepadInput('left');
+        var gamepadRight=gamepadInput('right');
+
+        // Keyboard and gamepad stay active together. The title-page selector
+        // only chooses between the standard and custom gamepad mappings.
+        shoot=keys.shoot.key+keys.shoot.alt+keys.shoot.alt2
+            +gamepadShield;
+        laser=keys.shield.key+keys.shield.alt+keys.shoot.alt2
+            +gamepadShield;
+        pause2=keys.pause+gamepadPause;
+        up=keys.up.key+keys.up.alt+gamepadUp;
+        down=keys.down.key+keys.down.alt+gamepadDown;
+        left=keys.left.key+keys.left.alt+gamepadLeft;
+        right=keys.right.key+keys.right.alt+gamepadRight;
     }
 }
 
@@ -311,41 +305,26 @@ if (!getCookie('highscore'+difficulty.general)){
     setCookie('highscore'+difficulty.general,0,3650);
 }
 var highscore=getCookie('highscore'+difficulty.general, scoretotal,3650) || 0;
-var scorestage=0;
-var scorecombo=0;
 var laserstock=difficulty.lasermax;
 var lifestock=2;
-var scorelife=0;
 var trystock=3;
-var scoremaxcombo=25;
-var scoretime=0;
 var scoretimer=99;
 var pause=0;
 
 //Timer
-var date = new Date();
 var ticks=0.0;
-var lastticks=0.0;
-var time=date.getTime();
-var beat=[0, 0, 0, 0, 0, 0, 0, 0];
-var prebeat=[0, 0, 0, 0, 0, 0, 0, 0];
-var shotwait=0;
-
+var beat=[0, 0, 0, 0, 0, 0, 0, 0]; //beat strength fopr flashing bullets
+var prebeat=[0, 0, 0, 0, 0, 0, 0, 0]; //indicators before the beat
+var soundbeat=[0, 0, 0, 0, 0, 0, 0, 0]; //sounds played by beatgenerator, 0 = no sound
+var prebeat2=[[],[],[],[],[],[],[],[],[]];
 //buffers
-var phase=0;
 var dead=0;
-var time=date.getTime();
-var track=0;
-var newtime = 0;
-var difftime = 0;
-var beattime=0;
+var difftime = 1000 / 60;
 var beatlayer=0;
-var ticks=0;
 var pace1=0;
 var bgchange=0;
 var bgspeedx=0;
 var bgspeedy=1;
-var bgspeedz=0;
 var musictime=0;
 
 
@@ -355,60 +334,89 @@ var musictime=0;
 
 function globalreset(){
     renderer.background.color = 0x000000;
-     score=0;
-     scorestage=0;
-     scorecombo=0;
-     laserstock=difficulty.lasermax;
-     //lifestock=2;
-     scorelife=0;
-     scoremaxcombo=25;
-     scoretime=0;
-     scoretimer=99;
-     ticks=0;
-     shotwait=0;
-     beat=[0, 0, 0, 0];
-     phase=0;
-     dead=0;
+    SoundStorm.reset.act();
 
-     time=date.getTime();
-     track=0;
-     newtime = 0;
-     difftime = 0;
-     beattime=0;
-     beatlayer=0;
-     ticks=0;
-     pace1=0;
-     bgchange=0;
-     bgspeedx=0;
-     bgspeedy=1;
-     bgspeedz=0;
-     musictime=0;
-
-     stage.alpha=1;
-     background.scale.x=1;
+    stage.alpha=1;
+    background.scale.x=1;
     background.scale.y=1;
     background.position.x=0;
     background.position.y=0;
 
-    var temp={
-        cloudheight: 0,
-        eaglewait: 0,
-    };
+    reset_filters();
 }
 
-function sleep(milliseconds) {
-    var start = new Date().getTime();
-    for (var i = 0; i < 1e7; i++) {
-      if ((new Date().getTime() - start) > milliseconds){
-        break;
+  var anonymousGameId='';
+  var localPlayCount=0;
+  var localPlayCountCookie='soundstorm_games_played';
+
+  function createAnonymousGameId(){
+    var values=new Uint32Array(4);
+    if (window.crypto && typeof(window.crypto.getRandomValues)==='function'){
+      window.crypto.getRandomValues(values);
+    }
+    else{
+      for (var i=0; i<values.length; i++){
+        values[i]=Math.floor(Math.random()*4294967296)>>>0;
       }
     }
+    return Array.from(values, function(value){
+      return value.toString(16).padStart(8, '0');
+    }).join('');
+  }
+
+  function beginAnonymousGameSession(){
+    if (anonymousGameId){
+      if (
+        typeof ReplaySystem!=="undefined"
+        && typeof ReplaySystem.attachAnonymousSession==="function"
+      ){
+        ReplaySystem.attachAnonymousSession(anonymousGameId, localPlayCount);
+      }
+      return anonymousGameId;
+    }
+    anonymousGameId=createAnonymousGameId();
+    var savedCount=getCookie(localPlayCountCookie);
+    var parsedCount=/^\d+$/.test(savedCount || '') ? Number(savedCount) : 0;
+    if (!Number.isSafeInteger(parsedCount) || parsedCount<0){
+      parsedCount=0;
+    }
+    localPlayCount=Math.min(parsedCount+1, Number.MAX_SAFE_INTEGER);
+    setCookie(localPlayCountCookie, localPlayCount, 3650);
+    if (
+      typeof ReplaySystem!=="undefined"
+      && typeof ReplaySystem.attachAnonymousSession==="function"
+    ){
+      ReplaySystem.attachAnonymousSession(anonymousGameId, localPlayCount);
+    }
+    return anonymousGameId;
+  }
+
+  function clearAnonymousGameSession(){
+    anonymousGameId='';
+    localPlayCount=0;
+  }
+
+  function currentAnonymousGameId(){
+    return anonymousGameId || beginAnonymousGameSession();
+  }
+
+  function currentLocalPlayCount(){
+    if (!anonymousGameId){
+      beginAnonymousGameSession();
+    }
+    return localPlayCount;
+  }
+
+  function activityLogEndpoint(){
+    var base=String(window.SOUNDSTORM_LOG_ENDPOINT || 'https://log.uhx.ch/api/v2');
+    return base.replace(/\/+$/, '')+'/activity.php';
   }
 
   function log2db(event='none'){
     if (settings.plattform!=='dev'){
         var paras='';
-        paras+='user='+user_id;
+        paras+='game='+encodeURIComponent(currentAnonymousGameId());
+        paras+='&local_play_count='+currentLocalPlayCount();
         paras+='&level='+difficulty.general+stagecount+actcount;//level
         paras+='&type='+event;//type
         paras+='&mode=none';//mode
@@ -419,9 +427,8 @@ function sleep(milliseconds) {
         paras+='&plattform='+settings.plattform;
         paras+='&version='+settings.version;
         paras+='&number='+settings.number;
-        console.log("https://log.uhx.ch?"+paras)
         var xhttp = new XMLHttpRequest();
-        xhttp.open("GET", "https://log.uhx.ch?"+paras, true);
+        xhttp.open("GET", activityLogEndpoint()+"?"+paras, true);
         xhttp.send();
     }
   }
