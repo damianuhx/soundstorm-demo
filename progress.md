@@ -87,7 +87,7 @@ dokumentiert. Bis dahin wird kein Upload oder Installationserfolg behauptet.
 Eine öffentliche Freigabe ist nicht autorisiert.
 
 
-## Abschlussstand des Work-Auftrags
+## Build- und Uploadstatus des Work-Auftrags
 
 - Der unveränderte Browserinhalt wurde vollständig durchgespielt: Tutorial,
   Stage 1 mit drei Abschnitten, Mighty Mushroom, Dankbildschirm und weitere
@@ -102,11 +102,18 @@ Eine öffentliche Freigabe ist nicht autorisiert.
   erlaubt keine bestätigte native Gameplay-Prüfung.
 - Steamworks ist für die Demo-App 2284540 angemeldet. Direkte SteamCMD-
   Anmeldung meldet „Cached credentials not found“ und verlangt ein Passwort.
-- Der ausdrücklich zuerst gewünschte Web-Upload wurde versucht. Dateiauswahl
-  ist aktuell durch die fehlende Chrome-Erweiterungsfreigabe „Allow access to
-  file URLs“ gesperrt; native Dateiauswahl meldet macOS-Aufnahmefehler.
-  Der Nutzer hat angekündigt, die Freigabe einzuschalten; sie ist vom
-  Uploadwerkzeug bisher nicht als aktiv bestätigt. Keine Datei hochgeladen.
+- Der ausdrücklich zuerst gewünschte Web-Upload wurde versucht. Die vom
+  Nutzer aktivierte Chrome-Dateifreigabe funktioniert; die finalen ZIPs wurden
+  ausgewählt. Windows/macOS wurden von Steam mit Fehler 9 „Did not receive
+  entire file“ abgewiesen. Ein abgeschlossener einzelner Windows-
+  Wiederholungsversuch lieferte denselben Fehler. Linux hatte vor dem
+  Neuladen der Seite kein bestätigtes Manifest. Eine Ursache für den
+  unvollständigen Dateiempfang ist nicht bewiesen.
+- Der geprüfte direkte Uploadstarter wurde auf Wunsch im Finder geöffnet.
+  SteamCMD beendete die Anmeldung um 13:38:54 mit `ERROR (Timeout)`.
+  Erfolgreiche Authentifizierung ist unbestätigt; es entstanden keine neuen
+  Demo-Buildlogs. Passwort/Steam Guard müssen direkt im Terminal eingegeben
+  werden und gehören nicht in den Chat.
 - Daher keine neue Steam-Build-ID, keine neuen Depot-Manifeste, keine private
   Branch-Aktivierung und keine neue Steam-Installation/Startprüfung.
   Demo default/beta bleiben im beobachteten Stand 17130127; private
@@ -116,6 +123,6 @@ Eine öffentliche Freigabe ist nicht autorisiert.
   Uploadstarter validiert alle finalen Pakete erneut und adressiert nur
   2284540 sowie 2284541/2/3 ohne SetLive.
 
-Offen: wirksamer Chrome-Dateizugriff oder direkte SteamCMD-Authentifizierung;
+Offen: erfolgreiche direkte SteamCMD-Authentifizierung;
 anschließend Upload, private Zuordnung und Steam-Installation/Start prüfen.
 Echter Windows-/Linux-Testzugang wird für deren native Gameplay-Prüfung benötigt.
